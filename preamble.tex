@@ -1,0 +1,89 @@
+% ==============================================================================
+% PREAMBLE: Formato oficial Trabajo de Grado - Instituto de Física, UdeA
+% ==============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}
+
+% Geometría de página (Márgenes estándar UdeA)
+\usepackage[letterpaper, top=3.0cm, bottom=2.5cm, left=3.0cm, right=2.5cm]{geometry}
+
+% Tipografía idéntica a la tesis de referencia (Times / NewTX)
+\IfFileExists{newtxtext.sty}{
+    \usepackage{newtxtext}
+    \usepackage{newtxmath}
+}{
+    \usepackage{mathptmx}
+}
+\usepackage{microtype}
+
+% Espaciado e interlineado
+\usepackage{setspace}
+\setstretch{1.15}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+% Enlaces y URLs con salto de línea automático
+\usepackage{xcolor}
+\definecolor{UdeAGreen}{HTML}{006837} % Verde institucional UdeA
+\usepackage{xurl} % Permite partir URLs largas en cualquier carácter
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=UdeAGreen
+}
+
+% Encabezados y pies de página (Estilo Lobo Ruiz)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{WALO: Instrumento Científico Abierto para Localización Acústica}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{15pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[R]{\small\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+}
+
+% Formato sobrio de títulos
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection.}{0.5em}{}
+
+% Matemáticas y física (Evita colisión de \Bbbk entre newtxmath y amssymb)
+\let\Bbbk\relax
+\usepackage{amsmath,amssymb,amsfonts,bm}
+
+\IfFileExists{physics.sty}{
+    \usepackage{physics}
+}{
+    \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+    \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+}
+
+% Paquete de unidades físicas (compatible con TeX Live 2023/2024 y punto decimal)
+\IfFileExists{siunitx.sty}{
+    \usepackage{siunitx}
+    \sisetup{
+        output-decimal-marker = {.},
+        per-mode = symbol
+    }
+}{}
+
+% Figuras, tablas y TikZ
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, labelsep=period}
+
+% Citas bibliográficas estilo IEEE
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{ieeetr}
