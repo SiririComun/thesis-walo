@@ -1,0 +1,25 @@
+\section{TRATAMIENTO DEL CAMPO ACÚSTICO Y EXTRACCIÓN DE OBSERVABLES FÍSICOS}
+
+En este capítulo se describe la formulación matemática y operacional empleada para transformar el campo continuo de presiones acústicas incidentes en un conjunto acotado de observables cinemáticos y geométricos. El proceso de medición se modela rigurosamente como una sucesión de proyecciones lineales, operadores integrales y transformaciones de fase aplicadas sobre el estado del campo acústico capturado por un arreglo dual de sensores.
+
+\paragraph{Nota de reproducibilidad y plataforma experimental.} La formulación descrita en las siguientes secciones representa el modelo exacto de la cadena de detección física. Para garantizar la reproducibilidad y permitir la verificación directa de los experimentos, la totalidad del código fuente, el diseño digital sintetizado en lógica programable (VHDL) y los algoritmos de adquisición se encuentran documentados y disponibles en acceso abierto en los repositorios institucionales:
+\begin{itemize}
+    \item \textbf{Capa de hardware y lógica digital:} \url{https://github.com/SiririComun/hw-xadc-dma-overlays} (Release v1.5.3).
+    \item \textbf{Capa de controladores y protocolos metrológicos:} \url{https://github.com/SiririComun/sw-pynq-sound-localizer} (Release v1.3.1).
+\end{itemize}
+
+\subsection{Definición del campo y formalismo de estados}
+Se considera una fuente acústica puntual armónica inmersa en un medio homogéneo e isótropo (aire a temperatura ambiente $T = \SI{20.0}{\celsius}$), cuya propagación está gobernada por la ecuación de onda escalar para la fluctuación de presión acústica $p(\vec{r}, t)$:
+\begin{equation}
+    \nabla^2 p(\vec{r}, t) - \frac{1}{c^2(T)} \frac{\partial^2 p(\vec{r}, t)}{\partial t^2} = 0,
+\end{equation}
+donde $c(T) = 331.3\sqrt{1 + T / 273.15}\,\si{m/s}$ representa la velocidad del sonido compensada por temperatura ($c \approx \SI{343.21}{m/s}$).
+
+El sistema instrumental dispone de dos sensores acústicos situados en posiciones espaciales fijas $\vec{r}_1$ y $\vec{r}_2$, separados por una línea de base $d = \norm{\vec{r}_2 - \vec{r}_1} = \SI{0.050}{m}$. El estado acústico continuo del receptor se define como el vector bidimensional de presiones:
+\begin{equation}
+    \mathbf{p}(t) = \begin{pmatrix} p_1(t) \\ p_2(t) \end{pmatrix} \in L^2(\mathbb{R}) \times L^2(\mathbb{R}),
+\end{equation}
+sujeto a ruido estocástico aditivo de banda ancha e interferencias acústicas por frentes de onda reflejados.
+
+\subsection{Discretización y acondicionamiento del campo acústico}
+% Aquí continúa la Sección X.2 del esquema propuesto...

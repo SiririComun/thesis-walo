@@ -1,0 +1,28 @@
+\documentclass[12pt,letterpaper]{article}
+
+% Cargar configuración
+\input{preamble.tex}
+
+\begin{document}
+
+% --- PORTADA (Sin anclas de página para evitar advertencias de hyperref) ---
+\hypersetup{pageanchor=false}
+\input{frontmatter/titlepage.tex}
+\newpage
+
+% --- TABLA DE CONTENIDO (Numeración romana preliminar) ---
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+
+% --- CAPÍTULO 1: TRATAMIENTO DEL CAMPO ACÚSTICO ---
+\pagenumbering{arabic}
+\input{chapters/01_tratamiento_campo.tex}
+
+% --- BIBLIOGRAFÍA ---
+\newpage
+\nocite{*} % Incluye las fuentes de references.bib sin error de BibTeX
+\bibliography{references.bib}
+
+\end{document}
