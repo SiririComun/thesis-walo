@@ -1,0 +1,117 @@
+% figures/fig2_rama_a.tex
+\begin{tikzpicture}[
+    >=Stealth,
+    % Estilo idéntico al bloque principal de la Figura 1
+    block/.style={
+        rectangle,
+        draw=black!70,
+        fill=black!2,
+        rounded corners=4pt,
+        line width=0.8pt,
+        text width=6.2cm,
+        align=center,
+        inner sep=8pt,
+        minimum height=1.35cm,
+        font=\small\sffamily
+    },
+    % Estilo idéntico a las cajas terminales de las ramas de la Figura 1
+    branchbox/.style={
+        rectangle,
+        draw=black!70,
+        fill=black!4,
+        rounded corners=4pt,
+        line width=0.9pt,
+        text width=4.6cm,
+        align=center,
+        inner sep=7pt,
+        font=\small\sffamily
+    },
+    % Flechas principales
+    arrow/.style={
+        ->,
+        line width=1.05pt,
+        draw=black!75,
+        shorten >= 2pt,
+        shorten <= 2pt
+    },
+    % Líneas de unión sin punta
+    line/.style={
+        line width=1.05pt,
+        draw=black!75
+    },
+    % Operador circular idéntico al de la Figura 1
+    oplabel/.style={
+        circle,
+        draw=black!85,
+        fill=white,
+        line width=0.9pt,
+        inner sep=3.5pt,
+        font=\normalsize\bfseries
+    }
+]
+
+    % =========================================================================
+    % Nivel 0: Entrada de la Rama A (y = 0.0)
+    % =========================================================================
+    \node[block] (inA) at (0, 0) {
+        \textbf{Vector de estado $\vec{P}$}\\
+        \footnotesize Entrada a la Rama A (Banda estrecha en $L^2$)
+    };
+
+    % Operador de Fase Cero (y = -1.8)
+    \node[oplabel] (opF) at (0, -1.8) {$\hat{\mathcal{F}}_{\text{ZPh}}$};
+
+    % =========================================================================
+    % Nivel 1: Señal Filtrada (y = -3.6)
+    % =========================================================================
+    \node[block] (filtered) at (0, -3.6) {
+        \textbf{Señal filtrada de fase nula}\\
+        \footnotesize $\mathbf{y}(t) = \mathbf{y}(t) \pm \Delta\mathbf{y}$ ($\tau_g \equiv 0$)
+    };
+
+    % Conexiones superiores
+    \draw[arrow] (inA) -- (opF);
+    \draw[arrow] (opF) -- (filtered);
+
+    % =========================================================================
+    % TRIFURCACIÓN SIMÉTRICA (3 VÍAS)
+    % =========================================================================
+    % 1. Tronco vertical descendente desde la señal filtrada
+    \coordinate (split) at (0, -4.8);
+    \draw[line] (filtered.south) -- (split);
+
+    % 2. Barra horizontal de distribución (de -5.4 a +5.4)
+    \coordinate (leftbar) at (-5.4, -4.8);
+    \coordinate (rightbar) at (5.4, -4.8);
+    \draw[line] (leftbar) -- (rightbar);
+
+    % 3. Bajadas verticales hacia las 3 vías (x = -5.4, x = 0.0, x = +5.4)
+    \draw[arrow] (-5.4, -4.8) -- (-5.4, -5.6);
+    \draw[arrow] (0.0, -4.8) -- (0.0, -5.6);
+    \draw[arrow] (5.4, -4.8) -- (5.4, -5.6);
+
+    % =========================================================================
+    % Nivel 2: Las 3 Vías de la Rama A (y = -7.2)
+    % =========================================================================
+    \node[branchbox] (via1) at (-5.4, -7.2) {
+        \textbf{Vía 1: Cinemática Doppler}\\
+        \footnotesize Transformada de Hilbert $\hat{\mathcal{H}}$\\
+        Vector analítico $\mathbf{z}(t) \in \mathbb{C}^N$\\
+        Derivada regularizada $\hat{\mathcal{D}}_{\Phi, SG}$
+    };
+
+    \node[branchbox] (via2) at (0.0, -7.2) {
+        \textbf{Vía 2: Régimen Cuasi-Anecoico}\\
+        \footnotesize Enventanado causal $\hat{T}_{\text{gate}}$ ($K=3$)\\
+        Demodulación Lock-In $\hat{\mathcal{P}}_{f_0}$\\
+        Integral de energía $\hat{\mathcal{E}}$
+    };
+
+    \node[branchbox] (via3) at (5.4, -7.2) {
+        \textbf{Vía 3: Detección ToA}\\
+        \footnotesize Ventana guarda $\hat{\mathcal{G}}_{\text{blank}}$\\
+        Discriminador pendiente $\hat{\mathcal{C}}_{zc}$\\
+        Interpolador secante $\hat{\mathcal{I}}_{zc}$
+    };
+
+\end{tikzpicture}

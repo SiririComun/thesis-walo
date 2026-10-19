@@ -1,0 +1,157 @@
+% figures/fig1_discretizacion.tex
+\begin{tikzpicture}[
+    >=Stealth,
+    % Cajas de la columna izquierda (física instrumental)
+    block/.style={
+        rectangle,
+        draw=black!70,
+        fill=black!2,
+        rounded corners=4pt,
+        line width=0.8pt,
+        text width=5.8cm,
+        align=center,
+        inner sep=8pt,
+        minimum height=1.35cm,
+        font=\small\sffamily
+    },
+    % Fórmulas matemáticas de la columna derecha
+    state/.style={
+        font=\small,
+        align=center,
+        inner sep=6pt
+    },
+    % Flechas principales
+    arrow/.style={
+        ->,
+        line width=1.05pt,
+        draw=black!75,
+        shorten >= 2pt,
+        shorten <= 2pt
+    },
+    % Líneas de unión sin punta
+    line/.style={
+        line width=1.05pt,
+        draw=black!75
+    },
+    % Operadores circulares
+    oplabel/.style={
+        circle,
+        draw=black!85,
+        fill=white,
+        line width=0.9pt,
+        inner sep=3.5pt,
+        font=\normalsize\bfseries
+    },
+    % Cajas terminales de las ramas (Parte 2)
+    branchbox/.style={
+        rectangle,
+        draw=UdeAGreen!85!black,
+        fill=UdeAGreen!6,
+        rounded corners=4pt,
+        line width=0.9pt,
+        text width=5.4cm,
+        align=center,
+        inner sep=7pt,
+        font=\small\sffamily
+    }
+]
+
+    % =========================================================================
+    % Nivel 0: Campo Continuo (y = 0.0)
+    % =========================================================================
+    \node[block] (b0) at (0, 0) {
+        \textbf{Campos acústicos continuos}\\
+        \footnotesize Presión sonora en receptores duales
+    };
+    \node[state] (s0) at (7.2, 0) {
+        $\mathbf{p}(t) = \begin{pmatrix} p_1(t) \\ p_2(t) \end{pmatrix} \in L^2(\mathbb{R}) \times L^2(\mathbb{R})$
+    };
+
+    % Operador 1
+    \node[oplabel] (op1) at (7.2, -1.8) {$\hat{\mathcal{P}}_{\Delta t}$};
+
+    % =========================================================================
+    % Nivel 1: Muestreo Simultáneo (y = -3.6)
+    % =========================================================================
+    \node[block] (b1) at (0, -3.6) {
+        \textbf{Muestreo simultáneo en FPGA}\\
+        \footnotesize Cuantización determinista ($\tau_{\text{skew}} \equiv 0$)
+    };
+    \node[state] (s1) at (7.2, -3.6) {
+        $\mathbf{p}[n] = \begin{pmatrix} p_1[n\Delta t] \pm \Delta p \\ p_2[n\Delta t] \pm \Delta p \end{pmatrix}$
+    };
+
+    % Operador 2
+    \node[oplabel] (op2) at (7.2, -5.4) {$\hat{\mathcal{C}}_M$};
+
+    % =========================================================================
+    % Nivel 2: Diezmado (y = -7.2)
+    % =========================================================================
+    \node[block] (b2) at (0, -7.2) {
+        \textbf{Diezmado digital promediado}\\
+        \footnotesize Reducción estocástica de varianza
+    };
+    \node[state] (s2) at (7.2, -7.2) {
+        $\tilde{\mathbf{p}}[k] = \begin{pmatrix} \tilde{p}_1[k\Delta t'] \pm \frac{\Delta p}{\sqrt{M}} \\ \tilde{p}_2[k\Delta t'] \pm \frac{\Delta p}{\sqrt{M}} \end{pmatrix}$
+    };
+
+    % Operador 3
+    \node[oplabel] (op3) at (7.2, -9.0) {$\hat{\mathcal{W}}_{nc}$};
+
+    % =========================================================================
+    % Nivel 3: Enventanado Causal (y = -10.8)
+    % =========================================================================
+    \node[block] (b3) at (0, -10.8) {
+        \textbf{Enventanado temporal causal}\\
+        \footnotesize Truncamiento a soporte compacto $\mathbb{R}^N$
+    };
+    \node[state] (s3) at (7.2, -10.8) {
+        $\vec{P} = \begin{pmatrix} \vec{p}_1 \pm \Delta\vec{p}' \\ \vec{p}_2 \pm \Delta\vec{p}' \end{pmatrix} \in \mathbb{R}^N \times \mathbb{R}^N$
+    };
+
+    % =========================================================================
+    % CONEXIONES VERTICALES INTERNAS (Etapa 1)
+    % =========================================================================
+    \draw[arrow] (b0) -- (b1);
+    \draw[arrow] (b1) -- (b2);
+    \draw[arrow] (b2) -- (b3);
+
+    \draw[arrow] (s0) -- (op1);
+    \draw[arrow] (op1) -- (s1);
+
+    \draw[arrow] (s1) -- (op2);
+    \draw[arrow] (op2) -- (s2);
+
+    \draw[arrow] (s2) -- (op3);
+    \draw[arrow] (op3) -- (s3);
+
+    % =========================================================================
+    % BIFURCACIÓN ELEGANTE (Convergencia suave y tronco común con etiqueta)
+    % =========================================================================
+    % 1. Curvas suaves de unión hacia el centro (x = 3.6, y = -12.4)
+    \coordinate (merge) at (3.6, -12.4);
+    \draw[line] (b3.south) to[out=-90, in=180] (merge);
+    \draw[line] (s3.south) to[out=-90, in=0] (merge);
+
+    % 2. Tronco común vertical con etiqueta física del vector que se bifurca
+    \coordinate (split) at (3.6, -13.5);
+    \draw[line] (merge) -- node[right=5pt, font=\small, align=left] {
+        \textbf{Vector de estado $\vec{P}$}\\
+        \footnotesize (Acondicionado)
+    } (split);
+
+    % 3. Cajas de destino de las ramas (y = -14.8)
+    \node[branchbox] (ramaA) at (0.0, -14.8) {
+        \textbf{Rama A: Canal temporal}\\
+        \footnotesize Banda estrecha en $L^2$ (Sección~1.3)
+    };
+    \node[branchbox] (ramaB) at (7.2, -14.8) {
+        \textbf{Rama B: Espacio recíproco}\\
+        \footnotesize Descomposición en $\ell^2$ (Sección~1.4)
+    };
+
+    % 4. Flechas ortogonales limpias hacia cada rama
+    \draw[arrow] (split) -| (ramaA.north);
+    \draw[arrow] (split) -| (ramaB.north);
+
+\end{tikzpicture}
