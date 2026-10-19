@@ -1,25 +1,370 @@
 \section{TRATAMIENTO DEL CAMPO ACÚSTICO Y EXTRACCIÓN DE OBSERVABLES FÍSICOS}
 
-En este capítulo se describe la formulación matemática y operacional empleada para transformar el campo continuo de presiones acústicas incidentes en un conjunto acotado de observables cinemáticos y geométricos. El proceso de medición se modela rigurosamente como una sucesión de proyecciones lineales, operadores integrales y transformaciones de fase aplicadas sobre el estado del campo acústico capturado por un arreglo dual de sensores.
+En este capítulo se formaliza el tratamiento operacional empleado para transformar el campo continuo de presiones acústicas en un conjunto ordenado de variables físicas observables. El proceso se estructura analíticamente como una secuencia de proyecciones lineales, operadores integrales y transformaciones en cuadratura aplicadas sobre las señales captadas por un arreglo dual de sensores.
 
-\paragraph{Nota de reproducibilidad y plataforma experimental.} La formulación descrita en las siguientes secciones representa el modelo exacto de la cadena de detección física. Para garantizar la reproducibilidad y permitir la verificación directa de los experimentos, la totalidad del código fuente, el diseño digital sintetizado en lógica programable (VHDL) y los algoritmos de adquisición se encuentran documentados y disponibles en acceso abierto en los repositorios institucionales:
+\paragraph{Nota de reproducibilidad y plataforma experimental.} La formulación matemática descrita en las siguientes secciones corresponde al modelo exacto de la cadena física de medición. Para garantizar la reproducibilidad metrológica y posibilitar la verificación directa de los experimentos, la totalidad del diseño digital sintetizado en lógica programable (VHDL), los controladores de adquisición síncrona y los algoritmos de procesamiento se encuentran documentados y disponibles en acceso abierto en los repositorios institucionales del proyecto:
 \begin{itemize}
-    \item \textbf{Capa de hardware y lógica digital:} \url{https://github.com/SiririComun/hw-xadc-dma-overlays} (Release v1.5.3).
-    \item \textbf{Capa de controladores y protocolos metrológicos:} \url{https://github.com/SiririComun/sw-pynq-sound-localizer} (Release v1.3.1).
+    \item \textbf{Lógica digital de adquisición y filtrado hardware:} \url{https://github.com/SiririComun/hw-xadc-dma-overlays} (Versión validada v1.5.3) \cite{SiririHW2026}.
+    \item \textbf{Controladores instrumentales y rutinas de procesamiento:} \url{https://github.com/SiririComun/sw-pynq-sound-localizer} (Versión validada v1.3.1) \cite{SiririSW2026}.
 \end{itemize}
 
+% ==============================================================================
+% 1.1. DEFINICIÓN DEL CAMPO Y FORMALISMO DE ESTADOS
+% ==============================================================================
 \subsection{Definición del campo y formalismo de estados}
-Se considera una fuente acústica puntual armónica inmersa en un medio homogéneo e isótropo (aire a temperatura ambiente $T = \SI{20.0}{\celsius}$), cuya propagación está gobernada por la ecuación de onda escalar para la fluctuación de presión acústica $p(\vec{r}, t)$:
+
+Se considera la radiación acústica emitida por una fuente puntual armónica en el aire, asumido como un fluido homogéneo e isótropo a temperatura ambiente $T = \SI{20.0}{\celsius}$. La propagación ondulatoria está gobernada por la ecuación diferencial de onda escalar para la fluctuación de presión sonora $p(\vec{r}, t)$ \cite{kinsler2000fundamentals, morse1968theoretical, pierce1989acoustics}:
 \begin{equation}
     \nabla^2 p(\vec{r}, t) - \frac{1}{c^2(T)} \frac{\partial^2 p(\vec{r}, t)}{\partial t^2} = 0,
+    \label{eq:onda_acustica}
 \end{equation}
-donde $c(T) = 331.3\sqrt{1 + T / 273.15}\,\si{m/s}$ representa la velocidad del sonido compensada por temperatura ($c \approx \SI{343.21}{m/s}$).
-
-El sistema instrumental dispone de dos sensores acústicos situados en posiciones espaciales fijas $\vec{r}_1$ y $\vec{r}_2$, separados por una línea de base $d = \norm{\vec{r}_2 - \vec{r}_1} = \SI{0.050}{m}$. El estado acústico continuo del receptor se define como el vector bidimensional de presiones:
+donde $c(T)$ representa la velocidad de propagación de la perturbación adiabática en función de la temperatura termodinámica:
 \begin{equation}
-    \mathbf{p}(t) = \begin{pmatrix} p_1(t) \\ p_2(t) \end{pmatrix} \in L^2(\mathbb{R}) \times L^2(\mathbb{R}),
+    c(T) = c_0 \sqrt{1 + \frac{T}{273.15}}, \qquad c_0 = \SI{331.3}{\metre\per\second},
 \end{equation}
-sujeto a ruido estocástico aditivo de banda ancha e interferencias acústicas por frentes de onda reflejados.
+lo que corresponde a un valor nominal de $c \approx \SI{343.21}{\metre\per\second}$ bajo las condiciones térmicas de referencia del laboratorio.
 
+El campo acústico es interrogado espacialmente mediante dos transductores situados en posiciones fijas $\vec{r}_1$ y $\vec{r}_2$, separados por una distancia euclidiana arbitraria:
+\begin{equation}
+    d = \norm{\vec{r}_2 - \vec{r}_1}.
+    \label{eq:linea_base}
+\end{equation}
+Esta distancia $d$ se trata aquí como un parámetro geométrico general. Su magnitud cuantitativa se define de manera específica según el diseño experimental adoptado en cada régimen de medición (desde aperturas milimétricas compactas para localización angular hasta separaciones métricas en rieles de aire unidimensionales).
+
+El estado continuo del campo acústico sobre la apertura instrumental se representa formalmente mediante el vector de presiones:
+\begin{equation}
+    \mathbf{p}(t) = \begin{pmatrix} p_1(t) \\ p_2(t) \end{pmatrix} \in L^2(\mathbb{R}) \times L^2(\mathbb{R}).
+    \label{eq:estado_continuo}
+\end{equation}
+En condiciones experimentales reales, estas componentes se encuentran perturbadas por ruido estocástico aditivo de banda ancha (como el flujo turbulento del soplador neumático en rieles de aire) y reflexiones de contorno en el recinto. El propósito de este capítulo es formular los operadores que proyectan el vector continuo infinito-dimensional $\mathbf{p}(t)$ sobre un espacio discreto de observables cinemáticos con incertidumbre acotada.
+
+% ==============================================================================
+% 1.2. DISCRETIZACIÓN Y ACONDICIONAMIENTO DEL CAMPO ACÚSTICO
+% ==============================================================================
 \subsection{Discretización y acondicionamiento del campo acústico}
-% Aquí continúa la Sección X.2 del esquema propuesto...
+
+La transformación del campo continuo a un espacio vectorial discreto se resume en la Figura~\ref{fig:discretizacion_flujo}, preservando la coherencia de fase entre canales mediante una topología sincrónica determinista.
+
+\begin{figure}[htbp]
+    \centering
+    \input{figures/fig1_discretizacion.tex}
+    \vspace{0.4cm}
+    \caption{Cadena operacional de discretización y acondicionamiento del campo acústico dual. En la columna izquierda se indican las transformaciones físicas del instrumento, mientras que la columna derecha detalla la evolución matemática del vector de estado junto con la propagación de incertidumbre debida a los operadores $\hat{\mathcal{P}}_{\Delta t}$, $\hat{\mathcal{C}}_M$ y $\hat{\mathcal{W}}_{nc}$.}
+    \label{fig:discretizacion_flujo}
+\end{figure}
+
+\subsubsection{Operador de muestreo simultáneo (\texorpdfstring{$\hat{\mathcal{P}}_{\Delta t}$}{P\_dt})}
+Sea $\Delta t$ el periodo fundamental de conversión analógico-digital ($\Delta t = \SI{1.0}{\micro\second}$, correspondiente a una tasa bruta de $f_{\text{bruta}} = \SI{1}{\mega\hertz}$ compartida en adquisición paralela). El operador de proyección temporal $\hat{\mathcal{P}}_{\Delta t}$ actúa sobre el par continuo transformándolo en una sucesión temporal discreta:
+\begin{equation}
+    \mathbf{p}[n] = \hat{\mathcal{P}}_{\Delta t}\{\mathbf{p}(t)\} = \begin{pmatrix} p_1(n\Delta t) \\ p_2(n\Delta t) \end{pmatrix} + \bm{\epsilon}_q[n], \quad n \in \mathbb{Z},
+    \label{eq:operador_muestreo}
+\end{equation}
+donde $\bm{\epsilon}_q[n] = (\epsilon_{q,1}, \epsilon_{q,2})^T$ representa el error estocástico de cuantización a 12 bits, modelado como una variable aleatoria uniformemente distribuida en el intervalo $[-\Delta V / 2, \Delta V / 2]$, con varianza teórica \cite{oppenheim1999discrete, lyons2010understanding}:
+\begin{equation}
+    \sigma_q^2 = \frac{(\Delta V)^2}{12} = \frac{1}{12} \left( \frac{V_{\text{ref}}}{2^{12} - 1} \right)^2 \approx \SI{5.41e-8}{\volt\squared}.
+\end{equation}
+
+Desde el punto de vista metrológico, la propiedad física crítica del operador $\hat{\mathcal{P}}_{\Delta t}$ es que impone simultaneidad temporal estricta entre ambos canales:
+\begin{equation}
+    \tau_{\text{skew}} = \abs{t_{1,n} - t_{2,n}} \equiv \SI{0.00}{\micro\second}.
+    \label{eq:skew_cero}
+\end{equation}
+
+Esta condición resulta inviable en arquitecturas basadas en procesadores secuenciales (CPU) o microcontroladores convencionales. En dichos sistemas, las entradas analógicas se digitalizan por turnos secuenciales con un único convertidor multiplexado, o bien quedan supeditadas a retardos variables de software (\textit{jitter} de interrupción). Para ondas acústicas en frecuencias del orden de kilohercios—como la portadora emitida por el transductor activo ($f_0 \approx \SI{2.6}{\kilo\hertz}$)—, un desfase temporal espurio de tan solo $\tau_{\text{skew}} = \SI{10}{\micro\second}$ introduce un error de fase artificial de $\Delta\phi_{\text{err}} = 2\pi f_0 \tau_{\text{skew}} \approx \SI{9.4}{\degree}$, degradando severamente la triangulación angular interferométrica y la velocimetría Doppler diferencial.
+
+En el instrumento WALO, la condición~(\ref{eq:skew_cero}) se satisface de forma determinista mediante la matriz lógica de la FPGA: dos convertidores analógico-digitales operan en paralelo real a nivel de silicio, gobernados sincrónicamente por el mismo flanco de un oscilador de reloj a \SI{100}{\mega\hertz}, eliminando el sesgo temporal intercanal antes de cualquier cómputo digital.
+
+\subsubsection{Operador de diezmado y reducción estocástica de varianza (\texorpdfstring{$\hat{\mathcal{C}}_M$}{C\_M})}
+Para aislar la banda espectral de interés ($f \le \SI{25}{\kilo\hertz}$) y atenuar perturbaciones estocásticas de alta frecuencia, se define el operador lineal de diezmado promediado $\hat{\mathcal{C}}_M$, parametrizado por un factor entero de compresión $M \in \{1, 10, 20, 50\}$.
+
+Para formalizar su efecto, se descompone la señal digital en cada canal como la superposición de una componente de presión acústica determinista $s_i[n]$ y un término estocástico aditivo de ruido $\epsilon_i[n]$ \cite{bevington2003data}:
+\begin{equation}
+    p_i[n] = s_i[n] + \epsilon_i[n], \quad i \in \{1, 2\},
+    \label{eq:descomposicion_ruido}
+\end{equation}
+donde $\epsilon_i[n]$ es un proceso estocástico incorrelacionado de media nula y varianza finita $\sigma^2$:
+\begin{equation}
+    \mathbb{E}[\epsilon_i[n]] = 0, \qquad \mathbb{E}[\epsilon_i[n]\,\epsilon_i[m]] = \sigma^2 \delta_{nm}.
+\end{equation}
+
+La acción de $\hat{\mathcal{C}}_M$ consiste en promediar bloques contiguos de $M$ muestras y submuestrear a la tasa efectiva $\Delta t' = M \Delta t$:
+\begin{equation}
+    \tilde{p}_i[k] = \hat{\mathcal{C}}_M\{p_i[n]\} = \frac{1}{M}\sum_{m=0}^{M-1} s_i[Mk - m] + \frac{1}{M}\sum_{m=0}^{M-1} \epsilon_i[Mk - m] = \tilde{s}_i[k] + \tilde{\epsilon}_i[k].
+    \label{eq:operador_diezmado}
+\end{equation}
+
+Dado que el periodo fundamental de la onda acústica ($T_0 = 1/f_0 \approx \SI{385}{\micro\second}$) es sustancialmente mayor que la ventana de promediado local ($M\Delta t = 10 \times \SI{1.0}{\micro\second} = \SI{10}{\micro\second}$ para $M=10$), la componente acústica varía de forma cuasi-estática en dicho intervalo:
+\begin{equation}
+    s_i[Mk - m] \approx s_i[Mk], \quad \forall m \in \{0, \dots, M-1\},
+\end{equation}
+de modo que la señal de interés se conserva con atenuación despreciable ($\tilde{s}_i[k] \approx s_i[Mk]$ con distorsión $< 0.1\,\%$). En contraste, para el término estocástico $\tilde{\epsilon}_i[k]$, la varianza de la suma de variables aleatorias independientes se reduce de acuerdo con el teorema del límite central \cite{bevington2003data}:
+\begin{equation}
+    \sigma_{\text{eff}}^2 = \text{Var}(\tilde{\epsilon}_i[k]) = \text{Var}\left( \frac{1}{M}\sum_{m=0}^{M-1} \epsilon_i[Mk - m] \right) = \frac{1}{M^2} \sum_{m=0}^{M-1} \sigma^2 = \frac{\sigma^2}{M}.
+\end{equation}
+
+En consecuencia, la banda de dispersión e incertidumbre experimental de la presión acústica se atenúa proporcionalmente a la raíz cuadrada del índice de diezmado:
+\begin{equation}
+    \Delta p' = \frac{\Delta p}{\sqrt{M}}.
+\end{equation}
+Para el modo de operación nominal empleado en este trabajo ($M = 10$, tasa efectiva por canal $f_s = \SI{50}{\kilo\hertz}$), este operador reduce la potencia del ruido electrónico en un factor de 10 ($\SI{10}{\decibel}$) respecto a la adquisición bruta, preservando la coherencia temporal de la señal acústica.
+
+\subsubsection{Enventanado temporal causal y partición del espacio vectorial (\texorpdfstring{$\hat{\mathcal{W}}_{nc}$}{W\_nc})}
+Para procesar la evolución cinemática en tiempo cuasi-real, el flujo $\tilde{\mathbf{p}}[k]$ se proyecta periódicamente sobre un subespacio euclidiano de dimensión finita $N$ ($N \in \{512, 1024, 2048\}$ muestras). Se define el operador de enventanado temporal causal $\hat{\mathcal{W}}_{nc}$:
+\begin{equation}
+    \vec{P} = \hat{\mathcal{W}}_{nc}\{\tilde{\mathbf{p}}[k]\} = \begin{pmatrix} \vec{p}_1 \\ \vec{p}_2 \end{pmatrix} \in \mathbb{R}^N \times \mathbb{R}^N,
+\end{equation}
+cuyos elementos matriciales se expresan como:
+\begin{equation}
+    (\vec{p}_i)_m = \tilde{p}_i[k_0 + m] \cdot w[m], \quad m \in \{0, 1, \dots, N-1\}, \quad i \in \{1, 2\},
+\end{equation}
+donde $w[m]$ es una ventana de Blackman-Harris de cuatro términos. Esta función de apodización se selecciona por presentar una atenuación de lóbulos laterales superior a $\SI{-92}{\decibel}$, suprimendo la fuga espectral entre modos acústicos adyacentes \cite{harris1978use, oppenheim1999discrete}.
+
+La formación del vector acotado $\vec{P} \pm \Delta\vec{p}'$ establece la partición del procesamiento en dos ramas complementarias:
+\begin{enumerate}
+    \item \textbf{Rama A (Canal temporal de banda estrecha):} Orientada a la resolución temporal instantánea, la demodulación continua de fase, la medición de tiempos de vuelo (ToA) y la integración de energía cuasi-anecoica directa.
+    \item \textbf{Rama B (Canal espectral en espacio recíproco):} Orientada a la descomposición armónica en base ortogonal de Fourier y la estimación analítica de superresolución sub-Hertz de la frecuencia portadora en reposo $f_0$.
+\end{enumerate}
+
+% ==============================================================================
+% 1.3. RAMA A: REPRESENTACIÓN TEMPORAL Y CANAL PASABANDA
+% ==============================================================================
+\subsection{Rama A: Representación temporal y canal pasabanda}
+
+La Rama A toma como entrada el vector de presión acústica acondicionado $\vec{P}$ y lo procesa en el dominio temporal. Su objetivo es aislar la dinámica de la fuente en torno a su frecuencia de emisión y extraer observables locales instantáneos (frecuencia Doppler, amplitud instantánea, tiempos de arribo y energía directa).
+
+\subsubsection{Operador de filtrado de fase cero (\texorpdfstring{$\hat{\mathcal{F}}_{\text{ZPh}}$}{F\_ZPh})}
+El vector $\vec{P}$ contiene tanto la oscilación acústica emitida como perturbaciones residuales fuera de banda. Para aislar la componente armónica de interés sin distorsionar la fase, se aplica un operador lineal pasabanda centrado en la frecuencia portadora $f_0$ con un semiancho de banda $B$:
+\begin{equation}
+    \vec{y}_i = \hat{\mathcal{F}}_{\text{ZPh}}\{\vec{p}_i\}, \quad i \in \{1, 2\}.
+    \label{eq:filtro_fase_cero}
+\end{equation}
+
+En física experimental de ondas, el uso de filtros digitales convencionales (IIR o FIR causales) introduce un retardo de fase dependiente de la frecuencia $\theta(\omega)$, lo que se traduce en un retardo de grupo no uniforme:
+\begin{equation}
+    \tau_g(\omega) = -\frac{d\theta(\omega)}{d\omega} \neq 0.
+\end{equation}
+Si la fuente acústica se encuentra en movimiento relativo respecto a los receptores, el efecto Doppler desplaza la frecuencia instantánea recibida ($f_1 \neq f_2$). Un retardo de grupo no nulo provocaría que cada canal sufriera un retraso temporal distinto en función de su velocidad, generando desfases artificiales que falsearían tanto el cálculo del ángulo de llegada como la velocidad Doppler diferencial.
+
+Para evitar esta distorsión, el operador $\hat{\mathcal{F}}_{\text{ZPh}}$ se implementa mediante un filtrado simétrico bidireccional (hacia adelante y hacia atrás) sobre una base Butterworth de segundo orden \cite{mitra2006digital}. La función de transferencia efectiva en el plano $z$ corresponde a:
+\begin{equation}
+    H_{\text{eff}}(z) = H(z) \cdot H(z^{-1}),
+\end{equation}
+cuya respuesta en frecuencia evaluada sobre el círculo unitario ($z = e^{j\omega\Delta t'}$) satisface:
+\begin{equation}
+    H_{\text{eff}}(e^{j\omega\Delta t'}) = \abs{H(e^{j\omega\Delta t'})}^2 \in \mathbb{R}^+, \qquad \arg\left( H_{\text{eff}}(e^{j\omega\Delta t'}) \right) \equiv 0.
+    \label{eq:fase_nula}
+\end{equation}
+
+La condición~(\ref{eq:fase_nula}) garantiza que el retardo de fase sea exactamente nulo para todas las frecuencias de la banda pasante ($\tau_g \equiv 0$). De este modo, las diferencias temporales y de fase observadas entre ambos micrófonos provienen exclusivamente del fenómeno físico de propagación en el aire, preservando la coherencia intercanal. La salida de esta etapa es el vector de señales filtradas:
+\begin{equation}
+    \mathbf{y}(t) = \begin{pmatrix} \vec{y}_1 \pm \Delta\vec{y} \\ \vec{y}_2 \pm \Delta\vec{y} \end{pmatrix} \in \mathbb{R}^N \times \mathbb{R}^N.
+\end{equation}
+
+\begin{figure}[htbp]
+    \centering
+    \input{figures/fig2_rama_a.tex}
+    \vspace{0.4cm}
+    \caption{Arquitectura funcional de la Rama A. A partir de la señal filtrada de fase nula $\mathbf{y}(t)$, el sistema se trifurca en vías independientes para la extracción simultánea de cinemática Doppler (Vía 1), energía cuasi-anecoica mediante Lock-In (Vía 2) y tiempos de arribo ToA de alta resolución (Vía 3).}
+    \label{fig:rama_a_flujo}
+\end{figure}
+
+\subsubsection{Vía 1: Cinemática Doppler en cuadratura y espacio de fase}
+A partir del canal filtrado $\mathbf{y}(t)$, se busca determinar la trayectoria cinemática de la fuente a través de su modulación en amplitud y frecuencia instantánea.
+
+Para superar la ambigüedad que surge al calcular la envolvente y la fase en señales reales mediante métodos basados en picos discretos, se emplea la formulación de la señal analítica compleja introducida por Gabor \cite{gabor1946theory}. Se aplica el operador integral de Hilbert $\hat{\mathcal{H}}$, definido como la convolución con el núcleo singular de Cauchy \cite{cohen1995time}:
+\begin{equation}
+    \tilde{y}_i(t) = \hat{\mathcal{H}}\{y_i(t)\} = \frac{1}{\pi} \, \text{P.V.} \int_{-\infty}^{\infty} \frac{y_i(\tau)}{t - \tau} \, d\tau,
+    \label{eq:hilbert_integral}
+\end{equation}
+donde $\text{P.V.}$ denota el valor principal de Cauchy. En el dominio de las frecuencias, $\hat{\mathcal{H}}$ actúa como un desfasador en cuadratura pura de $\SI{-90}{\degree}$ para frecuencias positivas y de $\SI{+90}{\degree}$ para frecuencias negativas.
+
+Con ello, se construye el vector de estados analítico complejo:
+\begin{equation}
+    \mathbf{z}(t) = \mathbf{y}(t) + j \hat{\mathcal{H}}\{\mathbf{y}(t)\} = \begin{pmatrix} y_1(t) + j\tilde{y}_1(t) \\ y_2(t) + j\tilde{y}_2(t) \end{pmatrix} \in \mathbb{C}^N \times \mathbb{C}^N.
+    \label{eq:vector_analitico}
+\end{equation}
+
+La representación polar de~(\ref{eq:vector_analitico}) desacopla de manera unívoca la disipación energética de la dinámica de fase:
+\begin{equation}
+    A_i(t) = \norm{\mathbf{z}_i(t)} = \sqrt{y_i^2(t) + \tilde{y}_i^2(t)},
+    \label{eq:amplitud_instantanea}
+\end{equation}
+\begin{equation}
+    \Phi_i(t) = \text{unwrap}\left( \arg \mathbf{z}_i(t) \right) = \text{unwrap}\left( \arctan\left( \frac{\tilde{y}_i(t)}{y_i(t)} \right) \right),
+    \label{eq:fase_desenvuelta}
+\end{equation}
+donde el operador $\text{unwrap}(\cdot)$ corrige las discontinuidades artificiales de módulo $2\pi$, generando una trayectoria de fase monótona y continua.
+
+Físicamente, la frecuencia instantánea corresponde a la tasa de variación temporal de la fase:
+\begin{equation}
+    f_i(t) = \frac{1}{2\pi} \frac{d\Phi_i(t)}{dt}.
+    \label{eq:frecuencia_derivada}
+\end{equation}
+Sin embargo, en señales experimentales discretas, el operador derivativo ordinario $\frac{d}{dt}$ presenta una respuesta en frecuencia proporcional a $\omega$, lo que amplifica fuertemente el ruido de alta frecuencia (la densidad espectral de potencia del ruido crece con $\omega^2$). Calcular~(\ref{eq:frecuencia_derivada}) mediante diferencias finitas produce fluctuaciones numéricas severas que enmascaran el corrimiento Doppler real.
+
+Para resolver este problema físico, se formula un operador unificado de demodulación polar y diferenciación regularizada $\hat{\mathcal{D}}_{\Phi, \text{sg}}$. Este operador ajusta localmente un polinomio de grado $p = 3$ sobre una ventana deslizante simétrica de $2K + 1$ puntos mediante el formalismo de Savitzky-Golay \cite{savitzky1964smoothing}:
+\begin{equation}
+    \Phi_i(t_k + \tau) \approx \sum_{r=0}^{p} c_r \tau^r, \quad \tau \in [-K\Delta t', K\Delta t'].
+\end{equation}
+La derivada regularizada en el punto central $t_k$ se obtiene analíticamente a partir del primer coeficiente del ajuste ($c_1$):
+\begin{equation}
+    f_{i,\text{inst}}(t) = \frac{1}{2\pi} \left. \frac{d\Phi_i}{dt} \right|_{\tau=0} = \frac{c_1}{2\pi} = \hat{\mathcal{D}}_{\Phi, \text{sg}}\{\mathbf{z}_i(t)\}.
+    \label{eq:doppler_regularizado}
+\end{equation}
+
+El operador $\hat{\mathcal{D}}_{\Phi, \text{sg}}$ actúa simultáneamente como filtro pasabajo sobre la fase y como diferenciador exacto, entregando la trayectoria cinemática de la fuente acústica libre de divergencias numéricas:
+\begin{equation}
+    \begin{pmatrix} \vec{A}_1(t) \pm \Delta\vec{A} \\ \vec{A}_2(t) \pm \Delta\vec{A} \end{pmatrix}, \qquad \begin{pmatrix} \vec{f}_{i,1}(t) \pm \Delta\vec{f} \\ \vec{f}_{i,2}(t) \pm \Delta\vec{f} \end{pmatrix}.
+\end{equation}
+Estas componentes describen de forma continua la variación de frecuencia debida al movimiento relativo entre la fuente y cada receptor, constituyendo la base del modelo cinemático Doppler diferencial que se formulará en capítulos posteriores.
+
+\subsubsection{Vía 2: Régimen cuasi-anecoico y densidad de energía (Lock-In)}
+En recintos experimentales cerrados, la señal registrada en los receptores constituye una superposición lineal entre el frente de onda directo procedente de la fuente y múltiples reflexiones tardías (eco) generadas en el suelo, paredes y techo de la estancia. Si estas reflexiones se integran junto con la señal directa, inducen fluctuaciones espaciales en forma de ondas estacionarias que destruyen la linealidad de la ley de decaimiento inversamente proporcional ($1/r$).
+
+Para eliminar por completo este artefacto sin necesidad de una cámara anecoica, la Vía 2 implementa el operador de enventanado causal cuasi-anecoico $\hat{T}_{\text{gate}}$. Este operador confina estrictamente la integración temporal al intervalo correspondiente a los primeros $K = 3$ ciclos completos de la portadora acústica:
+\begin{equation}
+    T_{\text{gate}} = K T_0 = \frac{3}{f_0} \approx \SI{1.13}{\milli\second} \quad (\text{para } f_0 = \SI{2.6}{\kilo\hertz}).
+    \label{eq:tiempo_gate}
+\end{equation}
+La duración temporal del operador se dimensiona de tal forma que el intervalo de acumulación concluye de manera estricta antes de que la primera reflexión proveniente de los límites del laboratorio ($r_{\text{refl}} \ge \SI{0.50}{\metre}$) alcance el transductor:
+\begin{equation}
+    c \cdot (K T_0) < \Delta r_{\text{refl}} \implies \text{Anulación de reverberación } (c_{\text{room}} \to 0).
+\end{equation}
+
+Dentro de este soporte temporal restringido, la amplitud y la energía de la onda directa se extraen mediante el operador de proyección fasorial síncrona (\textit{Lock-In Digital}) $\hat{\mathcal{P}}_{f_0}$, formulado como un producto interno ponderado en el espacio $L^2$ contra la base armónica de referencia \cite{meade1983lock}:
+\begin{equation}
+    X(f_0) = \frac{2}{N_{\text{gate}}} \sum_{m=0}^{N_{\text{gate}}-1} y_{\text{gate}}[m] \, e^{-j 2\pi f_0 m \Delta t'}.
+    \label{eq:lock_in_proyeccion}
+\end{equation}
+La evaluación de~(\ref{eq:lock_in_proyeccion}) sobre un número entero exacto de periodos de la portadora garantiza la ortogonalidad estricta de las funciones base de Fourier, suprimiendo las fugas espectrales y proporcionando una inmunidad absoluta frente a saltos de escala por desplazamiento de bits en punto flotante. A partir del fasor complejo, se obtiene la tensión eficaz directa y la densidad de flujo energético acumulado:
+\begin{equation}
+    A_{\text{RMS}} = \frac{\abs{X(f_0)}}{\sqrt{2}}, \qquad \mathcal{E} = \hat{\mathcal{E}}\{y_{\text{gate}}\} = \sum_{m=0}^{N_{\text{gate}}-1} \left( y_{\text{gate}}[m] - \overline{y}_{\text{gate}} \right)^2.
+    \label{eq:energia_directa}
+\end{equation}
+
+\subsubsection{Vía 3: Discriminación temporal de frentes de onda (ToA)}
+Cuando el objetivo experimental requiere la medición directa de distancias por tiempo de vuelo o la triangulación por diferencia temporal (TDOA), la Vía 3 opera sobre la discontinuidad causal del frente de onda mediante un discriminador de cruces por cero de alta resolución temporal.
+
+En primer lugar, el operador de ventana de guarda $\hat{\mathcal{G}}_{\text{blank}}$ descarta el intervalo temporal inicial asociado al transitorio electromagnético y mecánico de conmutación del actuador:
+\begin{equation}
+    t < t_{\text{blank}} \quad (\text{típicamente } t_{\text{blank}} \approx \SI{2.0}{\milli\second}).
+\end{equation}
+Superada la ventana de guarda, el operador de umbral dinámico evalúa la envolvente analítica local para habilitar el bloque de captura cuando la presión supera un nivel de seguridad frente al ruido ($V_{\text{th}} = \max\left(V_{\text{noise}}, \, 0.20 A_{\max}\right)$).
+
+Posteriormente, el discriminador de cruces por cero de pendiente positiva $\hat{\mathcal{C}}_{zc}$ localiza el intervalo discreto exacto $[k_0, k_0 + 1]$ donde la señal filtrada experimenta una transición ascendente por el nivel de referencia:
+\begin{equation}
+    y[k_0] \le 0 \quad \text{y} \quad y[k_0 + 1] > 0.
+    \label{eq:cruce_cero}
+\end{equation}
+Para superar la limitación impuesta por el periodo de muestreo discreto ($\Delta t' = \SI{20}{\micro\second}$ a $\SI{50}{\kilo\hertz}$), que en términos espaciales equivaldría a una incertidumbre de cuantización de $\pm \SI{6.8}{\milli\metre}$, la Vía 3 aplica un operador de interpolación secante continua $\hat{\mathcal{I}}_{zc}$ en la vecindad inmediata del cruce:
+\begin{equation}
+    t_{\text{arr}} = \left( k_0 - \frac{y[k_0]}{y[k_0+1] - y[k_0]} \right) \Delta t'.
+    \label{eq:interpolacion_secante}
+\end{equation}
+La formulación en~(\ref{eq:interpolacion_secante}) permite estimar el instante de arribo $t_{\text{arr}}$ con una resolución temporal efectiva sub-microsegundo ($\Delta t_{\text{res}} \ll \Delta t'$), logrando una precisión metrológica en la determinación de frentes de onda del orden de décimas de milímetro.
+
+% ==============================================================================
+% 1.4. RAMA B: ESPACIO RECÍPROCO Y SUPERRESOLUCIÓN ESPECTRAL
+% ==============================================================================
+\subsection{Rama B: Espacio recíproco y superresolución espectral}
+
+En contraparte a la Rama A, la Rama B proyecta el vector temporal acotado $\vec{P}$ sobre el espacio recíproco de frecuencias ($\ell^2$). El objetivo de esta rama es realizar una descomposición armónica global que permita aislar la frecuencia portadora en reposo $f_0$ con una precisión analítica muy superior a la resolución nominal del bloque de transformación. La secuencia operacional de esta rama se detalla en la Figura~\ref{fig:rama_b_flujo}.
+
+\begin{figure}[htbp]
+    \centering
+    \input{figures/fig3_rama_b.tex}
+    \vspace{0.4cm}
+    \caption{Cadena operacional de la Rama B en el espacio recíproco. La transformación ortogonal de Fourier y la rotación polar CORDIC convierten el vector temporal en un espectro polar analítico, sobre el cual opera el estimador no lineal de lóbulo sinc para alcanzar superresolución en la portadora $f_0$.}
+    \label{fig:rama_b_flujo}
+\end{figure}
+
+\subsubsection{Isomorfismo de Fourier discreto y rotaciones polares (\texorpdfstring{$\hat{\mathcal{F}}_{\text{FFT}}$}{F\_FFT} y \texorpdfstring{$\hat{\mathcal{R}}_C$}{R\_C})}
+El operador de transformación espectral $\hat{\mathcal{F}}_{\text{FFT}}$ corresponde a la transformada discreta de Fourier optimizada mediante algoritmos de flujo en canalización hardware (\textit{Fast Fourier Transform}) \cite{cooley1965algorithm}:
+\begin{equation}
+    \mathbf{Z}[k] = \hat{\mathcal{F}}_{\text{FFT}}\{\vec{P}\} = \sum_{m=0}^{N-1} (\vec{P})_m \, e^{-j \frac{2\pi k m}{N}}, \quad k \in \left\{0, 1, \dots, \frac{N}{2}-1\right\}.
+    \label{eq:transformada_fourier}
+\end{equation}
+La salida de~(\ref{eq:transformada_fourier}) entrega el espectro complejo en coordenadas cartesianas rectangulares:
+\begin{equation}
+    \mathbf{Z}[k] = X_R[k] + j X_I[k],
+\end{equation}
+el cual requiere una conversión a formato polar para facilitar la lectura de amplitud y fase de manera concurrente.
+
+Para evitar costosas evaluaciones aritméticas de funciones trascendentes de punto flotante en el procesador principal, el instrumento implementa un operador de rotación afín de Givens mediante el algoritmo numérico CORDIC (\textit{Coordinate Rotation Digital Computer}) \cite{volder1959cordic}:
+\begin{equation}
+    \left( \norm{\mathbf{Z}[k]}, \, \Phi[k] \right) = \hat{\mathcal{R}}_C\{\mathbf{Z}[k]\},
+    \label{eq:cordic_operador}
+\end{equation}
+donde el módulo y la fase espectral se calculan en hardware mediante una secuencia convergente de micro-rotaciones angulares elementales:
+\begin{equation}
+    \norm{\mathbf{Z}[k]} = \sqrt{X_R^2[k] + X_I^2[k]}, \qquad \Phi[k] = \arctan\left(\frac{X_I[k]}{X_R[k]}\right).
+\end{equation}
+
+\subsubsection{Estimación analítica no lineal de la portadora (\texorpdfstring{$\hat{\mathcal{M}}_{\text{sinc}}$}{M\_sinc})}
+En un análisis espectral estándar con $N$ muestras y frecuencia de muestreo $f_s$, la separación entre bines discretos consecutivos (resolución nominal) está dada por:
+\begin{equation}
+    \Delta f = \frac{f_s}{N}.
+    \label{eq:resolucion_bin}
+\end{equation}
+Para el modo nominal de trabajo del instrumento ($f_s = \SI{50}{\kilo\hertz}$ y $N = 2048$ puntos), la resolución de bin resulta ser $\Delta f \approx \SI{24.41}{\hertz}$. Esta discretización es insuficiente para medir con rigor variaciones de velocidad Doppler inferiores a $\SI{3.5}{\metre\per\second}$.
+
+Para superar esta limitación sin necesidad de incrementar el tamaño de la memoria de transformación $N$, la Rama B incorpora el operador de interpolación no lineal $\hat{\mathcal{M}}_{\text{sinc}}$. Al enventanar la señal con una función de Blackman-Harris, el lóbulo principal de la respuesta en frecuencia de un tono armónico puro se comporta localmente como una función sinc interpolada. Si el pico de energía real cae en un valor fraccionario entre el bin de máxima magnitud $k_0$ y sus vecinos inmediatos, la frecuencia exacta de la portadora $f_0$ y la amplitud corregida se deducen analíticamente mediante la razón espectral de las magnitudes observadas \cite{grandke1983interpolation, jacobsen2007fast}:
+\begin{equation}
+    \delta = \frac{\alpha}{1 + \alpha}, \quad \text{donde} \quad \alpha = \frac{\norm{\mathbf{Z}[k_0 + s]} - \norm{\mathbf{Z}[k_0]}}{\norm{\mathbf{Z}[k_0]} + \norm{\mathbf{Z}[k_0 - s]}},
+    \label{eq:razon_sinc}
+\end{equation}
+siendo $s = \text{sgn}\left(\norm{\mathbf{Z}[k_0 + 1]} - \norm{\mathbf{Z}[k_0 - 1]}\right)$ el sentido del desplazamiento fraccionario $\delta \in [-0.5, 0.5]$.
+
+La frecuencia portadora estimada con superresolución se calcula como:
+\begin{equation}
+    f_0 = (k_0 + \delta) \Delta f = \hat{\mathcal{M}}_{\text{sinc}}\left\{\norm{\mathbf{Z}[k]}, \Phi[k]\right\}.
+    \label{eq:frecuencia_sub_hertz}
+\end{equation}
+Es importante destacar que esta inversión analítica debe ejecutarse estrictamente sobre \textbf{magnitudes en escala lineal} ($\norm{\mathbf{Z}[k]}$). Si la interpolación se calculase sobre valores en decibelios ($20\log_{10}\norm{\mathbf{Z}[k]}$), la compresión logarítmica introduciría una asimetría sistemática (conocida como error de curva en S), falseando el cálculo fraccionario $\delta$. La aplicación de $\hat{\mathcal{M}}_{\text{sinc}}$ sobre la escala lineal reduce la incertidumbre en la determinación de la portadora hasta un umbral sub-Hertz ($\Delta f_0 \le \pm \SI{0.01}{\hertz}$), garantizando una referencia de frecuencia estable para todos los modelos cinemáticos subsiguientes.
+
+% ==============================================================================
+% 1.5. SÍNTESIS DEL VECTOR DE OBSERVABLES Y ACOPLAMIENTO CINEMÁTICO
+% ==============================================================================
+\subsection{Síntesis del vector de observables y acoplamiento cinemático}
+
+La acción concurrente de la Rama A (canales temporales locales de banda estrecha) y de la Rama B (descomposición armónica global en el espacio recíproco) converge en la generación de un vector de estado unificado. Este conjunto multidimensional condensa los parámetros físicos medidos del campo acústico sobre la apertura instrumental:
+\begin{equation}
+    \vec{\mathcal{O}}(t) = \begin{pmatrix} 
+        A_1(t) & f_{i,1}(t) & A_{\text{RMS},1} & \mathcal{E}_1 & t_{\text{arr},1} & f_{0,1} & \Phi_1 \\ 
+        A_2(t) & f_{i,2}(t) & A_{\text{RMS},2} & \mathcal{E}_2 & t_{\text{arr},2} & f_{0,2} & \Phi_2 
+    \end{pmatrix}^T \pm \Delta\vec{\mathcal{O}},
+    \label{eq:vector_observables_matriz}
+\end{equation}
+donde cada renglón indexa las magnitudes asociadas al transceptor $i \in \{1, 2\}$, dotadas de sus respectivas barras de incertidumbre experimental.
+
+\subsubsection{Propagación formal de errores y covarianza instrumental}
+Siguiendo los lineamientos metrológicos de la Guía para la Expresión de la Incertidumbre de Medida (GUM) \cite{jcg2008evaluation, taylor1997introduction}, dado que cada componente observable $O_k \in \vec{\mathcal{O}}$ se obtiene mediante una función de transformación diferenciable $f_k(\mathbf{y})$ a partir de las tensiones discretizadas en los receptores, la incertidumbre combinada se propaga a través de la matriz de covarianza del sistema:
+\begin{equation}
+    u^2(O_k) = \sum_{m=1}^{2N} \left( \frac{\partial f_k}{\partial y_m} \right)^2 u^2(y_m) + 2 \sum_{m=1}^{2N-1} \sum_{l=m+1}^{2N} \left( \frac{\partial f_k}{\partial y_m} \right) \left( \frac{\partial f_k}{\partial y_l} \right) u(y_m, y_l),
+    \label{eq:propagacion_gum}
+\end{equation}
+siendo $u(y_m, y_l)$ la covarianza estocástica intercanal o intermuesca generada por el filtrado y las ventanas de apodización. En virtud de la ortogonalidad de las bases empleadas en las Ramas A y B, los términos cruzados de covarianza se anulan asintóticamente, permitiendo acotar la dispersión total de la medición en función de la resolución instrumental de la FPGA y del ruido blanco de cuantización $\sigma_q$.
+
+\subsubsection{Frontera hacia los modelos de inversión espacial}
+El vector de observables $\vec{\mathcal{O}}(t)$ constituye el puente epistemológico entre la adquisición de bajo nivel en el SoC-FPGA y los modelos macroscópicos de la física de ondas. La Tabla~\ref{tab:acoplamiento_observables} resume el acoplamiento unívoco entre los componentes de $\vec{\mathcal{O}}$ y las magnitudes cinemáticas y geométricas que se formularán analíticamente en el siguiente capítulo.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{l X l}
+        \toprule
+        \textbf{Observable Físico en $\vec{\mathcal{O}}$} & \textbf{Modelo Físico de Inversión (Toolbox)} & \textbf{Magnitud Cinemática} \\
+        \midrule
+        Frecuencias instantáneas $f_{i,1}, f_{i,2}$ & Doppler diferencial $\Delta f = f_2 - f_1$ & Velocidad 1D $v(t)$ \\
+        Tiempos de arribo $t_{\text{arr},1}, t_{\text{arr},2}$ & Multilateración hiperbólica ToA / TDOA & Posición $(x, y)$ \\
+        Fases espectrales $\Phi_1, \Phi_2$ & Interferometría de fase AoA ($\Delta\Phi$) & Ángulo $\theta$ \\
+        Amplitud $A_{\text{RMS}}$ y Energía $\mathcal{E}$ & Decaimiento de onda esférica ($1/r$ y $1/r^2$) & Distancia $r(t)$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \caption{Tabla de acoplamiento conceptual entre el vector de observables físicos $\vec{\mathcal{O}}(t)$ extraído en este capítulo y los modelos de inversión espacial desarrollados en el capítulo subsiguiente.}
+    \label{tab:acoplamiento_observables}
+\end{table}
+
+De este modo, el sistema de instrumentación reduce un campo de presiones infinito-dimensional a un conjunto cerrado de métricas escalares y vectoriales estables, dotadas de consistencia matemática y trazabilidad metrológica.
