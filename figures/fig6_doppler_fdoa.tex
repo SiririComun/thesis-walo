@@ -1,0 +1,93 @@
+% figures/fig6_doppler_fdoa.tex
+\begin{tikzpicture}[
+    >=Stealth,
+    sensor/.style={
+        circle, draw=black!85, fill=black!12, line width=1pt,
+        minimum size=0.55cm, inner sep=0pt
+    },
+    source/.style={
+        circle, draw=black!85, fill=orange!80, line width=1.1pt,
+        minimum size=0.55cm, inner sep=0pt
+    },
+    axis/.style={
+        ->, line width=0.85pt, draw=black!65
+    },
+    velarrow/.style={
+        ->, line width=1.3pt, draw=orange!90!black
+    }
+]
+
+    % =========================================================================
+    % 1. EJE 1D DE MOVIMIENTO Y RECEPTORES OPUESTOS R1 y R2 (y = 0)
+    % =========================================================================
+    % Eje horizontal
+    \draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small\sffamily] {$x$ (Trayectoria 1D)};
+
+    % Receptor R1 en x = -4.5 (Izquierda)
+    \coordinate (R1) at (-4.5, 0.0);
+    \node[sensor] (NodeR1) at (R1) {};
+    \node[below=6pt, font=\small\sffamily\bfseries] at (R1) {$R_1$};
+    \node[below=18pt, font=\footnotesize\sffamily, text=black!70] at (R1) {($x = 0$)};
+
+    % Receptor R2 en x = +4.5 (Derecha)
+    \coordinate (R2) at (4.5, 0.0);
+    \node[sensor] (NodeR2) at (R2) {};
+    \node[below=6pt, font=\small\sffamily\bfseries] at (R2) {$R_2$};
+    \node[below=18pt, font=\footnotesize\sffamily, text=black!70] at (R2) {($x = L$)};
+
+    % =========================================================================
+    % 2. FUENTE EN MOVIMIENTO Y FLECHA DE VELOCIDAD
+    % =========================================================================
+    % Fuente S en x = 0.2
+    \coordinate (S) at (0.2, 0.0);
+    \node[source] (NodeS) at (S) {};
+    \node[below=6pt, font=\small\sffamily\bfseries] at (S) {$S(t)$};
+
+    % Flecha de velocidad instantánea v(t) elevada y acotada
+    \draw[velarrow] (0.2, 0.55) -- ++(1.15, 0.0) node[above=2pt, font=\small\sffamily\bfseries] {$\vec{v}(t)$};
+
+    % =========================================================================
+    % 3. FRENTES DE ONDA DOPPLER EXCÉNTRICOS
+    % =========================================================================
+    % Centros de emisión pasados: x = -0.1, -0.4, -0.7
+    % Radios: R = 0.95, 1.75, 2.55 (apertura controlada para no interferir)
+
+    % --- Frentes dilatados hacia R1 (Izquierda: lambda1 > lambda0) ---
+    % Cruzan el eje x en: -1.05, -2.15, -3.25
+    \draw[line width=0.85pt, red!75!black] ($(-0.1, 0.0)+(158:0.95)$) arc (158:202:0.95);
+    \draw[line width=0.85pt, red!75!black] ($(-0.4, 0.0)+(158:1.75)$) arc (158:202:1.75);
+    \draw[line width=0.85pt, red!75!black] ($(-0.7, 0.0)+(158:2.55)$) arc (158:202:2.55);
+
+    % --- Frentes comprimidos hacia R2 (Derecha: lambda2 < lambda0) ---
+    % Cruzan el eje x en: +0.85, +1.35, +1.85
+    \draw[line width=0.85pt, blue!75!black] ($(-0.1, 0.0)+(-22:0.95)$) arc (-22:22:0.95);
+    \draw[line width=0.85pt, blue!75!black] ($(-0.4, 0.0)+(-22:1.75)$) arc (-22:22:1.75);
+    \draw[line width=0.85pt, blue!75!black] ($(-0.7, 0.0)+(-22:2.55)$) arc (-22:22:2.55);
+
+    % =========================================================================
+    % 4. COTAS DE LONGITUD DE ONDA HOMOGÉNEAS (Ubicadas en y = -1.20)
+    % =========================================================================
+    % --- Cota Roja: Dilatación (lambda1 > lambda0) ---
+    \draw[dotted, line width=0.5pt, draw=red!75!black] (-2.15, 0.0) -- (-2.15, -1.20);
+    \draw[dotted, line width=0.5pt, draw=red!75!black] (-1.05, 0.0) -- (-1.05, -1.20);
+    \draw[<->, draw=red!75!black, line width=0.65pt] (-2.15, -1.20) -- node[below=2pt, font=\footnotesize\sffamily] {$\lambda_1 > \lambda_0$} (-1.05, -1.20);
+
+    % --- Cota Azul: Compresión (lambda2 < lambda0, idéntico formato) ---
+    \draw[dotted, line width=0.5pt, draw=blue!75!black] (0.85, 0.0) -- (0.85, -1.20);
+    \draw[dotted, line width=0.5pt, draw=blue!75!black] (1.35, 0.0) -- (1.35, -1.20);
+    \draw[<->, draw=blue!75!black, line width=0.65pt] (0.85, -1.20) -- node[below=2pt, font=\footnotesize\sffamily] {$\lambda_2 < \lambda_0$} (1.35, -1.20);
+
+    % =========================================================================
+    % 5. CAJA SINTÉTICA DE CANCELACIÓN DE DERIVA (y = 3.65)
+    % =========================================================================
+    \node[draw=black!75, fill=white, rounded corners=4pt, line width=0.8pt, inner sep=7pt] at (0.0, 3.65) {
+        \footnotesize
+        \begin{tabular}{@{} l l @{}}
+            \multicolumn{2}{@{} l @{}}{\textbf{Cinemática Doppler Diferencial en Régimen Subsónico ($v \ll c$):}} \\[4pt]
+            Frecuencia en $R_1$ (Alejamiento): & $f_1(t) \approx f_0 \left(1 - \frac{v(t)}{c(T)}\right) \implies f_1 < f_0$ \\[2pt]
+            Frecuencia en $R_2$ (Acercamiento): & $f_2(t) \approx f_0 \left(1 + \frac{v(t)}{c(T)}\right) \implies f_2 > f_0$ \\[5pt]
+            \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!80!black}{\textbf{Operador diferencial covariante:}} \ $v(t) = c(T) \cdot \left(\frac{f_2(t) - f_1(t)}{f_1(t) + f_2(t)}\right) \quad \implies \text{Inmunidad a la deriva del emisor}$}
+        \end{tabular}
+    };
+
+\end{tikzpicture}
