@@ -1,4 +1,18 @@
 {
+    // Compilar automáticamente al guardar cualquier archivo .tex
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    // Forzar a que la raíz SIEMPRE sea main.tex (aunque guardes en chapters/ o figures/)
+    "latex-workshop.latex.rootFile.useSubFile": false,
+    // Receta recomendada para pdflatex + bibtex en Linux
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk",
+            "tools": [
+                "latexmk"
+            ]
+        }
+    ],
+    // Parámetros limpios para latexmk en Tuxedo/Linux
     "latex-workshop.latex.tools": [
         {
             "name": "latexmk",
@@ -10,18 +24,9 @@
                 "-pdf",
                 "-outdir=%OUTDIR%",
                 "%DOC%"
-            ],
-            "env": {}
-        }
-    ],
-    "latex-workshop.latex.recipes": [
-        {
-            "name": "latexmk",
-            "tools": [
-                "latexmk"
             ]
         }
     ],
-    "latex-workshop.view.pdf.viewer": "tab",
-    "latex-workshop.formatting.latex": "none"
+    // Limpiar archivos auxiliares automáticamente si hay error grave
+    "latex-workshop.latex.clean.subfolder.enabled": true
 }

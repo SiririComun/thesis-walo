@@ -5,24 +5,27 @@
 
 \begin{document}
 
-% --- PORTADA (Sin anclas de página para evitar advertencias de hyperref) ---
+% --- PÁGINAS PRELIMINARES INSTITUCIONALES (Páginas 1 y 2) ---
 \hypersetup{pageanchor=false}
 \input{frontmatter/titlepage.tex}
 \newpage
 
-% --- TABLA DE CONTENIDO (Numeración romana preliminar) ---
+% --- TABLA DE CONTENIDO (Página 3 física, sincronizada con el PDF) ---
 \hypersetup{pageanchor=true}
-\pagenumbering{roman}
+\pagenumbering{arabic}
+\setcounter{page}{3}
 \tableofcontents
 \newpage
 
-% --- CAPÍTULO 1: TRATAMIENTO DEL CAMPO ACÚSTICO ---
-\pagenumbering{arabic}
+% --- CAPÍTULO 1 ---
 \input{chapters/01_tratamiento_campo.tex}
 
-% --- BIBLIOGRAFÍA ---
+% --- CAPÍTULO 2 ---
+\input{chapters/02_modelos_inversion.tex}
+
+% --- BIBLIOGRAFÍA GLOBAL ---
 \newpage
-\nocite{*} % Incluye las fuentes de references.bib sin error de BibTeX
-\bibliography{references.bib}
+\nocite{*}
+\bibliography{references}
 
 \end{document}

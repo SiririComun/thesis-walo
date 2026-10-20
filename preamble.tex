@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 % 'es-noquoting' desactiva la activación de < y > que rompe TikZ
 \usepackage[spanish,es-nodecimaldot,es-tabla,es-noquoting]{babel}
+\spanishplainpercent
 
 % Geometría de página (Márgenes estándar UdeA)
 \usepackage[letterpaper, top=3.0cm, bottom=2.5cm, left=3.0cm, right=2.5cm]{geometry}
@@ -81,10 +82,21 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, babel}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, babel, patterns}
 \usepackage{caption}
 \captionsetup{font=small, labelfont=bf, labelsep=period}
 
 % Citas bibliográficas estilo IEEE
 \usepackage[numbers,sort&compress]{natbib}
 \bibliographystyle{ieeetr}
+
+% ==============================================================================
+% OPTIMIZACIÓN DE PARÁMETROS DE FLOTACIÓN (Evita páginas con figuras aisladas)
+% ==============================================================================
+\renewcommand{\topfraction}{0.85}       % Máx. proporción de página ocupada por figuras arriba (def: 0.70)
+\renewcommand{\bottomfraction}{0.80}    % Máx. proporción ocupada por figuras abajo (def: 0.30)
+\renewcommand{\textfraction}{0.12}      % Mín. proporción obligatoria de texto por página (def: 0.20)
+\renewcommand{\floatpagefraction}{0.75} % Solo crea página de figuras si la figura ocupa al menos 75% (def: 0.50)
+\setcounter{topnumber}{3}               % Máximo 3 figuras en la parte superior
+\setcounter{bottomnumber}{2}            % Máximo 2 figuras en la parte inferior
+\setcounter{totalnumber}{4}             % Máximo 4 flotantes por página
