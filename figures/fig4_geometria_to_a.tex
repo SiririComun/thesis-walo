@@ -1,89 +1,67 @@
-% figures/fig4_geometria_to_a.tex
 \begin{tikzpicture}[
     >=Stealth,
-    stand/.style={
-        line width=1.5pt, draw=black!75
-    },
-    baseplate/.style={
-        draw=black!80, fill=black!25, rounded corners=1pt
-    },
-    sensor/.style={
-        circle, draw=black!85, fill=black!12, line width=1.1pt,
-        minimum size=0.60cm, inner sep=0pt
-    },
-    % Fuente en naranja unificado
-    source/.style={
-        circle, draw=black!85, fill=orange!80, line width=1.1pt,
-        minimum size=0.60cm, inner sep=0pt
-    },
-    tabletop/.style={
-        draw=black!75, line width=0.9pt, pattern=north east lines, pattern color=black!25
-    },
-    raydir/.style={
-        ->, line width=1.2pt, draw=UdeAGreen!75!black
-    },
-    rayrefl/.style={
-        ->, line width=1.1pt, dashed, draw=red!70!black
-    }
+    stand/.style={line width=1.4pt, draw=black!70},
+    baseplate/.style={draw=black!80, fill=black!20, rounded corners=1pt},
+    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.55cm},
+    source/.style={circle, draw=black!85, fill=orange!75, line width=1pt, minimum size=0.55cm},
+    tabletop/.style={draw=black!70, line width=0.8pt, pattern=north east lines, pattern color=black!25},
+    raydir/.style={->, line width=1.1pt, draw=UdeAGreen!85!black},
+    rayrefl/.style={->, line width=1pt, dashed, draw=red!70!black}
 ]
 
-    % =========================================================================
-    % 1. SUPERFICIE HORIZONTAL DE LA MESA (y = 0)
-    % =========================================================================
-    \draw[tabletop] (-5.6, -0.38) rectangle (5.6, 0.0);
-    \node[below=4pt, font=\footnotesize\sffamily] at (0, -0.38) {Superficie reflectora horizontal (Mesa / Suelo)};
+% 1. Superficie reflectora horizontal
+\draw[tabletop] (-5.2,-0.35) rectangle (5.2,0.0);
+\node[below=3pt, font=\footnotesize] at (0,-0.35) {Superficie reflectora horizontal (mesa o suelo)};
 
-    % =========================================================================
-    % 2. SOPORTES Y TRANSDUCTORES (x = -3.6 y x = +3.6, y = 2.6)
-    % =========================================================================
-    \coordinate (Mic) at (-3.6, 2.6);       % Receptor R
-    \coordinate (Spk) at (3.6, 2.6);        % Emisor S
-    \coordinate (Bounce) at (0.0, 0.0);     % Punto de rebote en la mesa
+% 2. Posiciones físicas (elevadas para dar espacio)
+\coordinate (Mic) at (-3.4, 2.2);
+\coordinate (Spk) at (3.4, 2.2);
+\coordinate (Bounce) at (0.0, 0.0);
 
-    % Soporte y cápsula Receptor R (Gris)
-    \draw[baseplate] (-4.05, 0.0) rectangle (-3.15, 0.14);
-    \draw[stand] (-3.6, 0.14) -- (Mic);
-    \node[sensor] (NodeMic) at (Mic) {};
-    \node[left=8pt, font=\small\sffamily\bfseries] at (Mic) {Receptor ($R$)};
+% Soporte receptor
+\draw[baseplate] (-3.8,0.0) rectangle (-3.0,0.12);
+\draw[stand] (-3.4,0.12) -- (Mic);
+\node[sensor] (NodeMic) at (Mic) {};
+\node[left=6pt, font=\small\bfseries] at (Mic) {Receptor ($R$)};
 
-    % Soporte y cápsula Fuente S (Naranja)
-    \draw[baseplate] (3.15, 0.0) rectangle (4.05, 0.14);
-    \draw[stand] (3.6, 0.14) -- (Spk);
-    \node[source] (NodeSpk) at (Spk) {};
-    \node[right=8pt, font=\small\sffamily\bfseries] at (Spk) {Fuente ($S$)};
+% Soporte emisor
+\draw[baseplate] (3.0,0.0) rectangle (3.8,0.12);
+\draw[stand] (3.4,0.12) -- (Spk);
+\node[source] (NodeSpk) at (Spk) {};
+\node[right=6pt, font=\small\bfseries] at (Spk) {Fuente ($S$)};
 
-    % Arcos acústicos de radiación en naranja unificado
-    \draw[line width=0.85pt, orange!85!black] ($(Spk)+(-0.45, 0.3)$) arc (145:215:0.5);
-    \draw[line width=0.85pt, orange!85!black] ($(Spk)+(-0.75, 0.45)$) arc (145:215:0.8);
-    \draw[line width=0.85pt, orange!85!black] ($(Spk)+(-1.05, 0.6)$) arc (145:215:1.1);
+% Frentes de onda esquemáticos
+\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.4,0.25)$) arc (150:210:0.5);
+\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.7,0.40)$) arc (150:210:0.8);
 
-    % =========================================================================
-    % 3. TRAYECTORIAS ONDULATORIAS Y COTA CENTRAL DE ALTURA h
-    % =========================================================================
-    % Trayectoria directa horizontal
-    \draw[raydir] (NodeSpk.west) -- node[above=4pt, font=\small\sffamily] {Onda directa: $r_{\text{dir}} = r$} (NodeMic.east);
+% 3. Trayectorias acústicas
+\draw[raydir] (NodeSpk.west) -- node[above=2pt, font=\footnotesize] {Onda directa: $r_{\mathrm{dir}} = r$} (NodeMic.east);
 
-    % Trayectoria reflejada especular en V
-    \draw[rayrefl] (NodeSpk.south) -- node[below right=2pt, font=\footnotesize\sffamily, text=red!75!black] {$r_{\text{refl}}/2$} (Bounce);
-    \draw[rayrefl] (Bounce) -- node[below left=2pt, font=\footnotesize\sffamily, text=red!75!black] {$r_{\text{refl}}/2$} (NodeMic.south);
-    \fill[red!70!black] (Bounce) circle (2.0pt);
+\draw[rayrefl] (NodeSpk.south) -- node[below right=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (Bounce);
+\draw[rayrefl] (Bounce) -- node[below left=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (NodeMic.south);
+\fill[red!70!black] (Bounce) circle (1.8pt);
 
-    % Eje vertical de altura h
-    \draw[dashed, draw=black!45, line width=0.6pt] (0.0, 0.0) -- (0.0, 2.6);
-    \draw[<->, draw=black!75, line width=0.65pt] (-0.35, 0.05) -- node[left=1pt, font=\small\sffamily] {$h$} (-0.35, 2.55);
+% Altura h
+\draw[dashed, draw=black!40, line width=0.6pt] (0.0,0.0) -- (0.0,2.2);
+\draw[<->, draw=black!70, line width=0.6pt] (-0.35,0.05) -- node[left=1pt, font=\small] {$h$} (-0.35,2.15);
 
-    % =========================================================================
-    % 4. CAJA METROLÓGICA (y = 5.0)
-    % =========================================================================
-    \node[draw=black!75, fill=white, rounded corners=4pt, line width=0.8pt, inner sep=8pt] at (0.0, 5.0) {
-        \footnotesize
-        \begin{tabular}{@{} l l @{}}
-            \multicolumn{2}{@{} l @{}}{\textbf{Geometría de Reflexión y Condición Cuasi-Anecoica:}} \\[4pt]
-            Trayectoria directa: & $r_{\text{dir}} = r$ \\
-            Trayectoria reflejada: & $r_{\text{refl}} = 2\sqrt{(r/2)^2 + h^2} = \sqrt{r^2 + 4h^2}$ \\
-            Diferencial de camino: & $\Delta r_{\text{refl}} = \sqrt{r^2 + 4h^2} - r$ \\[4pt]
-            \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!80!black}{\textbf{Condición de corte:}} \ $c(T) \cdot T_{\text{gate}} < \Delta r_{\text{refl}} \implies \text{Anulación de eco }(c_{\text{room}} \to 0)$}
-        \end{tabular}
-    };
+% 4. Recuadro de fórmulas ubicado holgadamente ARRIBA del rayo directo
+\node[
+    draw=black!70,
+    line width=0.7pt,
+    fill=white,
+    rounded corners=3pt,
+    inner sep=6pt,
+    anchor=south
+] at (0.0, 3.1) {
+    \footnotesize
+    \begin{tabular}{@{} l l @{}}
+        \multicolumn{2}{@{} l @{}}{\textbf{Geometría de reflexión y selección temporal:}} \\[3pt]
+        Trayectoria directa: & $r_{\mathrm{dir}} = r$ \\
+        Trayectoria reflejada: & $r_{\mathrm{refl}} = \sqrt{r^2+4h^2}$ \\
+        Diferencial de camino: & $\Delta r_{\mathrm{refl}} = \sqrt{r^2+4h^2} - r$ \\[4pt]
+        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Condición de selección temporal:}} \quad $c(T)T_{\mathrm{gate}} < \Delta r_{\mathrm{refl}}$}
+    \end{tabular}
+};
 
 \end{tikzpicture}

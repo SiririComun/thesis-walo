@@ -1,93 +1,76 @@
-% figures/fig6_doppler_fdoa.tex
 \begin{tikzpicture}[
     >=Stealth,
-    sensor/.style={
-        circle, draw=black!85, fill=black!12, line width=1pt,
-        minimum size=0.55cm, inner sep=0pt
-    },
-    source/.style={
-        circle, draw=black!85, fill=orange!80, line width=1.1pt,
-        minimum size=0.55cm, inner sep=0pt
-    },
-    axis/.style={
-        ->, line width=0.85pt, draw=black!65
-    },
-    velarrow/.style={
-        ->, line width=1.3pt, draw=orange!90!black
-    }
+    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
+    source/.style={circle, draw=black!85, fill=orange!75, line width=1.1pt, minimum size=0.52cm},
+    axis/.style={->, line width=0.7pt, draw=black!60},
+    velarrow/.style={->, line width=1.2pt, draw=orange!90!black}
 ]
 
-    % =========================================================================
-    % 1. EJE 1D DE MOVIMIENTO Y RECEPTORES OPUESTOS R1 y R2 (y = 0)
-    % =========================================================================
-    % Eje horizontal
-    \draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small\sffamily] {$x$ (Trayectoria 1D)};
+% Eje unidimensional de movimiento
+\draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
 
-    % Receptor R1 en x = -4.5 (Izquierda)
-    \coordinate (R1) at (-4.5, 0.0);
-    \node[sensor] (NodeR1) at (R1) {};
-    \node[below=6pt, font=\small\sffamily\bfseries] at (R1) {$R_1$};
-    \node[below=18pt, font=\footnotesize\sffamily, text=black!70] at (R1) {($x = 0$)};
+% Sensor R1 (Separación holgada del texto bajo el círculo)
+\coordinate (R1) at (-4.8, 0.0);
+\node[sensor] (NodeR1) at (R1) {};
+\node[below=7pt, align=center] at (R1) {
+    \small\bfseries $R_1$\\[2pt]
+    \footnotesize\color{black!65} $x = 0$
+};
 
-    % Receptor R2 en x = +4.5 (Derecha)
-    \coordinate (R2) at (4.5, 0.0);
-    \node[sensor] (NodeR2) at (R2) {};
-    \node[below=6pt, font=\small\sffamily\bfseries] at (R2) {$R_2$};
-    \node[below=18pt, font=\footnotesize\sffamily, text=black!70] at (R2) {($x = L$)};
+% Sensor R2 (Separación holgada del texto bajo el círculo)
+\coordinate (R2) at (4.8, 0.0);
+\node[sensor] (NodeR2) at (R2) {};
+\node[below=7pt, align=center] at (R2) {
+    \small\bfseries $R_2$\\[2pt]
+    \footnotesize\color{black!65} $x = L$
+};
 
-    % =========================================================================
-    % 2. FUENTE EN MOVIMIENTO Y FLECHA DE VELOCIDAD
-    % =========================================================================
-    % Fuente S en x = 0.2
-    \coordinate (S) at (0.2, 0.0);
-    \node[source] (NodeS) at (S) {};
-    \node[below=6pt, font=\small\sffamily\bfseries] at (S) {$S(t)$};
+% Fuente acústica móvil S(t) centrada en el origen
+\coordinate (S) at (0.0, 0.0);
+\node[source] (NodeS) at (S) {};
+\node[below=7pt, font=\small\bfseries] at (S) {$S(t)$};
 
-    % Flecha de velocidad instantánea v(t) elevada y acotada
-    \draw[velarrow] (0.2, 0.55) -- ++(1.15, 0.0) node[above=2pt, font=\small\sffamily\bfseries] {$\vec{v}(t)$};
+% ---------------- FRENTES DE ONDA DOPPLER ----------------
+% Hacia R1: longitudes de onda dilatadas (rojo)
+\draw[line width=0.8pt, red!75!black] ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
+\draw[line width=0.8pt, red!75!black] ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
+\draw[line width=0.8pt, red!75!black] ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
 
-    % =========================================================================
-    % 3. FRENTES DE ONDA DOPPLER EXCÉNTRICOS
-    % =========================================================================
-    % Centros de emisión pasados: x = -0.1, -0.4, -0.7
-    % Radios: R = 0.95, 1.75, 2.55 (apertura controlada para no interferir)
+% Hacia R2: longitudes de onda comprimidas con apertura controlada (azul)
+\draw[line width=0.8pt, blue!75!black] ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
+\draw[line width=0.8pt, blue!75!black] ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
+\draw[line width=0.8pt, blue!75!black] ($(-0.6, 0.0)+(-22:1.55)$) arc (-22:22:1.55);
 
-    % --- Frentes dilatados hacia R1 (Izquierda: lambda1 > lambda0) ---
-    % Cruzan el eje x en: -1.05, -2.15, -3.25
-    \draw[line width=0.85pt, red!75!black] ($(-0.1, 0.0)+(158:0.95)$) arc (158:202:0.95);
-    \draw[line width=0.85pt, red!75!black] ($(-0.4, 0.0)+(158:1.75)$) arc (158:202:1.75);
-    \draw[line width=0.85pt, red!75!black] ($(-0.7, 0.0)+(158:2.55)$) arc (158:202:2.55);
+% ---------------- VECTOR VELOCIDAD TOTALMENTE DESPEJADO ----------------
+\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0) node[above=1pt, font=\small\bfseries] {$v(t)$};
+\draw[dotted, line width=0.5pt, draw=orange!80!black] (0.0, 0.25) -- (0.0, 0.85);
 
-    % --- Frentes comprimidos hacia R2 (Derecha: lambda2 < lambda0) ---
-    % Cruzan el eje x en: +0.85, +1.35, +1.85
-    \draw[line width=0.85pt, blue!75!black] ($(-0.1, 0.0)+(-22:0.95)$) arc (-22:22:0.95);
-    \draw[line width=0.85pt, blue!75!black] ($(-0.4, 0.0)+(-22:1.75)$) arc (-22:22:1.75);
-    \draw[line width=0.85pt, blue!75!black] ($(-0.7, 0.0)+(-22:2.55)$) arc (-22:22:2.55);
+% Cotas inferiores de longitud de onda
+\draw[dotted, line width=0.5pt, red!75!black] (-2.0, 0.0) -- (-2.0, -0.9);
+\draw[dotted, line width=0.5pt, red!75!black] (-1.1, 0.0) -- (-1.1, -0.9);
+\draw[<->, draw=red!75!black, line width=0.6pt] (-2.0, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_1 > \lambda_0$} (-1.1, -0.9);
 
-    % =========================================================================
-    % 4. COTAS DE LONGITUD DE ONDA HOMOGÉNEAS (Ubicadas en y = -1.20)
-    % =========================================================================
-    % --- Cota Roja: Dilatación (lambda1 > lambda0) ---
-    \draw[dotted, line width=0.5pt, draw=red!75!black] (-2.15, 0.0) -- (-2.15, -1.20);
-    \draw[dotted, line width=0.5pt, draw=red!75!black] (-1.05, 0.0) -- (-1.05, -1.20);
-    \draw[<->, draw=red!75!black, line width=0.65pt] (-2.15, -1.20) -- node[below=2pt, font=\footnotesize\sffamily] {$\lambda_1 > \lambda_0$} (-1.05, -1.20);
+\draw[dotted, line width=0.5pt, blue!75!black] (0.55, 0.0) -- (0.55, -0.9);
+\draw[dotted, line width=0.5pt, blue!75!black] (1.05, 0.0) -- (1.05, -0.9);
+\draw[<->, draw=blue!75!black, line width=0.6pt] (0.55, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_2 < \lambda_0$} (1.05, -0.9);
 
-    % --- Cota Azul: Compresión (lambda2 < lambda0, idéntico formato) ---
-    \draw[dotted, line width=0.5pt, draw=blue!75!black] (0.85, 0.0) -- (0.85, -1.20);
-    \draw[dotted, line width=0.5pt, draw=blue!75!black] (1.35, 0.0) -- (1.35, -1.20);
-    \draw[<->, draw=blue!75!black, line width=0.65pt] (0.85, -1.20) -- node[below=2pt, font=\footnotesize\sffamily] {$\lambda_2 < \lambda_0$} (1.35, -1.20);
-
-    % =========================================================================
-    % 5. CAJA SINTÉTICA DE CANCELACIÓN DE DERIVA (y = 3.65)
-    % =========================================================================
-    \node[draw=black!75, fill=white, rounded corners=4pt, line width=0.8pt, inner sep=7pt] at (0.0, 3.65) {
-        \footnotesize
-        \begin{tabular}{@{} l l @{}}
-            \multicolumn{2}{@{} l @{}}{\textbf{Cinemática Doppler Diferencial en Régimen Subsónico ($v \ll c$):}} \\[4pt]
-            Frecuencia en $R_1$ (Alejamiento): & $f_1(t) \approx f_0 \left(1 - \frac{v(t)}{c(T)}\right) \implies f_1 < f_0$ \\[2pt]
-            Frecuencia en $R_2$ (Acercamiento): & $f_2(t) \approx f_0 \left(1 + \frac{v(t)}{c(T)}\right) \implies f_2 > f_0$ \\[5pt]
-            \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!80!black}{\textbf{Operador diferencial covariante:}} \ $v(t) = c(T) \cdot \left(\frac{f_2(t) - f_1(t)}{f_1(t) + f_2(t)}\right) \quad \implies \text{Inmunidad a la deriva del emisor}$}
-        \end{tabular}
-    };
+% ---------------- RECUADRO DOPPLER ELEVADO ----------------
+\node[
+    draw=black!70,
+    line width=0.7pt,
+    fill=white,
+    rounded corners=3pt,
+    inner sep=6pt,
+    anchor=south
+] at (0.0, 2.05) {
+    \footnotesize
+    \begin{tabular}{@{} l l @{}}
+        \multicolumn{2}{@{} l @{}}{\textbf{Efecto Doppler para fuente móvil ($v \ll c$):}} \\[3pt]
+        Frecuencia en $R_1$ (alejamiento): & $f_1(t) \approx f_0\left(1 - \frac{v(t)}{c(T)}\right)$ \\[2pt]
+        Frecuencia en $R_2$ (acercamiento): & $f_2(t) \approx f_0\left(1 + \frac{v(t)}{c(T)}\right)$ \\[4pt]
+        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Estimador diferencial de velocidad:}} \quad $v(t) = c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$} \\[2pt]
+        \multicolumn{2}{@{} l @{}}{\textit{\scriptsize Cancelación exacta de la frecuencia emitida en el modelo ideal.}}
+    \end{tabular}
+};
 
 \end{tikzpicture}

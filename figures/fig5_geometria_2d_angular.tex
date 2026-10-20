@@ -1,100 +1,80 @@
-% figures/fig5_geometria_2d_angular.tex
 \begin{tikzpicture}[
     >=Stealth,
-    sensor/.style={
-        circle, draw=black!85, fill=black!12, line width=1pt,
-        minimum size=0.52cm, inner sep=0pt
-    },
-    source/.style={
-        circle, draw=black!85, fill=orange!80, line width=1.1pt,
-        minimum size=0.55cm, inner sep=0pt
-    },
-    axis/.style={
-        ->, line width=0.85pt, draw=black!65
-    }
+    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
+    source/.style={circle, draw=black!85, fill=orange!75, line width=1.1pt, minimum size=0.52cm},
+    axis/.style={->, line width=0.7pt, draw=black!60},
+    baseline/.style={<->, draw=black!70, line width=0.6pt},
+    pathRone/.style={->, line width=1.1pt, draw=UdeAGreen!80!black},
+    pathRtwo/.style={->, line width=1.1pt, draw=blue!75!black},
+    projection/.style={dotted, line width=0.6pt, draw=black!50}
 ]
 
-    % =========================================================================
-    % 1. EJES CARTESIANOS (Origen en x = 0.5)
-    % =========================================================================
-    \coordinate (Orig) at (0.5, 0.0);
+% ==============================================================================
+% 1. RECUADRO DE FÓRMULAS (LADO IZQUIERDO DESPEJADO)
+% ==============================================================================
+\node[
+    draw=black!70,
+    line width=0.7pt,
+    fill=white,
+    rounded corners=3pt,
+    inner sep=6pt,
+    anchor=west
+] at (-6.5, 2.7) {
+    \footnotesize
+    \begin{tabular}{@{} l @{}}
+        \textbf{Geometría angular y PDoA:} \\[3pt]
+        Diferencia de camino: \ $\Delta r = r_1 - r_2 = d\sin\theta$ \\[3pt]
+        Diferencia de fase: \ $\Delta\Phi = \dfrac{2\pi f_0}{c(T)}\Delta r$ \\[5pt]
+        \textcolor{UdeAGreen!85!black}{\textbf{Condición de no-aliasing espacial:}} \\[2pt]
+        $d \leq \dfrac{\lambda_0}{2} = \dfrac{c(T)}{2f_0}$
+    \end{tabular}
+};
 
-    % Ejes coordenados alargados
-    \draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small\sffamily] {$x$ (Transversal)};
-    \draw[axis] (0.5, -0.6) -- (0.5, 5.7) node[above=2pt, font=\small\sffamily] {$y$ (Broadside)};
+% ==============================================================================
+% 2. DIAGRAMA GEOMÉTRICO (DESPLAZADO AL LADO DERECHO)
+% ==============================================================================
+% Origen del arreglo de sensores en x = 2.8
+\coordinate (Orig) at (2.8, 0.0);
 
-    % =========================================================================
-    % 2. SENSORES RECEPTORES: R1(-d/2, 0) y R2(+d/2, 0)
-    % =========================================================================
-    % d/2 = 2.0 => R1 en -1.5; R2 en 2.5
-    \coordinate (R1) at (-1.5, 0.0);
-    \coordinate (R2) at (2.5, 0.0);
+% Ejes locales del sistema de medición
+\draw[axis] (-0.2, 0.0) -- (6.0, 0.0) node[right=2pt, font=\small] {$x$ (transversal)};
+\draw[axis] (2.8, -0.6) -- (2.8, 5.2) node[above=2pt, font=\small] {$y$ (broadside)};
 
-    \node[sensor] (NodeR1) at (R1) {};
-    \node[below=6pt, font=\small\sffamily] at (R1) {$R_1\left(-\frac{d}{2}, 0\right)$};
+% Posiciones de los sensores (Línea de base centrada en Orig)
+\coordinate (R1) at (1.4, 0.0);
+\coordinate (R2) at (4.2, 0.0);
 
-    \node[sensor] (NodeR2) at (R2) {};
-    \node[below=6pt, font=\small\sffamily] at (R2) {$R_2\left(+\frac{d}{2}, 0\right)$};
+\node[sensor] (NodeR1) at (R1) {};
+\node[below=4pt, font=\small] at (R1) {$R_1\left(-\frac{d}{2},0\right)$};
 
-    % Cota de línea de base d (inferior con amplio respiro)
-    \draw[<->, draw=black!70, line width=0.65pt] (-1.5, -1.30) -- node[below=2pt, font=\footnotesize\sffamily] {Línea de base $d = \norm{\vec{r}_2 - \vec{r}_1}$} (2.5, -1.30);
-    \draw[dotted, line width=0.5pt, draw=black!45] (-1.5, 0.0) -- (-1.5, -1.30);
-    \draw[dotted, line width=0.5pt, draw=black!45] (2.5, 0.0) -- (2.5, -1.30);
+\node[sensor] (NodeR2) at (R2) {};
+\node[below=4pt, font=\small] at (R2) {$R_2\left(+\frac{d}{2},0\right)$};
 
-    % =========================================================================
-    % 3. FUENTE EMISORA S(x, y) (Ondas hacia abajo, texto limpio arriba)
-    % =========================================================================
-    \coordinate (S) at (1.7, 4.4);
+% Cota de la línea de base
+\draw[baseline] (1.4, -1.1) -- node[below=2pt, font=\footnotesize] {$d = \|\vec{r}_2-\vec{r}_1\|$} (4.2, -1.1);
+\draw[projection] (1.4, 0.0) -- (1.4, -1.1);
+\draw[projection] (4.2, 0.0) -- (4.2, -1.1);
 
-    % Proyecciones ortogonales hacia los ejes
-    \draw[dotted, line width=0.65pt, draw=black!55] (1.7, 4.4) -- (1.7, 0.0) node[below=3pt, font=\small\sffamily] {$x$};
-    \draw[dotted, line width=0.65pt, draw=black!55] (1.7, 4.4) -- (0.5, 4.4) node[left=2pt, font=\small\sffamily] {$y$};
+% Posición de la fuente acústica S(x,y)
+\coordinate (S) at (3.8, 4.3);
+\node[source] (NodeS) at (S) {};
+\node[above right=2pt, font=\small\bfseries] at (S) {$S(x,y)$};
 
-    % Frentes de onda concéntricos radiados HACIA ABAJO (hacia los receptores)
-    \draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.45)$) arc (215:285:0.45);
-    \draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.80)$) arc (215:285:0.80);
-    \draw[line width=0.75pt, orange!85!black] ($(S)+(215:1.15)$) arc (215:285:1.15);
+% Proyecciones a los ejes coordenados
+\draw[projection] (S) -- (3.8, 0.0) node[below=3pt, font=\small] {$x$};
+\draw[projection] (S) -- (2.8, 4.3) node[left=3pt, font=\small] {$y$};
 
-    % Nodo Fuente (el rótulo queda arriba, totalmente libre de ondas)
-    \node[source] (NodeS) at (S) {};
-    \node[above=6pt, font=\small\sffamily\bfseries] at (S) {$S(x, y)$};
+% Frentes de onda emitidos por la fuente
+\draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.4)$) arc (215:280:0.4);
+\draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.75)$) arc (215:280:0.75);
 
-    % =========================================================================
-    % 4. VECTORES DE PROPAGACIÓN r1, r2, r Y ÁNGULO THETA
-    % =========================================================================
-    % Vector r1
-    \draw[->, line width=1.15pt, draw=UdeAGreen!75!black] (NodeR1) -- node[pos=0.45, above left=1pt, font=\small] {$\vec{r}_1$} (NodeS);
+% Rayos acústicos
+\draw[pathRone] (NodeR1) -- node[pos=0.45, above left=1pt, font=\small] {$r_1$} (NodeS);
+\draw[pathRtwo] (NodeR2) -- node[pos=0.55, right=2pt, font=\small] {$r_2$} (NodeS);
+\draw[->, dashed, line width=0.8pt, draw=black!70] (Orig) -- node[pos=0.65, below right=1pt, font=\small] {$r$} (NodeS);
 
-    % Vector r2
-    \draw[->, line width=1.15pt, draw=blue!70!black] (NodeR2) -- node[pos=0.55, right=2pt, font=\small] {$\vec{r}_2$} (NodeS);
-
-    % Vector central r
-    \draw[->, dashed, line width=0.85pt, draw=black!70] (Orig) -- node[pos=0.65, below right=1pt, font=\small] {$\vec{r}$} (NodeS);
-
-    % Arco del ángulo de incidencia theta respecto al eje vertical y
-    \draw[line width=0.8pt, draw=black!85] ($(Orig) + (0.0, 2.2)$) arc (90:74.8:2.2);
-    \node[font=\small\sffamily\bfseries] at ($(Orig) + (82.5:2.55)$) {$\theta$};
-
-    % =========================================================================
-    % 5. HIPÉRBOLA TDOA
-    % =========================================================================
-    \draw[thick, orange!90!black, domain=0.4:5.2, smooth, variable=\y]
-        plot ({ 0.5 + 0.4845 * sqrt(1 + (\y/1.940)*(\y/1.940)) }, {\y});
-    % Rótulo en la parte superior derecha, libre de ondas y de la fuente
-    \node[orange!90!black, font=\footnotesize\sffamily, right=3pt] at (1.92, 5.25) {Hipérbola TDOA ($\Delta r = r_1 - r_2$)};
-
-    % =========================================================================
-    % 6. RECUADRO ESQUINADO EN EL EXTREMO SUPERIOR IZQUIERDO
-    % =========================================================================
-    \node[draw=black!75, fill=white, rounded corners=4pt, line width=0.8pt, inner sep=7pt] at (-3.3, 4.2) {
-        \footnotesize
-        \begin{tabular}{@{} l @{}}
-            \textbf{Inversión Angular (PDoA):} \\[3pt]
-            Retardo espacial: \ $\Delta r = d \sin\theta$ \\
-            Desfase medido: \ $\Delta\Phi = \frac{2\pi f_0}{c(T)} d \sin\theta$ \\[5pt]
-            \textcolor{UdeAGreen!80!black}{\textbf{Cota de no-aliasing espacial:}} \\[2pt]
-            $d \le \frac{\lambda_0}{2} = \frac{c(T)}{2 f_0}$
-        \end{tabular}
-    };
+% Ángulo de incidencia theta respecto a la normal broadside
+\draw[line width=0.75pt, draw=black!85] ($(Orig)+(0.0,2.1)$) arc (90:76.8:2.1);
+\node[font=\small\bfseries] at ($(Orig)+(83:2.45)$) {$\theta$};
 
 \end{tikzpicture}

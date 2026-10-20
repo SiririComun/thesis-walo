@@ -1,111 +1,111 @@
-% figures/fig3_rama_b.tex
 \begin{tikzpicture}[
     >=Stealth,
-    % Estilo idéntico al bloque principal de Figuras 1 y 2
-    block/.style={
-        rectangle,
-        draw=black!70,
-        fill=black!2,
-        rounded corners=4pt,
-        line width=0.8pt,
-        text width=5.8cm,
-        align=center,
-        inner sep=8pt,
-        minimum height=1.35cm,
-        font=\small\sffamily
-    },
-    % Fórmulas matemáticas de la columna derecha
-    state/.style={
-        font=\small,
-        align=center,
-        inner sep=6pt
-    },
-    % Flechas principales
-    arrow/.style={
-        ->,
-        line width=1.05pt,
+    node distance=0.65cm and 0.75cm,
+    input/.style={
         draw=black!75,
-        shorten >= 2pt,
-        shorten <= 2pt
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!10,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.3cm,
+        font=\small
     },
-    % Operador circular idéntico a Figuras 1 y 2
-    oplabel/.style={
-        circle,
-        draw=black!85,
+    proc/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!5,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.45cm,
+        font=\small
+    },
+    highlight/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!7,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.45cm,
+        font=\small
+    },
+    outnode/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
         fill=white,
-        line width=0.9pt,
-        inner sep=3.5pt,
-        font=\normalsize\bfseries
-    }
+        align=center,
+        minimum height=0.95cm,
+        text width=2.6cm,
+        font=\small
+    },
+    arrow/.style={->, line width=0.8pt, draw=black!75}
 ]
 
-    % =========================================================================
-    % Nivel 0: Entrada de la Rama B (y = 0.0)
-    % =========================================================================
-    \node[block] (inB) at (0, 0) {
-        \textbf{Vector de estado $\vec{P}$}\\
-        \footnotesize Entrada a la Rama B (Espacio recíproco en $\ell^2$)
-    };
-    \node[state] (s0) at (7.2, 0) {
-        $\vec{P} = \begin{pmatrix} \vec{p}_1 \\ \vec{p}_2 \end{pmatrix} \in \mathbb{R}^N \times \mathbb{R}^N$
-    };
+% Fila superior
+\node[input] (block) {
+    Bloque de muestras\\
+    $v_i[n]$\\
+    $n = 0,\dots,N-1$
+};
 
-    % Operador 1
-    \node[oplabel] (op1) at (7.2, -1.8) {$\hat{\mathcal{F}}_{\text{FFT}}$};
+\node[proc, right=of block] (window) {
+    Enventanado\\
+    $x_i[n] = w[n]v_i[n]$\\
+    Blackman--Harris
+};
 
-    % =========================================================================
-    % Nivel 1: Espectro Cartesiano (y = -3.6)
-    % =========================================================================
-    \node[block] (b1) at (0, -3.6) {
-        \textbf{Transformada discreta de Fourier}\\
-        \footnotesize Vectores espectrales cartesianos $\{X_R, X_I\}$
-    };
-    \node[state] (s1) at (7.2, -3.6) {
-        $\mathbf{Z}[k] = X_R[k] + j X_I[k] \in \mathbb{C}^{N/2}$
-    };
+\node[proc, right=of window] (fft) {
+    Transformada\\
+    discreta de Fourier\\
+    $Z_i[k]$ (FFT)
+};
 
-    % Operador 2
-    \node[oplabel] (op2) at (7.2, -5.4) {$\hat{\mathcal{R}}_C$};
+\node[proc, right=of fft] (polar) {
+    Magnitud y fase\\
+    $|Z_i[k]|$ y $\Phi_i[k]$\\
+    Cálculo CORDIC
+};
 
-    % =========================================================================
-    % Nivel 2: Espectro Polar / CORDIC (y = -7.2)
-    % =========================================================================
-    \node[block] (b2) at (0, -7.2) {
-        \textbf{Rotaciones polares CORDIC}\\
-        \footnotesize Transformación afín de Givens
-    };
-    \node[state] (s2) at (7.2, -7.2) {
-        $\left( \norm{\mathbf{Z}[k]}, \, \Phi[k] \right)$
-    };
+\draw[arrow] (block) -- (window);
+\draw[arrow] (window) -- (fft);
+\draw[arrow] (fft) -- (polar);
 
-    % Operador 3
-    \node[oplabel] (op3) at (7.2, -9.0) {$\hat{\mathcal{M}}_{\text{sinc}}$};
+% Fila inferior
+\node[proc, below=1.3cm of polar] (peak) {
+    Identificación del\\
+    máximo espectral\\
+    Bin $k_0$
+};
 
-    % =========================================================================
-    % Nivel 3: Superresolución Portadora (y = -10.8)
-    % =========================================================================
-    \node[block] (b3) at (0, -10.8) {
-        \textbf{Estimación analítica sub-Hertz}\\
-        \footnotesize Inversión no lineal del lóbulo sinc
-    };
-    \node[state] (s3) at (7.2, -10.8) {
-        $\left( f_0 \pm \Delta f_0, \, \norm{\mathbf{Z}(f_0)}, \, \Phi(f_0) \right)$
-    };
+\node[proc, left=of peak] (interp) {
+    Interpolación\\
+    local parabólica\\
+    Desplazamiento $\delta$
+};
 
-    % =========================================================================
-    % CONEXIONES VERTICALES
-    % =========================================================================
-    \draw[arrow] (inB) -- (b1);
-    \draw[arrow] (b1) -- (b2);
-    \draw[arrow] (b2) -- (b3);
+\node[highlight, left=of interp] (freq) {
+    Frecuencia estimada\\
+    $\widehat{f}_0 = (k_0+\delta)\dfrac{f_s'}{N}$
+};
 
-    \draw[arrow] (s0) -- (op1);
-    \draw[arrow] (op1) -- (s1);
+\draw[arrow] (polar.south) -- (peak.north);
+\draw[arrow] (peak) -- (interp);
+\draw[arrow] (interp) -- (freq);
 
-    \draw[arrow] (s1) -- (op2);
-    \draw[arrow] (op2) -- (s2);
-
-    \draw[arrow] (s2) -- (op3);
-    \draw[arrow] (op3) -- (s3);
+% Indicador de resolución espectral
+\node[
+    draw=black!40,
+    dashed,
+    rounded corners=2pt,
+    fill=white,
+    font=\footnotesize,
+    inner sep=4pt,
+    below=0.35cm of fft
+] {
+    Separación entre bines: $\Delta f = f_s' / N$
+};
 
 \end{tikzpicture}
