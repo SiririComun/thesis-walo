@@ -1,102 +1,209 @@
+
 % ==============================================================================
-% PREAMBLE: Formato oficial Trabajo de Grado - Instituto de Física, UdeA
+% PREÁMBULO
+% WALO: Localización de fuentes de ondas acústicas
+% Trabajo de grado - Instituto de Física, Universidad de Antioquia
 % ==============================================================================
+
+% ------------------------------------------------------------------------------
+% Idioma y codificación
+% ------------------------------------------------------------------------------
 \usepackage[utf8]{inputenc}
-% 'es-noquoting' desactiva la activación de < y > que rompe TikZ
-\usepackage[spanish,es-nodecimaldot,es-tabla,es-noquoting]{babel}
-\spanishplainpercent
+\usepackage[
+    spanish,
+    es-nodecimaldot,
+    es-tabla,
+    es-noquoting
+]{babel}
 
-% Geometría de página (Márgenes estándar UdeA)
-\usepackage[letterpaper, top=3.0cm, bottom=2.5cm, left=3.0cm, right=2.5cm]{geometry}
+% ------------------------------------------------------------------------------
+% Geometría de página
+% ------------------------------------------------------------------------------
+\usepackage[
+    letterpaper,
+    top=3.0cm,
+    bottom=2.5cm,
+    left=3.0cm,
+    right=2.5cm
+]{geometry}
 
-% Tipografía idéntica a la tesis de referencia (Times / NewTX)
+% ------------------------------------------------------------------------------
+% Tipografía
+% ------------------------------------------------------------------------------
 \IfFileExists{newtxtext.sty}{
     \usepackage{newtxtext}
     \usepackage{newtxmath}
 }{
     \usepackage{mathptmx}
 }
+
 \usepackage{microtype}
 
-% Espaciado e interlineado
+% ------------------------------------------------------------------------------
+% Espaciado
+% ------------------------------------------------------------------------------
 \usepackage{setspace}
 \setstretch{1.15}
+
 \setlength{\parskip}{6pt}
 \setlength{\parindent}{0pt}
 
-% Enlaces y URLs con división automática
+% ------------------------------------------------------------------------------
+% Matemáticas
+% ------------------------------------------------------------------------------
+\let\Bbbk\relax
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+
+% Carga de physics si está disponible.
+% En caso contrario, se definen únicamente las funciones necesarias.
+\IfFileExists{physics.sty}{
+    \usepackage{physics}
+}{
+    \providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+    \providecommand{\abs}[1]{\left\lvert#1\right\rvert}
+}
+
+% ------------------------------------------------------------------------------
+% Unidades físicas
+% ------------------------------------------------------------------------------
+\usepackage{siunitx}
+
+\sisetup{
+    output-decimal-marker = {.},
+    per-mode = symbol,
+    separate-uncertainty = true
+}
+
+% Unidad para expresar cantidades de muestras cuando sea necesario.
+\DeclareSIUnit\sample{sample}
+
+% ------------------------------------------------------------------------------
+% Figuras y gráficos
+% ------------------------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+
+\usetikzlibrary{
+    shapes.geometric,
+    arrows.meta,
+    positioning,
+    calc,
+    fit,
+    babel,
+    patterns,
+    decorations.pathmorphing
+}
+
+% ------------------------------------------------------------------------------
+% Tablas
+% ------------------------------------------------------------------------------
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+% ------------------------------------------------------------------------------
+% Leyendas de figuras y tablas
+% ------------------------------------------------------------------------------
+\usepackage{caption}
+
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    labelsep=period
+}
+
+% ------------------------------------------------------------------------------
+% Color y enlaces
+% ------------------------------------------------------------------------------
 \usepackage{xcolor}
-\definecolor{UdeAGreen}{HTML}{006837} % Verde institucional UdeA
+\definecolor{UdeAGreen}{HTML}{006837}
+
 \usepackage{xurl}
 \usepackage{hyperref}
+
 \hypersetup{
     colorlinks=true,
     linkcolor=black,
     citecolor=black,
-    urlcolor=UdeAGreen
+    urlcolor=UdeAGreen,
+    pdftitle={WALO: Localización de fuentes de ondas acústicas},
+    pdfsubject={Trabajo de grado en Física},
+    pdfcreator={LaTeX}
 }
 
+\urlstyle{same}
+
+% ------------------------------------------------------------------------------
+% Bibliografía
+% ------------------------------------------------------------------------------
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{ieeetr}
+
+% ------------------------------------------------------------------------------
 % Encabezados y pies de página
+% ------------------------------------------------------------------------------
 \usepackage{fancyhdr}
+
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{WALO: Localización de Fuentes de Ondas Acústicas}}\fancyhead[R]{\small\thepage}
+
+\fancyhead[L]{%
+    \small\textit{WALO: Localización de fuentes de ondas acústicas}%
+}
+\fancyhead[R]{\small\thepage}
+
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
+
 \setlength{\headheight}{15pt}
 
+% Estilo de páginas con formato plain.
 \fancypagestyle{plain}{
     \fancyhf{}
     \fancyhead[R]{\small\thepage}
     \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
 }
 
-% Formato sobrio de títulos
+% ------------------------------------------------------------------------------
+% Formato de títulos
+% ------------------------------------------------------------------------------
 \usepackage{titlesec}
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
-\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection.}{0.5em}{}
 
-% Matemáticas y física
-\let\Bbbk\relax
-\usepackage{amsmath,amssymb,amsfonts,bm}
+\titleformat{\section}
+    {\large\bfseries}
+    {\thesection.}
+    {0.5em}
+    {}
 
-\IfFileExists{physics.sty}{
-    \usepackage{physics}
-}{
-    \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-    \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
-}
+\titleformat{\subsection}
+    {\normalsize\bfseries}
+    {\thesubsection.}
+    {0.5em}
+    {}
 
-% Unidades físicas
-\IfFileExists{siunitx.sty}{
-    \usepackage{siunitx}
-    \sisetup{
-        output-decimal-marker = {.},
-        per-mode = symbol
-    }
-}{}
+\titleformat{\subsubsection}
+    {\small\bfseries}
+    {\thesubsubsection.}
+    {0.5em}
+    {}
 
-% Figuras, tablas y TikZ (con compatibilidad de babel activada)
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, babel, patterns}
-\usepackage{caption}
-\captionsetup{font=small, labelfont=bf, labelsep=period}
+% ------------------------------------------------------------------------------
+% Parámetros de flotación
+% ------------------------------------------------------------------------------
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.12}
+\renewcommand{\floatpagefraction}{0.75}
 
-% Citas bibliográficas estilo IEEE
-\usepackage[numbers,sort&compress]{natbib}
-\bibliographystyle{ieeetr}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
 
 % ==============================================================================
-% OPTIMIZACIÓN DE PARÁMETROS DE FLOTACIÓN (Evita páginas con figuras aisladas)
+% FIN DEL PREÁMBULO
 % ==============================================================================
-\renewcommand{\topfraction}{0.85}       % Máx. proporción de página ocupada por figuras arriba (def: 0.70)
-\renewcommand{\bottomfraction}{0.80}    % Máx. proporción ocupada por figuras abajo (def: 0.30)
-\renewcommand{\textfraction}{0.12}      % Mín. proporción obligatoria de texto por página (def: 0.20)
-\renewcommand{\floatpagefraction}{0.75} % Solo crea página de figuras si la figura ocupa al menos 75% (def: 0.50)
-\setcounter{topnumber}{3}               % Máximo 3 figuras en la parte superior
-\setcounter{bottomnumber}{2}            % Máximo 2 figuras en la parte inferior
-\setcounter{totalnumber}{4}             % Máximo 4 flotantes por página

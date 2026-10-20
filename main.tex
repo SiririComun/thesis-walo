@@ -1,31 +1,87 @@
+
+% ==============================================================================
+% DOCUMENTO PRINCIPAL
+% WALO: Localización de fuentes de ondas acústicas
+% Trabajo de grado - Instituto de Física, Universidad de Antioquia
+% ==============================================================================
+
 \documentclass[12pt,letterpaper]{article}
 
-% Cargar configuración
+% ------------------------------------------------------------------------------
+% Configuración general
+% ------------------------------------------------------------------------------
 \input{preamble.tex}
 
+% ==============================================================================
+% INICIO DEL DOCUMENTO
+% ==============================================================================
 \begin{document}
 
-% --- PÁGINAS PRELIMINARES INSTITUCIONALES (Páginas 1 y 2) ---
-\hypersetup{pageanchor=false}
-\input{frontmatter/titlepage.tex}
-\newpage
+% ------------------------------------------------------------------------------
+% PÁGINAS PRELIMINARES
+% ------------------------------------------------------------------------------
+% La portada institucional conserva su propia composición.
+% Se desactivan temporalmente los anclajes para evitar conflictos
+% con la numeración posterior.
 
-% --- TABLA DE CONTENIDO (Página 3 física, sincronizada con el PDF) ---
+\hypersetup{pageanchor=false}
+
+\input{frontmatter/titlepage.tex}
+
+\clearpage
+
+% ------------------------------------------------------------------------------
+% TABLA DE CONTENIDO
+% ------------------------------------------------------------------------------
+% La numeración comienza en la página física 3, después de las
+% dos páginas preliminares.
+
 \hypersetup{pageanchor=true}
+
 \pagenumbering{arabic}
 \setcounter{page}{3}
-\tableofcontents
-\newpage
 
-% --- CAPÍTULO 1 ---
+\tableofcontents
+
+\clearpage
+
+% ==============================================================================
+% CUERPO PRINCIPAL
+% ==============================================================================
+
+% ------------------------------------------------------------------------------
+% CAPÍTULO 1
+% ------------------------------------------------------------------------------
 \input{chapters/01_tratamiento_campo.tex}
 
-% --- CAPÍTULO 2 ---
+\clearpage
+
+% ------------------------------------------------------------------------------
+% CAPÍTULO 2
+% ------------------------------------------------------------------------------
 \input{chapters/02_modelos_inversion.tex}
 
-% --- BIBLIOGRAFÍA GLOBAL ---
-\newpage
+\clearpage
+
+% ------------------------------------------------------------------------------
+% CAPÍTULO 3
+% ------------------------------------------------------------------------------
+\input{chapters/03_instrumentacion_metodologia.tex}
+
+\clearpage
+
+% ==============================================================================
+% BIBLIOGRAFÍA
+% ==============================================================================
+
+% Incluye todas las referencias declaradas en el archivo .bib,
+% incluso aquellas que todavía no se citan explícitamente.
+
 \nocite{*}
+
 \bibliography{references}
 
+% ==============================================================================
+% FIN DEL DOCUMENTO
+% ==============================================================================
 \end{document}
