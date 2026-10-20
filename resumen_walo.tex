@@ -1,0 +1,109 @@
+\documentclass[10.5pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\spanishplainpercent
+\usepackage[margin=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+\definecolor{UdeAGreen}{RGB}{15, 87, 54}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=UdeAGreen,
+    urlcolor=UdeAGreen,
+    citecolor=UdeAGreen
+}
+
+% ==============================================================================
+% PULIDO ESTÉTICO TIPOGRÁFICO
+% ==============================================================================
+% Control de espaciado y formato para títulos de sección con identidad UdeA
+\titleformat{\section}{\bfseries\color{UdeAGreen}\normalsize}{}{0em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.4ex minus 0.2ex}{0.6ex plus 0.2ex}
+
+% Espaciado optimizado para listas
+\setlist{nosep, leftmargin=1.3em, topsep=2pt, partopsep=0pt}
+
+\begin{document}
+\pagestyle{empty}
+
+% ==============================================================================
+% ENCABEZADO INSTITUCIONAL Y TÍTULO (AUTOR Y ASESOR APILADOS)
+% ==============================================================================
+\begin{center}
+    {\large\bfseries\color{UdeAGreen} WALO: Diseño e Implementación de un Instrumento Científico Abierto basado en SoC-FPGA para la Localización de Fuentes de Ondas Acústicas}\\[0.35cm]
+    
+    \begin{tabular}{cc}
+        \textbf{Estudiante (Autor):} Juan Pablo Sánchez Arroyave & \quad \textbf{Asesor (Profesor):} Dr. Johny Alexander Jaramillo Gallego
+    \end{tabular}\\[0.12cm]
+    
+    {\small\textit{Instituto de Física, Facultad de Ciencias Exactas y Naturales, Universidad de Antioquia, Medellín, Colombia.}}
+\end{center}
+
+\vspace{0.05cm}
+
+% ==============================================================================
+% 1. INTRODUCCIÓN Y PLANTEAMIENTO
+% ==============================================================================
+\section*{1. Introducción y Planteamiento del Problema}
+La localización espacial de fuentes emisoras de ondas acústicas constituye un problema de frontera científica y tecnológica con impacto directo en múltiples áreas estratégicas: la evaluación no destructiva y el monitoreo de integridad estructural mediante detección de microfracturas por emisión acústica, la bioacústica aplicada al rastreo y conservación no invasiva de biodiversidad, la navegación robótica en interiores donde la señal satelital GNSS se atenúa por completo, y los sectores de seguridad y defensa. En este último campo, la localización acústica pasiva ha cobrado relevancia crítica para la detección, clasificación y seguimiento de vehículos aéreos no tripulados (UAVs y drones), escenarios donde los sistemas ópticos y de radar tradicionales enfrentan severas limitaciones por oclusión visual y reducida sección transversal de radar.
+
+A pesar de que la propagación acústica es un fenómeno fundamental de la mecánica ondulatoria clásica, en el Instituto de Física de la Universidad de Antioquia ha existido un vacío sistemático: actualmente no se cuenta con un grupo de investigación, ni con una línea activa dentro de los grupos existentes, dedicada al estudio experimental de las ondas sonoras y su localización espacial. Históricamente, el estudio del sonido en nuestro entorno se ha confinado a modelos teóricos analíticos o al empleo esporádico de instrumental comercial importado. Dichos equipos comerciales operan como ``cajas negras'' herméticas, costosas y propietarias, impidiendo auditar los algoritmos de bajo nivel o estudiar empíricamente los límites físicos que la naturaleza impone a la resolución espacial. Como físicos, interrogar a la naturaleza exige dominar la tecnología con la que se mide. Este proyecto responde a esa necesidad desarrollando \textbf{WALO} (\textit{Wave Acoustic Localizer}), un instrumento científico abierto concebido para caracterizar y optimizar la localización de fuentes sonoras, sentando una base experimental reproducible para futuros trabajos en la Facultad.
+
+% ==============================================================================
+% 2. OBJETIVOS DEL PROYECTO
+% ==============================================================================
+\section*{2. Objetivos del Proyecto}
+\begin{itemize}
+    \item \textbf{Objetivo General:} Diseñar, implementar y evaluar experimentalmente un instrumento científico abierto basado en una arquitectura SoC-FPGA (PYNQ-Z2) enfocado en la localización espacial (radial y angular) y cinemática de ondas acústicas.
+    \item \textbf{Objetivos Específicos:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Implementar la adquisición multicanal síncrona en la lógica programable (PL) acoplada por DMA al procesador (PS) para eliminar retardos no deterministas en la captura.
+        \item Desarrollar una caja de herramientas modular que integre múltiples técnicas de localización (RSSI, ToA, TDoA, PDoA y Doppler/FDoA).
+        \item Evaluar cuantitativamente en bancos experimentales físicos la resolución espacial en distancia, dirección de llegada y trayectoria cinemática continua.
+        \item Documentar y liberar el hardware y software bajo estándares rigurosos de ciencia e instrumentación abierta.
+    \end{enumerate}
+\end{itemize}
+
+% ==============================================================================
+% 3. ARQUITECTURA DEL INSTRUMENTO
+% ==============================================================================
+\section*{3. Arquitectura del Instrumento y Co-diseño Hardware-Software}
+En la localización de ondas, el espacio físico se deduce del tiempo. Errores temporales de apenas microsegundos degradan significativamente la estimación espacial, una limitación insuperable para procesadores convencionales cuyos sistemas operativos introducen latencias y fluctuaciones (\textit{jitter}) impredecibles. WALO resuelve este cuello de botella mediante una arquitectura heterogénea basada en el SoC Zynq-7000:
+\begin{itemize}
+    \item \textbf{Lógica Programable (PL - Hardware):} Se implementó el control de muestreo paralelo del doble convertidor analógico-digital (XADC) garantizando sincronización con desvío temporal nulo ($\tau_{\text{skew}} \approx 0$). En la misma lógica se integró un módulo FFT en hardware para el aislamiento y filtrado espectral en tiempo real de componentes armónicas de interés. La transmisión continua de flujos de datos se gestiona mediante un controlador AXI-DMA que comunica la lógica física con la memoria compartida sin sobrecargar la CPU.
+    \item \textbf{Sistema de Procesamiento (PS - Software):} Sobre un entorno embebido Linux con Python/Jupyter, el procesador ARM ejecuta los algoritmos de la caja de herramientas de localización, orquestando el procesamiento digital de señales y la visualización de trayectorias en tiempo real. Esta separación modular garantiza determinismo a nivel de nanosegundos en la captura física y máxima versatilidad matemática en la capa de usuario.
+\end{itemize}
+
+\newpage % ==================================================================== SALTO EXACTO A PÁGINA 2
+
+% ==============================================================================
+% 4. RESULTADOS EXPERIMENTALES
+% ==============================================================================
+\section*{4. Resultados Experimentales y Desempeño en Localización}
+El instrumento fue sometido a tres protocolos experimentales físicos para cuantificar con precisión su desempeño:
+\begin{itemize}
+    \item \textbf{Resolución Radial por Decaimiento de Presión y Energía (Setup Lineal):} Se evaluó la atenuación geométrica en campo libre en un rango de $10$ a $100\,\text{cm}$ frente a una fuente patrón. Las mediciones demostraron un ajuste extraordinario a los modelos teóricos: $R^2 = 0.9978$ para la amplitud de presión (proporcional a $1/r$, con constante de acople $k_A = \SI{20.68}{\milli\volt\metre}$) y $R^2 = 0.9987$ para la energía acústica (proporcional a $1/r^2$). Este resultado valida la capacidad de WALO para resolver la distancia de una fuente de forma puramente pasiva mediante potencia recibida, sin requerir sincronización temporal previa con el emisor.
+    \item \textbf{Resolución Angular: Fase vs. Tiempo (AoA en Arreglo Compacto de $5\,\text{cm}$):} Se implementó un arreglo de dos micrófonos separados una distancia de $5.0\,\text{cm}$, barriendo ángulos de llegada entre $-60^\circ$ y $+60^\circ$ a una distancia de $30\,\text{cm}$. La comparación experimental demostró la superioridad del método interferométrico por diferencia de fase (PDoA), el cual alcanzó un error absoluto medio (MAE) de solo $4.0^\circ$ ($\sigma = 3.8^\circ$), manteniéndose con holgura dentro del corredor de aceptación metrológico. En contraste, el método por diferencia de tiempo (TDoA) exhibió una resolución inferior con un MAE de $7.9^\circ$ ($\sigma = 10.0^\circ$). La reconstrucción de rayos acústicos vectoriales en 2D confirmó la alta fidelidad espacial del sistema en campo cercano.
+    \item \textbf{Rastreo Cinemático Continuo por Efecto Doppler (Riel de Aire de $2.0\,\text{m}$):} Para validar el desempeño ante fuentes en movimiento dinámico, se montó el emisor sobre un deslizador en un riel de aire lineal de 2 metros. WALO aisló el corrimiento Doppler en tiempo real y reconstruyó continuamente el perfil de velocidad $v(t)$ y la trayectoria $x(t)$ de un oscilador armónico amortiguado, situándose dentro de bandas de incertidumbre a $\pm 1\sigma$. 
+\end{itemize}
+
+% ==============================================================================
+% 5. ORIGINALIDAD Y PRODUCTOS
+% ==============================================================================
+\section*{5. Originalidad, Aportes Científicos y Productos Derivados}
+\begin{itemize}
+    \item \textbf{Aporte Fundacional e Institucional:} WALO constituye la primera plataforma experimental abierta en el Instituto de Física dedicada a la localización y estudio de ondas sonoras, sentando una metodología replicable donde no existía desarrollo previo.
+    \item \textbf{Filosofía de Ciencia Abierta:} Todo el diseño se encuentra liberado y documentado en repositorios públicos de GitHub (\texttt{hw-xadc-dma-overlays} para la lógica HDL y overlays, y \texttt{sw-pynq-sound-localizer} para el software y algoritmos), garantizando capacidad instalada permanente para que futuros estudiantes continúen la línea hacia arreglos 2D/3D o radiofrecuencia sin arrancar desde cero.
+    \item \textbf{Divulgación Académica:} Los avances del sistema y la demostración de \textit{streaming} en tiempo real fueron presentados como ponencia oral en el \textit{X Encuentro Regional y I Congreso Internacional de Ciencias Físicas} celebrado en la ciudad de Montería.
+\end{itemize}
+
+\end{document}
