@@ -1,29 +1,105 @@
+% ==============================================================================
+% PÁGINA 1: PORTADA OFICIAL (ESTÁNDAR INSTITUTO DE FÍSICA UdeA)
+% ==============================================================================
 \begin{titlepage}
+    \thispagestyle{empty}
     \centering
-    \vspace*{0.5cm}
     
-    % Incluye el escudo si existe en figures/, o deja el espacio si aún no lo descargas
+    % Encabezado institucional unificado y centrado verticalmente
+    \vspace*{-0.5cm}
     \IfFileExists{figures/logo_udea.png}{
-        \includegraphics[width=4.5cm]{figures/logo_udea.png}\\[0.6cm]
+        \begin{center}
+            \begin{minipage}[c]{1.9cm}
+                \centering
+                \includegraphics[height=1.9cm]{figures/logo_udea.png}
+            \end{minipage}%
+            \hspace{0.4cm}%
+            \begin{minipage}[c]{9.6cm}
+                {\Large\bfseries\color{UdeAGreen} UNIVERSIDAD DE ANTIOQUIA}
+            \end{minipage}
+        \end{center}
     }{
-        \vspace*{3.5cm}
+        {\Large\bfseries\color{UdeAGreen} UNIVERSIDAD DE ANTIOQUIA}
     }
     
-    {\Large\bfseries\color{UdeAGreen} UNIVERSIDAD DE ANTIOQUIA}\\[1.5cm]
+    \vspace{2.2cm}
     
-    {\Large\bfseries WALO: Diseño e Implementación de un Instrumento Científico Abierto basado en SoC-FPGA para la Localización de Fuentes de Ondas Acústicas}\\[1.5cm]
+    % Título oficial corregido (con "Fuentes")
+    {\large\bfseries WALO: Diseño e Implementación de un Instrumento Científico Abierto basado en SoC-FPGA para la Localización de Fuentes de Ondas Acústicas}\\[2.0cm]
     
-    {\large\bfseries Juan Pablo Sánchez Arroyave}\\[2.0cm]
+    % Autor
+    {\normalsize Juan Pablo Sánchez Arroyave}\\[2.2cm]
     
-    {\normalsize Trabajo de grado presentado para optar al título de Físico}\\[1.5cm]
+    % Leyenda de grado
+    {\normalsize Trabajo de grado presentado para optar al título de Físico}\\[2.2cm]
     
-    \textbf{Asesor:}\\[0.2cm]
-    {\normalsize [Nombre del Asesor], Doctor (PhD) en Ciencias - Física}\\[2.5cm]
+    % Asesor oficial
+    {\normalsize Asesor}\\[0.25cm]
+    {\normalsize Johny Alexander Jaramillo Gallego, Doctor (PhD) en Física.}\\[2.2cm]
     
+    % Pie institucional
+    \vfill
     {\normalsize
     Universidad de Antioquia\\
     Facultad de Ciencias Exactas y Naturales\\
     Instituto de Física\\
     Medellín, Antioquia, Colombia\\
     2026}
+
+% ==============================================================================
+% PÁGINA 2: HOJA DE CITACIÓN Y REPOSITORIO (BIBLIOTECA CARLOS GAVIRIA DÍAZ)
+% ==============================================================================
+    \newpage
+    \thispagestyle{empty}
+    \vspace*{-0.5cm}
+    
+    % Encabezado de la biblioteca idéntico y centrado
+    \IfFileExists{figures/logo_udea.png}{
+        \begin{center}
+            \begin{minipage}[c]{1.7cm}
+                \centering
+                \includegraphics[height=1.7cm]{figures/logo_udea.png}
+            \end{minipage}%
+            \hspace{0.35cm}%
+            \begin{minipage}[c]{8.8cm}
+                {\large\bfseries\color{UdeAGreen} UNIVERSIDAD DE ANTIOQUIA}
+            \end{minipage}
+        \end{center}
+    }{
+        {\large\bfseries\color{UdeAGreen} UNIVERSIDAD DE ANTIOQUIA}
+    }
+    \vspace{0.2cm}
+    {\color{UdeAGreen}\hrule height 1.2pt}
+    
+    \vspace{0.8cm}
+    
+    % Ficha de citación estilo IEEE
+    \noindent
+    \begin{tabularx}{\textwidth}{@{} p{2.8cm} X @{}}
+        \textbf{Cita} & Sánchez Arroyave [1] \\[0.4cm]
+        \textbf{Referencia} & \textbf{[1]} J. P. Sánchez Arroyave, ``WALO: Diseño e Implementación de un Instrumento Científico Abierto basado en SoC-FPGA para la Localización de Fuentes de Ondas Acústicas'', Trabajo de grado profesional, Física, Universidad de Antioquia, Medellín, Antioquia, Colombia, 2026. \\[0.2cm]
+        \footnotesize Estilo IEEE (2020) & \\
+    \end{tabularx}
+    
+    \vspace{0.6cm}
+    
+    % Licencia abierta Creative Commons
+    \noindent
+    \fbox{\footnotesize\bfseries CC} \textbf{\footnotesize BY-NC-SA} \quad
+    {\footnotesize Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0}
+    
+    \vspace{1.6cm}
+    
+    % Grupo de investigación oficial UdeA
+    \noindent
+    Grupo de Investigación: Grupo de Instrumentación Científica y Microelectrónica (GICM)\\[0.3cm]
+    Biblioteca Carlos Gaviria Díaz\\[0.6cm]
+    \textbf{Repositorio Institucional:} \url{http://bibliotecadigital.udea.edu.co}\\[0.6cm]
+    Universidad de Antioquia - \url{www.udea.edu.co}
+    
+    \vfill
+    
+    % Descargo legal obligatorio UdeA
+    \noindent\small
+    El contenido de esta obra corresponde al derecho de expresión de los autores y no compromete el pensamiento institucional de la Universidad de Antioquia ni desata su responsabilidad frente a terceros. Los autores asumen la responsabilidad por los derechos de autor y conexos.
 \end{titlepage}
