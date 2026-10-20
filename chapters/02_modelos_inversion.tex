@@ -1,297 +1,842 @@
 % ==============================================================================
-% CAPÍTULO 2: MODELOS DE INVERSIÓN CINEMÁTICA Y LOCALIZACIÓN ESPACIAL
+% CAPÍTULO 2: LOCALIZACIÓN ACÚSTICA: MODELOS GEOMÉTRICOS Y ESTIMACIÓN CINEMÁTICA
 % ==============================================================================
-\newpage
-\section{MODELOS DE INVERSIÓN CINEMÁTICA Y LOCALIZACIÓN ESPACIAL}
+
+\clearpage
+\section{LOCALIZACIÓN ACÚSTICA: MODELOS GEOMÉTRICOS Y ESTIMACIÓN CINEMÁTICA}
 \label{chap:modelos_inversion}
 
-\subsection{Introducción: El problema inverso de la localización acústica}
+% ==============================================================================
+% 2.1. INTRODUCCIÓN
+% ==============================================================================
 
-El objetivo central de la instrumentación científica desarrollada en este trabajo consiste en resolver el problema inverso de la localización acústica: a partir de las propiedades del campo de ondas registrado en un conjunto discretizado de puntos, determinar la posición, la trayectoria y el estado cinemático de la fuente emisora en el espacio euclidiano. 
+\subsection{El problema inverso de la localización acústica}
 
-En la literatura especializada de navegación pasiva y arreglos de sensores, el repertorio de técnicas de inversión es sumamente amplio \cite{brandstein2001microphone}. Estas se clasifican habitualmente en función del dominio físico de la magnitud medida o de la heurística de procesamiento empleada, abarcando familias metodológicas bien diferenciadas:
+La localización acústica consiste en estimar la posición y el movimiento de una
+fuente sonora a partir de señales registradas por uno o varios receptores. El
+problema directo describe cómo se propaga la onda desde la fuente hasta los
+sensores; el problema inverso utiliza las señales medidas para recuperar
+magnitudes geométricas y cinemáticas de la fuente.
+
+Los métodos de localización pueden clasificarse de acuerdo con el observable
+físico utilizado. Entre los más habituales se encuentran:
+
 \begin{itemize}
-    \item \textbf{Métodos basados en la potencia y densidad energética (\textit{Received Signal Strength / RSSI}):} Analizan la atenuación de la amplitud o el flujo de energía en función de la distancia geométrica \cite{zhuang2016evaluation}.
-    \item \textbf{Métodos basados en diferencias de tiempo de propagación (\textit{Time Difference of Arrival / TDOA} y \textit{Time of Arrival / ToA}):} Explotan las discontinuidades temporales de los frentes de onda mediante correlación cruzada o discriminadores de flanco de alta resolución \cite{knapp1976generalized}.
-    \item \textbf{Métodos basados en fase intercanal (\textit{Phase Difference of Arrival / PDoA}):} Utilizan la interferometría de fase armónica para estimar el ángulo de incidencia con alta precisión a escala de sub-longitud de onda \cite{rautenberg2018phase}.
-    \item \textbf{Métodos basados en el efecto Doppler (\textit{Frequency Difference of Arrival / FDoA}):} Rastrean el corrimiento dinámico de la frecuencia instantánea inducido por el movimiento relativo entre la fuente y los receptores \cite{chestnut1982estimation}.
+    \item \textbf{Métodos basados en amplitud o potencia recibida (RSS):}
+    relacionan la amplitud de la señal o una magnitud proporcional a la potencia
+    recibida con la distancia entre la fuente y el receptor. Su validez depende
+    del patrón de radiación, la respuesta de los transductores y las condiciones
+    de propagación \cite{kinsler2000fundamentals,zhuang2016evaluation}.
+
+    \item \textbf{Métodos basados en tiempos de llegada (ToA y TDOA):}
+    utilizan el tiempo de propagación hasta uno o varios receptores. El ToA
+    permite estimar una distancia si se conoce el instante de emisión y se han
+    corregido los retardos instrumentales. El TDOA utiliza diferencias entre
+    tiempos de llegada y define, en dos dimensiones, lugares geométricos
+    hiperbólicos \cite{knapp1976generalized,brandstein2001microphone}.
+
+    \item \textbf{Métodos basados en diferencias de fase (PDoA):}
+    relacionan la diferencia de fase de una señal armónica recibida por dos
+    sensores con la diferencia de camino de propagación. Su precisión depende
+    de la frecuencia, la separación entre sensores, la coherencia de los
+    canales y la ausencia de ambigüedades de fase
+    \cite{brandstein2001microphone,rautenberg2018phase}.
+
+    \item \textbf{Métodos basados en desplazamiento Doppler:}
+    utilizan el cambio de frecuencia producido por el movimiento relativo entre
+    la fuente y los receptores. Cuando se dispone de dos receptores situados a
+    lados opuestos de una trayectoria, la diferencia de sus frecuencias
+    recibidas permite estimar la velocidad de la fuente
+    \cite{kinsler2000fundamentals,chestnut1982estimation}.
 \end{itemize}
 
-Si bien el universo de algoritmos de estimación es vasto, el instrumento abierto WALO se estructura sobre un subconjunto rigurosamente seleccionado de estos observables físicos: \textbf{ToA, TDOA, PDoA, FDoA y densidad energética directa}. Cada uno de estos métodos encuentra una correspondencia unívoca con las herramientas de procesamiento formalizadas en el capítulo anterior a través de las Ramas A y B.
+En WALO se consideran cinco observables principales: tiempo de llegada (ToA),
+diferencia de tiempos de llegada (TDOA), diferencia de fase intercanal (PDoA),
+diferencia de frecuencia asociada al efecto Doppler (FDoA) y una magnitud
+digital proporcional a la energía de la señal recibida. Estos observables se
+obtienen mediante las etapas de procesamiento descritas en el capítulo
+anterior.
 
-Por consiguiente, el presente capítulo aborda estos métodos como \textbf{operadores de inversión física} que transforman el vector de observables $\vec{\mathcal{O}}(t)$ —definido en la ecuación~(\ref{eq:vector_observables_matriz})— en las magnitudes cinemáticas y geométricas que describen el estado de la fuente sonora.
+El propósito de este capítulo es establecer las relaciones físicas que permiten
+convertir esas magnitudes medidas en estimaciones de distancia, dirección y
+velocidad. La validez de cada estimación se discute junto con las hipótesis
+geométricas y de propagación necesarias para aplicarla.
 
 % ==============================================================================
-% 2.2. INVERSIÓN DE LA COORDENADA RADIAL: ESTIMACIÓN DE DISTANCIA r(t)
+% 2.2. ESTIMACIÓN DE DISTANCIA
 % ==============================================================================
-\subsection{Inversión de la coordenada radial: Estimación de distancia \texorpdfstring{$r(t)$}{r(t)}}
 
-La determinación de la distancia métrica radial $r$ que separa a la fuente emisora de un punto de observación constituye la operación física primaria en telemetría y ecolocalización acústica. A diferencia de la estimación angular o cartesiana —que requiere arreglos espaciales multipunto—, la coordenada radial se resuelve analíticamente a través de un canal monoaural representativo. El instrumento WALO implementa dos enfoques físicos independientes para extraer $r(t)$ a partir del vector de observables $\vec{\mathcal{O}}$: el tiempo de propagación cinemático (ToA) y el decaimiento de densidad energética en régimen cuasi-anecoico.
+\subsection{Estimación de distancia}
+
+La distancia radial $r$ entre una fuente emisora y un receptor puede estimarse
+mediante el tiempo de propagación o a partir de la atenuación de la señal
+recibida. Ambos procedimientos utilizan información física diferente y, por
+tanto, presentan fuentes de error distintas. No obstante, comparten factores
+como la temperatura del medio, la geometría de propagación y la respuesta
+electroacústica del sistema.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig4_geometria_to_a.tex}
     \vspace{0.25cm}
-    \caption{Geometría de propagación radial y trayectorias de trayectos múltiples en el plano vertical. La elevación de los transductores a una altura vertical arbitraria $h$ sobre la superficie de trabajo establece un diferencial geométrico de camino entre la onda directa y el rebote especular de la mesa, fijando la cota máxima para el enventanado temporal cuasi-anecoico.}
+    \caption{Geometría de propagación directa y reflexión especular en una
+    superficie horizontal. Para una fuente y un receptor situados a la misma
+    altura $h$, el método de la fuente imagen permite calcular la diferencia
+    entre las longitudes de los trayectos directo y reflejado.}
     \label{fig:geometria_cuasi_anecoica}
 \end{figure}
 
-\subsubsection{Propagación temporal directa: Tiempos de vuelo (ToA) y umbrales causales}
-El enfoque temporal se fundamenta en la medición directa del tiempo que invierte el frente de onda acústico en recorrer la distancia euclidiana rectilínea entre el emisor $S$ y el transductor receptor $R$. A partir del instante de arribo $t_{\text{arr}}$ discriminado por la Vía 3 de la Rama A (ecuación~\ref{eq:interpolacion_secante}), la distancia absoluta se calcula mediante la ley cinemática de propagación adiabática:
+\subsubsection{Estimación temporal: tiempo de llegada (ToA)}
+
+En condiciones de propagación directa, el tiempo de vuelo de una onda acústica
+entre una fuente y un receptor separados una distancia $r$ viene dado por
+
 \begin{equation}
-    r(t) = c(T) \cdot \left( t_{\text{arr}} - t_{\text{off}} \right),
+    t_{\mathrm{vuelo}} = \frac{r}{c(T)},
+\end{equation}
+
+donde $c(T)$ es la velocidad del sonido en el medio. Para aire seco, una
+aproximación de su dependencia con la temperatura es
+
+\begin{equation}
+    c(T) = 331.3
+    \sqrt{1+\frac{T}{273.15}},
+\end{equation}
+
+con $T$ expresada en grados Celsius. Esta expresión no incorpora correcciones
+por humedad, composición del aire ni gradientes térmicos.
+
+Si el instante de emisión es conocido y el retardo instrumental se representa
+mediante $t_{\mathrm{off}}$, la distancia puede estimarse como
+
+\begin{equation}
+    r(t) =
+    c(T)\left[t_{\mathrm{arr}}(t)-t_{\mathrm{off}}\right],
     \label{eq:distancia_toa_absoluta}
 \end{equation}
-donde $c(T)$ es la velocidad de propagación del sonido y $t_{\text{off}}$ engloba los retardos instrumentales sistemáticos (tiempo de establecimiento electroacústico del transductor, latencia de interrupción y retardo de grupo residual del acondicionamiento digital). Este parámetro se calibra estáticamente mediante un ensayo de referencia a distancia geométrica conocida $r_{\text{ref}}$:
+
+donde $t_{\mathrm{arr}}$ es el instante de llegada detectado por el receptor.
+El término $t_{\mathrm{off}}$ agrupa los retardos sistemáticos que afectan a la
+medición, entre ellos el retardo electroacústico del transductor y los retardos
+del acondicionamiento y de la cadena de adquisición.
+
+Una calibración a distancia conocida $r_{\mathrm{ref}}$ permite determinar un
+valor efectivo de dicho retardo:
+
 \begin{equation}
-    t_{\text{off}} = t_{\text{arr}}^{(\text{ref})} - \frac{r_{\text{ref}}}{c(T)}.
+    t_{\mathrm{off}} =
+    t_{\mathrm{arr}}^{(\mathrm{ref})}
+    - \frac{r_{\mathrm{ref}}}{c(T)}.
     \label{eq:calibracion_toffset}
 \end{equation}
 
-La incertidumbre instrumental en la estimación radial por tiempo de vuelo queda gobernada por la resolución temporal sub-microsegundo del operador secante $\hat{\mathcal{I}}_{zc}$ ($\Delta t_{\text{res}} \approx \SI{1}{\micro\second}$):
+Esta calibración corrige el retardo global bajo las condiciones del ensayo de
+referencia. No separa necesariamente las contribuciones individuales ni
+garantiza que el retardo permanezca constante ante cambios de frecuencia,
+temperatura, amplitud o configuración del procesamiento. Por ello, su
+estabilidad debe comprobarse cuando cambian las condiciones de medida.
+
+La conversión de una variación temporal en una variación de distancia se
+expresa como
+
 \begin{equation}
-    \Delta r_{\text{ToA}} = c(T) \cdot \Delta t_{\text{res}} \approx \SI{343.21}{\metre\per\second} \times \SI{1.0e-6}{\second} \approx \SI{0.34}{\milli\metre},
+    \delta r = c(T)\,\delta t.
+    \label{eq:conversion_resolucion_toa}
 \end{equation}
-otorgando una cota de resolución submilimétrica en ausencia de obstrucciones en la línea de vista directa.
 
-\subsubsection{Propagación energética: Inversión por densidad de flujo (Modelos \texorpdfstring{$1/r$}{1/r} y \texorpdfstring{$1/r^2$}{1/r²})}
-Como método ortogonal al tiempo de tránsito, la distancia radial puede inferirse a partir de la atenuación geométrica de la amplitud o del flujo energético acumulado, operando sobre los observables $A_{\text{RMS}}$ y $\mathcal{E}$ extraídos por la demodulación síncrona Lock-In (Vía 2 de la Rama A).
+A modo de referencia, una variación temporal de
+$\SI{1}{\micro\second}$ corresponde aproximadamente a
+$\SI{0.34}{\milli\metre}$ de recorrido acústico para
+$c=\SI{343.21}{\metre\per\second}$. Este resultado expresa una equivalencia
+cinemática entre tiempo y distancia; no constituye por sí mismo la incertidumbre
+ni la exactitud de la estimación ToA. Estas últimas dependen del ruido, la forma
+del pulso, el criterio de detección, la frecuencia de muestreo, la interpolación
+y la calibración del retardo instrumental.
 
-En un fluido homogéneo e infinito, el frente de onda radiado por una fuente puntual esférica distribuye su energía sobre superficies que crecen con $4\pi r^2$. Bajo condiciones de campo libre o en ausencia estricta de reflexiones de contorno ($c_{\text{room}} \to 0$), la presión acústica eficaz decae de manera inversamente proporcional a la distancia métrica \cite{kinsler2000fundamentals}:
+\subsubsection{Estimación mediante amplitud y energía recibidas}
+
+En un medio homogéneo y sin pérdidas, una fuente puntual que radia
+aproximadamente de forma esférica produce una amplitud de presión acústica
+proporcional a $1/r$ en campo lejano. Esta dependencia se obtiene de la
+conservación de la potencia radiada sobre superficies esféricas cuya área crece
+como $4\pi r^2$ \cite{kinsler2000fundamentals,morse1968theoretical}.
+
+Si la respuesta del sistema de emisión y recepción se mantiene constante, una
+magnitud eléctrica proporcional a la amplitud acústica puede modelarse
+empíricamente como
+
 \begin{equation}
-    A_{\text{RMS}}(r) = \frac{k_A}{r} \implies r_{\text{amp}}(t) = \frac{k_A}{A_{\text{RMS}}(t)},
+    A(r) = \frac{k_A}{r},
+\end{equation}
+
+de donde se obtiene la estimación
+
+\begin{equation}
+    r_{\mathrm{amp}} =
+    \frac{k_A}{A(r)}.
     \label{eq:inversion_amplitud}
 \end{equation}
-donde $k_A$ es la constante de acoplamiento electroacústico del sistema (en unidades de $\si{\volt\metre}$). Análogamente, la densidad de energía directa acumulada $\mathcal{E}$ satisface la ley del inverso del cuadrado de la distancia \cite{morse1968theoretical}:
+
+La constante $k_A$ debe determinarse mediante calibración y recoge tanto la
+intensidad de emisión como el acoplamiento electroacústico y la ganancia del
+canal de recepción. Por tanto, $A(r)$ debe entenderse como una amplitud
+eléctrica medida, salvo que exista una calibración adicional que permita
+expresarla en unidades de presión acústica.
+
+De manera análoga, si la magnitud digital acumulada es proporcional al
+cuadrado de la amplitud durante una ventana temporal de duración fija, puede
+utilizarse el modelo empírico
+
 \begin{equation}
-    \mathcal{E}(r) = \frac{k_E}{r^2} \implies r_{\text{energy}}(t) = \sqrt{\frac{k_E}{\mathcal{E}(t)}},
+    \mathcal{E}_{\mathrm{dig}}(r) =
+    \frac{k_E}{r^2},
+\end{equation}
+
+y su inversión
+
+\begin{equation}
+    r_{\mathrm{energy}} =
+    \sqrt{\frac{k_E}{\mathcal{E}_{\mathrm{dig}}(r)}}.
     \label{eq:inversion_energia}
 \end{equation}
-siendo $k_E$ el coeficiente energético de calibración ($\si{\volt\squared\second\metre\squared}$).
 
-\subsubsection{Mecanismo de reflexión en límites cercanos y condición de corte cuasi-anecoica}
-La validez física de las leyes de decaimiento~(\ref{eq:inversion_amplitud}) y~(\ref{eq:inversion_energia}) se degrada severamente si las reflexiones de contorno interfieren constructiva o destructivamente con la señal incidente, generando patrones de onda estacionaria. En un entorno cerrado, las superficies reflectores dominantes más próximas corresponden comúnmente a los límites horizontales (mesa de soporte o suelo) adyacentes al montaje.
+Aquí $\mathcal{E}_{\mathrm{dig}}$ representa una magnitud digital proporcional
+a la suma de cuadrados de las muestras o a su integral temporal, según la
+normalización empleada en la implementación. No debe interpretarse directamente
+como energía acústica absoluta en julios. La constante $k_E$ se determina
+experimentalmente y depende de la definición de la magnitud digital, de la
+ventana de integración y de la respuesta del sistema.
 
-Tal como se esquematiza en la Figura~\ref{fig:geometria_cuasi_anecoica}, al elevar el emisor y el receptor a una altura vertical arbitraria $h$ sobre la superficie horizontal de referencia, la propagación acústica se descompone en dos trayectorias geométricas fundamentales:
-\begin{enumerate}
-    \item \textbf{Rayo directo:} Recorre la distancia horizontal $r_{\text{dir}} = r$ con un tiempo de tránsito $t_{\text{dir}} = r/c$.
-    \item \textbf{Rayo reflejado especular:} Rebota en la superficie intermedia, recorriendo una distancia euclidiana total calculada por simetría especular:
-    \begin{equation}
-        r_{\text{refl}} = 2\sqrt{\left(\frac{r}{2}\right)^2 + h^2} = \sqrt{r^2 + 4h^2}.
-    \end{equation}
-\end{enumerate}
-El diferencial geométrico de camino entre la onda directa y el primer eco especular es:
+Las relaciones anteriores requieren condiciones de propagación próximas a las
+de campo libre, una fuente con emisión suficientemente estable, una respuesta
+de recepción reproducible y una ventana temporal comparable entre mediciones.
+La atenuación atmosférica, la directividad de la fuente, las reflexiones y las
+variaciones de ganancia pueden apartar las observaciones de las leyes ideales
+$1/r$ y $1/r^2$. Por ello, estas expresiones deben utilizarse como modelos de
+calibración dentro del intervalo de distancias caracterizado, no como leyes
+universales para cualquier recinto.
+
+\subsubsection{Reflexión especular y selección de la ventana temporal}
+
+Las reflexiones de las superficies próximas pueden superponerse a la señal
+directa y modificar su amplitud y fase. Para estudiar una reflexión especular
+en una superficie horizontal, se considera una fuente y un receptor situados a
+la misma altura $h$ sobre dicha superficie y separados horizontalmente una
+distancia $r$.
+
+El trayecto directo tiene longitud
+
 \begin{equation}
-    \Delta r_{\text{refl}} = r_{\text{refl}} - r_{\text{dir}} = \sqrt{r^2 + 4h^2} - r,
+    r_{\mathrm{dir}} = r.
+\end{equation}
+
+Mediante el método de la fuente imagen, el trayecto reflejado se representa
+como una línea recta entre el receptor y la imagen de la fuente situada a una
+distancia vertical $2h$ respecto de la fuente real. Su longitud es
+
+\begin{equation}
+    r_{\mathrm{refl}} = \sqrt{r^2+4h^2}.
+\end{equation}
+
+La diferencia entre ambos recorridos resulta
+
+\begin{equation}
+    \Delta r_{\mathrm{refl}} =
+    \sqrt{r^2+4h^2}-r,
     \label{eq:delta_r_refl}
 \end{equation}
-lo que introduce un retraso temporal neto para la interferencia reflejada de $\Delta t_{\text{refl}} = \Delta r_{\text{refl}} / c$. 
 
-Para asegurar que la integración energética Lock-In opere en un régimen estrictamente cuasi-anecoico ($c_{\text{room}} \to 0$), la ventana temporal impuesta por el operador $\hat{T}_{\text{gate}}$ ($K = 3$ ciclos de portadora, $T_{\text{gate}} \approx \SI{1.13}{\milli\second}$) debe extinguirse por completo antes del arribo del frente reflejado:
+y el retraso de llegada de esa reflexión respecto a la onda directa es
+
 \begin{equation}
-    c(T) \cdot T_{\text{gate}} < \sqrt{r^2 + 4h^2} - r.
+    \Delta t_{\mathrm{refl}} =
+    \frac{\Delta r_{\mathrm{refl}}}{c(T)}.
+\end{equation}
+
+Si la ventana de integración comienza con la llegada de la señal directa,
+una condición geométrica para que termine antes de la llegada de esa reflexión
+es
+
+\begin{equation}
+    T_{\mathrm{gate}} <
+    \frac{\sqrt{r^2+4h^2}-r}{c(T)}.
     \label{eq:criterio_corte_anecoico}
 \end{equation}
-En el diseño experimental, la cota en~(\ref{eq:criterio_corte_anecoico}) impone una condición analítica estricta sobre la elección de la altura física $h$ en función del rango de distancias $r$ que se pretenda caracterizar, garantizando que la energía integrada en~(\ref{eq:energia_directa}) corresponda exclusivamente al frente de onda esférico directo.
+
+Esta condición solo considera la reflexión especular de la superficie
+horizontal descrita. No excluye reflexiones procedentes de otras superficies,
+ni garantiza que la respuesta del recinto sea anecoica. Además, en una
+adquisición real deben considerarse la duración del pulso, el tiempo de
+establecimiento del transductor y la posición efectiva de inicio de la ventana.
+En consecuencia, el criterio constituye una condición geométrica de selección
+temporal para una reflexión particular, no una garantía de que la energía
+integrada corresponda exclusivamente a la onda directa.
 
 % ==============================================================================
-% 2.3. INVERSIÓN DE LA COORDENADA ANGULAR: LOCALIZACIÓN DIRECCIONAL \theta
+% 2.3. ESTIMACIÓN ANGULAR
 % ==============================================================================
-\subsection{Inversión de la coordenada angular: Localización direccional \texorpdfstring{$\theta$}{theta}}
 
-Además de la distancia radial $r$, la determinación unívoca de la posición espacial de una fuente acústica exige conocer su orientación angular $\theta$ respecto al eje transversal del instrumento (plano de \textit{broadside}, definido sobre el eje normal $y$ a $\theta = 0^\circ$). El sistema WALO resuelve esta coordenada mediante interferometría de fase intercanal (PDoA) y desequilibrio energético diferencial, acotados por los límites fundamentales del muestreo espacial en medios continuos.
+\subsection{Estimación angular mediante diferencias intercanal}
+
+La estimación angular requiere relacionar las señales registradas por dos
+receptores separados una distancia conocida $d$. Se considera un arreglo
+lineal situado sobre el eje $x$, con centro en el origen, mientras que el eje
+$y$ define la dirección normal al arreglo. El ángulo $\theta$ se mide respecto
+a dicho eje normal, de modo que $\theta=0$ corresponde a la dirección
+\textit{broadside}.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig5_geometria_2d_angular.tex}
     \vspace{0.25cm}
-    \caption{Geometría unificada de localización acústica 2D sobre el plano horizontal. El ángulo de incidencia $\theta$ se mide respecto al eje normal de avance (\textit{broadside}, eje $y$). El diferencial de camino espacial $\Delta r = r_1 - r_2$ define simultáneamente el desfase interferométrico intercanal $\Delta\Phi$ y la trayectoria de la superficie hiperbólica TDOA, acotada por la condición de no-ambigüedad espacial $d \le \lambda_0/2$.}
+    \caption{Geometría del arreglo lineal de dos receptores. El ángulo de
+    incidencia se mide respecto al eje normal al arreglo. La diferencia de
+    camino entre los receptores permite formular estimadores angulares basados
+    en fase o en tiempos de llegada.}
     \label{fig:geometria_2d_angular}
 \end{figure}
 
-\subsubsection{Interferometría de fase intercanal (PDoA / Autodyne Phase)}
-Cuando la onda armónica emitida por la fuente $S(x, y)$ incide sobre el arreglo dual con un ángulo de llegada $\theta$ (Figura~\ref{fig:geometria_2d_angular}), la separación física entre los receptores introduce una diferencia de camino geométrico $\Delta r$:
+\subsubsection{Diferencia de fase intercanal (PDoA)}
+
+En el régimen de campo lejano, las direcciones de propagación hacia los dos
+receptores pueden considerarse aproximadamente paralelas. La diferencia de
+camino entre los sensores se expresa entonces como
+
 \begin{equation}
-    \Delta r = d \sin\theta.
+    \Delta r = r_1-r_2 = d\sin\theta,
     \label{eq:desvio_camino_optico}
 \end{equation}
-Este retraso espacial induce una diferencia de fase instantánea intercanal $\Delta\Phi$, la cual se extrae de manera coherente y síncrona a partir de las fases espectrales $\Phi_1$ y $\Phi_2$ registradas en el vector de observables $\vec{\mathcal{O}}$:
+
+donde $r_1$ y $r_2$ son las distancias desde la fuente hasta los receptores
+$R_1$ y $R_2$, respectivamente. Esta convención de signo corresponde a
+$R_1=(-d/2,0)$ y $R_2=(+d/2,0)$.
+
+Para una señal armónica de frecuencia $f_0$, la diferencia de fase debida a
+la propagación es
+
 \begin{equation}
-    \Delta\Phi = \Phi_2 - \Phi_1 = \frac{2\pi f_0}{c(T)} \, d \sin\theta.
+    \Delta\Phi =
+    \Phi_2-\Phi_1 =
+    \frac{2\pi f_0}{c(T)}d\sin\theta.
     \label{eq:diferencia_fase_intercanal}
 \end{equation}
 
-Invirtiendo analíticamente la expresión~(\ref{eq:diferencia_fase_intercanal}), se formula el operador de inversión angular por interferometría de fase (PDoA):
+La relación anterior presupone que se ha corregido la diferencia de fase
+instrumental entre canales y que la fase se interpreta con una convención
+consistente. La fase medida es periódica módulo $2\pi$; por tanto, su inversión
+requiere seleccionar una rama de fase compatible con la geometría y con el
+intervalo angular de interés.
+
+Cuando esa rama es conocida y el argumento se encuentra dentro del dominio
+físico, la estimación angular es
+
 \begin{equation}
-    \theta_{\text{phase}} = \arcsin\left( \text{clip}\left( \frac{c(T) \cdot \Delta\Phi}{2\pi f_0 d}, \, -1.0, \, 1.0 \right) \right),
+    \theta_{\mathrm{PDoA}} =
+    \arcsin\left(
+    \frac{c(T)\,\Delta\Phi}{2\pi f_0d}
+    \right).
     \label{eq:inversion_angular_fase}
 \end{equation}
-donde la función $\text{clip}(\cdot)$ actúa como una guarda numérica determinista que confina estrictamente el argumento dentro del dominio físico del arcoseno $[-1, 1]$, previniendo divergencias computacionales ante perturbaciones transitorias de ruido acústico.
 
-\subsubsection{Desequilibrio de intensidad diferencial (Monopulse energético)}
-Como mecanismo ortogonal a la fase, el instrumento puede estimar el rumbo angular comparando las densidades de energía directa $\mathcal{E}_1$ y $\mathcal{E}_2$ recolectadas por cada transceptor durante la ventana de integración cuasi-anecoica. Considerando la ley de decaimiento esférico en campo cercano descrita en el capítulo anterior, las distancias euclidianas a cada sensor se aproximan en primer orden como $r_1 \approx r + \frac{d}{2}\sin\theta$ y $r_2 \approx r - \frac{d}{2}\sin\theta$. Operando algebraicamente sobre el cociente normalizado de densidades de flujo, se define el monopulse energético \cite{skolnik2001introduction}:
+En la implementación numérica puede limitarse el argumento del arcoseno para
+evitar errores de dominio debidos al redondeo. Sin embargo, si el valor medido
+queda fuera del intervalo $[-1,1]$ por una discrepancia física o por ruido, el
+recorte numérico no resuelve la incompatibilidad: puede ocultarla y sesgar la
+estimación hacia un ángulo extremo. Estos casos deben identificarse como
+mediciones no compatibles con el modelo o tratarse mediante un procedimiento
+estadístico explícito.
+
+\subsubsection{Estimación angular mediante desequilibrio energético}
+
+Una alternativa a la estimación por fase consiste en comparar las magnitudes
+energéticas registradas por ambos receptores. Se considera el modelo ideal
+
 \begin{equation}
-    \frac{\mathcal{E}_2 - \mathcal{E}_1}{\mathcal{E}_1 + \mathcal{E}_2} \approx \frac{d \sin\theta}{r + \frac{d^2}{4r}},
+    \mathcal{E}_1 \propto \frac{1}{r_1^2},
+    \qquad
+    \mathcal{E}_2 \propto \frac{1}{r_2^2},
+\end{equation}
+
+que supone respuestas de canal equivalentes y una propagación dominada por
+la onda directa.
+
+En campo lejano, las distancias pueden aproximarse mediante
+
+\begin{equation}
+    r_1 \simeq r+\frac{d}{2}\sin\theta,
+    \qquad
+    r_2 \simeq r-\frac{d}{2}\sin\theta,
+\end{equation}
+
+donde $r$ es la distancia desde el punto medio del arreglo hasta la fuente.
+Definiendo el cociente diferencial normalizado
+
+\begin{equation}
+    D_E =
+    \frac{\mathcal{E}_2-\mathcal{E}_1}
+    {\mathcal{E}_1+\mathcal{E}_2},
+\end{equation}
+
+y sustituyendo el modelo de energía inversamente proporcional al cuadrado de
+la distancia, se obtiene
+
+\begin{equation}
+    D_E =
+    \frac{r_1^2-r_2^2}{r_1^2+r_2^2}.
+\end{equation}
+
+Con las aproximaciones geométricas anteriores,
+
+\begin{equation}
+    D_E \simeq
+    \frac{d\,r\sin\theta}
+    {r^2+\dfrac{d^2}{4}\sin^2\theta}.
     \label{eq:monopulse_energetico}
 \end{equation}
-lo que permite despejar el ángulo de incidencia $\theta_{\text{energy}}$ sin depender de la fase espectral. Aunque este enfoque es insensible a los saltos de ciclo de $2\pi$, su resolución espacial es menor a la interferometría de fase debido a su sensibilidad ante asimetrías de sensibilidad en las membranas de los transductores.
 
-\subsubsection{El límite de aliasing espacial y la cota de la línea de base}
-La validez unívoca de la inversión por fase en~(\ref{eq:inversion_angular_fase}) exige que la diferencia de camino no introduzca desfases superiores a $\pm \pi$, evitando la aparición de lóbulos de difracción espurios (ambigüedad interferométrica de fase). Para garantizar que cualquier ángulo en el semicírculo frontal de visibilidad $\theta \in [-90^\circ, 90^\circ]$ se mapee sin ambigüedad dentro del intervalo principal $[-\pi, \pi]$, la separación entre sensores $d$ debe satisfacer el teorema de muestreo espacial de Nyquist:
+Si además $d/r\ll 1$, el término cuadrático del denominador puede despreciarse
+y resulta
+
 \begin{equation}
-    \Delta r_{\max} = d \le \frac{\lambda_0}{2} = \frac{c(T)}{2 f_0}.
+    D_E \simeq \frac{d}{r}\sin\theta.
+    \label{eq:monopulse_farfield}
+\end{equation}
+
+Este estimador no presenta ambigüedad de fase módulo $2\pi$, pero su respuesta
+depende de la distancia y de la igualdad de sensibilidad entre canales.
+Diferencias de ganancia, directividad de los transductores, reflexiones y
+variaciones de amplitud de la fuente pueden producir un desequilibrio que no
+corresponda exclusivamente al ángulo. Por ello, su uso requiere calibrar ambos
+canales y caracterizar el intervalo de distancias y ángulos en el que la
+aproximación es válida.
+
+\subsubsection{Separación entre sensores y ambigüedad espacial}
+
+La fase de una señal armónica solo permite conocer la diferencia de camino
+módulo una longitud de onda
+
+\begin{equation}
+    \lambda_0 = \frac{c(T)}{f_0}.
+\end{equation}
+
+Para un arreglo lineal, la condición
+
+\begin{equation}
+    d \leq \frac{\lambda_0}{2}
     \label{eq:condicion_aliasing}
 \end{equation}
-Para la frecuencia nominal de trabajo del instrumento ($f_0 \approx \SI{2.6}{\kilo\hertz}$ y $c \approx \SI{343.21}{\metre\per\second}$), la longitud de onda acústica en el aire es $\lambda_0 \approx \SI{13.2}{\centi\metre}$, lo que impone un límite geométrico superior de $d \le \SI{6.6}{\centi\metre}$. La arquitectura instrumental adopta una línea de base rígida estándar de $d = \SI{5.0}{\centi\metre}$ ($d/\lambda_0 \approx 0.38$), blindando completamente el procesamiento angular contra efectos de aliasing espacial en todo el sector de barrido.
+
+limita la diferencia de fase geométrica al intervalo principal de fase para
+el sector frontal. Esta condición evita ambigüedades espaciales de fase
+asociadas a separaciones mayores que media longitud de onda en el modelo
+ideal. No elimina errores de calibración, saltos de ciclo, reflexiones ni
+ambigüedades debidas a una relación señal-ruido insuficiente.
+
+Para una frecuencia de referencia $f_0=\SI{2.6}{\kilo\hertz}$ y una velocidad
+del sonido de $c=\SI{343.21}{\metre\per\second}$, se obtiene
+
+\begin{equation}
+    \lambda_0 \simeq \SI{13.2}{\centi\metre},
+    \qquad
+    \frac{\lambda_0}{2}\simeq \SI{6.6}{\centi\metre}.
+\end{equation}
+
+Una línea de base de $\SI{5.0}{\centi\metre}$ satisface la condición anterior
+para esa frecuencia nominal. Esta elección evita la ambigüedad espacial
+idealizada en el sector frontal, pero no constituye por sí sola una garantía
+de exactitud angular.
 
 % ==============================================================================
-% 2.4. INVERSIÓN DEL CAMPO VECTORIAL DE VELOCIDADES: DINÁMICA TEMPORAL v(t)
+% 2.4. ESTIMACIÓN DE VELOCIDAD
 % ==============================================================================
-\subsection{Inversión del campo vectorial de velocidades: Dinámica temporal \texorpdfstring{$v(t)$}{v(t)}}
 
-La monitorización cinemática en tiempo real de cuerpos en movimiento continuo exige estimar el campo escalar de velocidades instantáneas $v(t)$ a partir de las perturbaciones espectrales inducidas en el campo acústico. El instrumento WALO implementa un esquema de velocimetría diferencial basado en la divergencia de frecuencia entre receptores colineales opuestos (\textit{Frequency Difference of Arrival / FDoA}), el cual posee la propiedad física fundamental de cancelar analíticamente por modo común cualquier inestabilidad o deriva térmica del oscilador emisor \cite{chestnut1982estimation}.
+\subsection{Estimación de velocidad mediante el efecto Doppler}
+
+La velocidad de una fuente sonora puede estimarse a partir del desplazamiento
+de frecuencia producido por su movimiento relativo respecto a los receptores.
+Se considera una trayectoria rectilínea entre dos receptores fijos $R_1$ y
+$R_2$, situados en $x=0$ y $x=L$, respectivamente. La fuente se desplaza en
+el sentido positivo del eje $x$, con velocidad $v>0$ cuando se aproxima a
+$R_2$ y se aleja de $R_1$.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig6_doppler_fdoa.tex}
     \vspace{0.25cm}
-    \caption{Cinemática del efecto Doppler diferencial 1D. La fuente móvil emite frentes de onda esféricos que experimentan compresión espacial hacia el receptor de avance $R_2$ ($\lambda_2 < \lambda_0 \implies f_2 > f_0$) y dilatación hacia el receptor posterior $R_1$ ($\lambda_1 > \lambda_0 \implies f_1 < f_0$). El cociente normalizado entre la resta y la suma de frecuencias cancela de forma exacta las fluctuaciones intrínsecas de la portadora emitida.}
+    \caption{Esquema del efecto Doppler para una fuente que se desplaza entre
+    dos receptores fijos. La frecuencia recibida aumenta en el receptor hacia
+    el que se aproxima la fuente y disminuye en el receptor del que se aleja.}
     \label{fig:doppler_fdoa}
 \end{figure}
 
-\subsubsection{Espectrometría de frecuencia instantánea y Doppler diferencial (FDoA)}
-Considere una fuente acústica puntual que emite una onda armónica con frecuencia propia $f_0$, la cual se desplaza a lo largo de una trayectoria rectilínea 1D delimitada entre dos transductores fijos: el receptor $R_1$ situado en el origen del recorrido ($x = 0$) y el receptor $R_2$ situado en el extremo opuesto ($x = L$), como se ilustra en la Figura~\ref{fig:doppler_fdoa}.
+\subsubsection{Relación Doppler para receptores opuestos}
 
-Bajo la convención de velocidad positiva hacia la derecha ($v > 0$ dirigida en sentido de avance hacia $R_2$), y considerando un fluido homogéneo en reposo adiabático, la relación cinemática clásica exacta para una fuente en movimiento radiando hacia receptores en reposo está dada por~\cite{kinsler2000fundamentals, pierce1989acoustics}:
+Para una fuente que emite una señal armónica de frecuencia $f_e$ y se mueve
+con velocidad constante en un medio en reposo, las frecuencias recibidas por
+los dos sensores son
+
 \begin{equation}
-    f_1(t) = \frac{f_0}{1 + \frac{v(t)}{c(T)}}, \qquad f_2(t) = \frac{f_0}{1 - \frac{v(t)}{c(T)}}.
+    f_1 =
+    \frac{f_e}{1+\dfrac{v}{c(T)}},
+    \qquad
+    f_2 =
+    \frac{f_e}{1-\dfrac{v}{c(T)}}.
     \label{eq:doppler_exacto}
 \end{equation}
 
-En experimentos de dinámica mecánica en laboratorio, las velocidades del móvil se encuentran en un régimen netamente subsónico bajo ($v \le \SI{1.5}{\metre\per\second}$), lo que corresponde a un número de Mach muy inferior a la unidad:
+Estas expresiones corresponden al caso ideal en que el movimiento es
+rectilíneo, la velocidad es colineal con la línea fuente-receptor y la
+frecuencia emitida puede considerarse constante durante los intervalos de
+emisión que originan ambas señales recibidas. En un movimiento acelerado,
+la formulación debe considerar las velocidades y los instantes de emisión
+retardados correspondientes a cada receptor.
+
+Definiendo el número de Mach de la fuente como
+
 \begin{equation}
-    \beta(t) = \frac{v(t)}{c(T)} \le \frac{\SI{1.5}{\metre\per\second}}{\SI{343.21}{\metre\per\second}} \approx 4.37 \times 10^{-3} \ll 1.
+    \beta = \frac{v}{c(T)},
 \end{equation}
-Desarrollando las expresiones exactas~(\ref{eq:doppler_exacto}) en serie de Taylor de primer orden respecto al parámetro adimensional $\beta$:
+
+y considerando velocidades mucho menores que la velocidad del sonido,
+$\lvert\beta\rvert\ll 1$, las expresiones anteriores pueden aproximarse a
+primer orden:
+
 \begin{equation}
-    (1 \pm \beta)^{-1} = 1 \mp \beta + \mathcal{O}(\beta^2),
-\end{equation}
-los términos cuadráticos $\beta^2 \sim 10^{-5}$ introducen una discrepancia analítica inferior al $0.004\,\%$, lo que legitima plenamente la formulación linealizada estándar:
-\begin{equation}
-    f_1(t) \approx f_0 \left( 1 - \frac{v(t)}{c(T)} \right), \qquad f_2(t) \approx f_0 \left( 1 + \frac{v(t)}{c(T)} \right).
+    f_1 \simeq f_e(1-\beta),
+    \qquad
+    f_2 \simeq f_e(1+\beta).
     \label{eq:doppler_unilateral}
 \end{equation}
 
-En sistemas instrumentales convencionales basados en un único receptor, despejar $v(t)$ a partir de~(\ref{eq:doppler_unilateral}) exige asumir que la frecuencia portadora en reposo $f_0$ es estrictamente constante. No obstante, en actuadores reales (como transductores piezoeléctricos o zumbadores cerámicos auto-oscilantes), la frecuencia experimenta derivas continuas por calentamiento óhmico o fatiga mecánica $\Delta f_{\text{drift}}(t)$. En un sensor unilateral, dicha variación paramétrica es indistinguible de una aceleración real del móvil, induciendo severos errores sistemáticos en la trayectoria calculada.
+Para $v=\SI{1.5}{\metre\per\second}$ y
+$c=\SI{343.21}{\metre\per\second}$, el número de Mach es aproximadamente
+$4.37\times10^{-3}$. En este régimen, la aproximación de primer orden es
+adecuada para describir el efecto Doppler con una precisión acorde con el
+modelo, aunque las correcciones de orden superior no deben confundirse con
+la incertidumbre experimental del estimador.
 
-Para neutralizar experimentalmente esta vulnerabilidad, el instrumento WALO evalúa el operador de \textbf{Doppler diferencial covariante}, estructurado como el cociente normalizado entre la resta y la semisuma de las frecuencias instantáneas demoduladas por las Ramas A y B:
+\subsubsection{Estimador diferencial de velocidad}
+
+A partir de las dos frecuencias recibidas, se define el estimador diferencial
+
 \begin{equation}
-    v_{\text{diff}}(t) = c(T) \cdot \left( \frac{f_2(t) - f_1(t)}{f_1(t) + f_2(t)} \right).
+    \hat{v}_{\mathrm{diff}} =
+    c(T)\frac{f_2-f_1}{f_1+f_2}.
     \label{eq:doppler_diferencial_formal}
 \end{equation}
 
-\subsubsection{Demostración analítica de la cancelación de deriva por modo común}
-Suponga que la frecuencia instantánea emitida por la fuente incorpora una función de inestabilidad o deriva temporal arbitraria $\Delta f_{\text{drift}}(t)$ superpuesta a su tono nominal:
-\begin{equation}
-    f_{\text{emitido}}(t) = f_0 + \Delta f_{\text{drift}}(t).
-\end{equation}
-Sustituyendo esta emisión no ideal en las leyes de recepción linealizadas~(\ref{eq:doppler_unilateral}):
+Si se sustituyen las expresiones exactas de la ecuación
+(\ref{eq:doppler_exacto}), con una misma frecuencia emitida $f_e$ para ambos
+receptores, se obtiene
+
 \begin{align}
-    f_1(t) &= \left[ f_0 + \Delta f_{\text{drift}}(t) \right] \left( 1 - \frac{v(t)}{c(T)} \right), \label{eq:f1_deriva} \\
-    f_2(t) &= \left[ f_0 + \Delta f_{\text{drift}}(t) \right] \left( 1 + \frac{v(t)}{c(T)} \right). \label{eq:f2_deriva}
+    f_2-f_1
+    &=
+    f_e\left[
+    \frac{1}{1-\beta}-\frac{1}{1+\beta}
+    \right]
+    =
+    \frac{2f_e\beta}{1-\beta^2},\\
+    f_1+f_2
+    &=
+    f_e\left[
+    \frac{1}{1-\beta}+\frac{1}{1+\beta}
+    \right]
+    =
+    \frac{2f_e}{1-\beta^2}.
 \end{align}
 
-Al conformar algebraicamente la diferencia y la suma simétrica de ambas señales:
-\begin{align}
-    f_2(t) - f_1(t) &= 2 \left[ f_0 + \Delta f_{\text{drift}}(t) \right] \frac{v(t)}{c(T)}, \label{eq:diff_doppler} \\
-    f_1(t) + f_2(t) &= 2 \left[ f_0 + \Delta f_{\text{drift}}(t) \right]. \label{eq:sum_doppler}
-\end{align}
-Al evaluar el cociente diferencial definido en~(\ref{eq:doppler_diferencial_formal}), el término entre corchetes correspondiente a la frecuencia perturbada actúa como un factor escalar de modo común en el numerador y denominador, cancelándose de manera idéntica y simultánea:
+Por tanto,
+
 \begin{equation}
-    \frac{f_2(t) - f_1(t)}{f_1(t) + f_2(t)} = \frac{2 \left[ f_0 + \Delta f_{\text{drift}}(t) \right] \frac{v(t)}{c(T)}}{2 \left[ f_0 + \Delta f_{\text{drift}}(t) \right]} = \frac{v(t)}{c(T)}.
-    \label{eq:cancelacion_drift}
+    \frac{f_2-f_1}{f_1+f_2}=\beta,
 \end{equation}
-Multiplicando por la velocidad del sonido $c(T)$, se recupera la velocidad física instantánea:
+
+y el estimador recupera
+
 \begin{equation}
-    v(t) = c(T) \cdot \left(\frac{f_2(t) - f_1(t)}{f_1(t) + f_2(t)}\right),
+    \hat{v}_{\mathrm{diff}}=v.
     \label{eq:velocidad_final_doppler}
 \end{equation}
-demostrando que la estimación de velocidad es matemáticamente inmune a derivas térmicas, envejecimiento o variaciones en la tensión de polarización del oscilador.
 
-De forma complementaria, la frecuencia portadora instantánea real del emisor se monitorea en tiempo real a partir de la semisuma de los canales:
+La cancelación de $f_e$ es exacta dentro de este modelo. En particular, el
+cociente no necesita conocer de antemano el valor absoluto de la frecuencia
+emitida. Esta propiedad hace al estimador menos sensible a cambios comunes
+de frecuencia que afecten por igual a las dos mediciones.
+
+Sin embargo, en una adquisición física los receptores pueden registrar
+emisiones correspondientes a instantes distintos, debido a las diferencias
+de distancia entre la fuente y cada sensor. Si la frecuencia emitida varía
+con el tiempo, las dos frecuencias recibidas no contienen necesariamente el
+mismo factor $f_e$. La cancelación deja entonces de ser exacta. Su validez
+como aproximación requiere que la deriva de frecuencia sea suficientemente
+lenta durante la diferencia entre los tiempos de emisión asociados a ambos
+receptores, y que las ventanas de estimación espectral estén temporalmente
+alineadas de forma adecuada.
+
+La frecuencia media
+
 \begin{equation}
-    f_{0,\text{common}}(t) = \frac{f_1(t) + f_2(t)}{2} = f_0 + \Delta f_{\text{drift}}(t),
+    f_{\mathrm{mean}} =
+    \frac{f_1+f_2}{2}
     \label{eq:f0_common}
 \end{equation}
-proporcionando una métrica diagnóstica continua de la estabilidad del transductor durante las adquisiciones cinemáticas.
+
+puede utilizarse como indicador de la escala de frecuencia común. No coincide
+exactamente con la frecuencia emitida en el modelo Doppler exacto, pues
+
+\begin{equation}
+    f_{\mathrm{mean}} =
+    \frac{f_e}{1-\beta^2}.
+\end{equation}
+
+Para $\lvert\beta\rvert\ll1$, esta diferencia es de segundo orden y la
+semisuma constituye una aproximación a la frecuencia de emisión. Su uso como
+indicador de deriva debe interpretarse teniendo en cuenta esta corrección y
+los posibles retardos de propagación diferentes.
 
 % ==============================================================================
-% 2.5. SÍNTESIS GEOMÉTRICA 2D: MULTILATERACIÓN Y RECONSTRUCCIÓN DE TRAYECTORIAS
+% 2.5. RECONSTRUCCIÓN GEOMÉTRICA BIDIMENSIONAL
 % ==============================================================================
-\subsection{Síntesis geométrica: Multilateración hiperbólica 2D y reconstrucción de trayectorias \texorpdfstring{$(x, y)$}{(x, y)}}
 
-La integración simultánea de los observables de tiempo de vuelo ($r_1, r_2$) y de diferencia de llegada ($\Delta r$) permite expandir la telemetría unidimensional hacia la reconstrucción cartesiana bidimensional $(x, y)$ sobre el plano de propagación. Retomando la geometría formalizada en la Figura~\ref{fig:geometria_2d_angular}, el origen del marco de referencia $(0, 0)$ se sitúa en el punto medio de la línea de base, ubicando los transceptores en las coordenadas fijas $R_1\left(-\frac{d}{2}, 0\right)$ y $R_2\left(+\frac{d}{2}, 0\right)$.
+\subsection{Reconstrucción geométrica bidimensional}
 
-\subsubsection{Solución analítica del sistema de multilateración}
-Conociendo los radios de propagación absolutos $r_1$ y $r_2$ obtenidos mediante la calibración de tiempos de arribo~(\ref{eq:distancia_toa_absoluta}), el estado espacial de la fuente satisface el sistema de ecuaciones cuadráticas:
+Dos distancias absolutas medidas desde receptores cuya posición es conocida
+permiten reconstruir la posición de una fuente en el plano, salvo una
+ambigüedad de simetría respecto a la línea que une los receptores. Este
+procedimiento corresponde a la intersección de dos circunferencias. Es
+distinto de la localización basada exclusivamente en TDOA, en la que una
+diferencia de distancias constante define una hipérbola.
+
+Se considera el sistema de referencia de la Figura
+\ref{fig:geometria_2d_angular}, con los receptores situados en
+
+\begin{equation}
+    R_1=\left(-\frac{d}{2},0\right),
+    \qquad
+    R_2=\left(+\frac{d}{2},0\right).
+\end{equation}
+
+\subsubsection{Intersección de circunferencias a partir de ToA}
+
+Sean $r_1$ y $r_2$ las distancias estimadas desde la fuente hasta los
+receptores $R_1$ y $R_2$. La posición $(x,y)$ satisface
+
 \begin{align}
-    \left(x + \frac{d}{2}\right)^2 + y^2 &= r_1^2, \label{eq:circulo_r1} \\
-    \left(x - \frac{d}{2}\right)^2 + y^2 &= r_2^2. \label{eq:circulo_r2}
+    \left(x+\frac{d}{2}\right)^2+y^2 &= r_1^2,
+    \label{eq:circulo_r1}\\
+    \left(x-\frac{d}{2}\right)^2+y^2 &= r_2^2.
+    \label{eq:circulo_r2}
 \end{align}
 
-Restando miembro a miembro las expresiones~(\ref{eq:circulo_r1}) y~(\ref{eq:circulo_r2}), se cancela el término radial $x^2 + y^2$, permitiendo despejar de forma unívoca y exacta la coordenada transversal $x$ \cite{brandstein2001microphone}:
+Restando ambas ecuaciones se obtiene
+
 \begin{equation}
-    x = \frac{r_1^2 - r_2^2}{2d} = \frac{(r_1 + r_2)(r_1 - r_2)}{2d} = \frac{r_{\text{mean}} \, \Delta r}{d},
+    x=\frac{r_1^2-r_2^2}{2d}.
     \label{eq:coordenada_x_analitica}
 \end{equation}
-donde $r_{\text{mean}} = \frac{1}{2}(r_1 + r_2)$ denota la distancia media radial y $\Delta r = r_1 - r_2$ es la diferencia de trayectoria evaluada por TDOA.
 
-Por otra parte, sumando miembro a miembro las ecuaciones~(\ref{eq:circulo_r1}) y~(\ref{eq:circulo_r2}), se obtiene la relación de conservación simétrica:
+La coordenada $y$ se obtiene sustituyendo este resultado en cualquiera de las
+ecuaciones de circunferencia:
+
 \begin{equation}
-    2x^2 + 2y^2 + \frac{d^2}{2} = r_1^2 + r_2^2.
-\end{equation}
-Despejando la coordenada longitudinal de avance $y$ sobre el semiespacio positivo frontal ($y > 0$, plano \textit{forward}):
-\begin{equation}
-    y = \sqrt{ \frac{r_1^2 + r_2^2}{2} - x^2 - \frac{d^2}{4} },
+    y =
+    \pm\sqrt{
+    r_1^2-\left(x+\frac{d}{2}\right)^2
+    }.
     \label{eq:coordenada_y_analitica}
 \end{equation}
-cuya evaluación utiliza el promedio exacto de los cuadrados de los radios, eliminando el sesgo sistemático que se produciría al emplear el cuadrado de la media aritmética.
 
-\subsubsection{Protección contra saltos de ciclo por paridad de longitud de onda (\texorpdfstring{módulo $\lambda$}{modulo lambda})}
-En escenarios experimentales reales con reflexiones o fluctuaciones acústicas de fase, un error en la discriminación del semiciclo puede inducir un desplazamiento artificial en el retardo $\Delta r$ correspondiente a un múltiplo entero de la longitud de onda portadora ($\lambda_0 = c/f_0$). Para prevenir distorsiones topológicas en la trayectoria reconstruida, el instrumento procesa la diferencia de caminos mediante un operador simétrico de paridad modular (\textit{módulo $\lambda$}):
+El signo doble representa las dos posiciones simétricas que producen las
+mismas distancias a los receptores. La selección de la solución con $y>0$
+requiere información adicional sobre el semiplano en el que se encuentra la
+fuente; no puede deducirse únicamente de las dos distancias.
+
+Una forma equivalente de expresar la coordenada transversal es
+
 \begin{equation}
-    \Delta r_{\text{corr}} = \left( \Delta r + \frac{\lambda_0}{2} \right) \pmod{\lambda_0} - \frac{\lambda_0}{2},
-    \label{eq:modulo_lambda_paridad}
+    x =
+    \frac{(r_1+r_2)(r_1-r_2)}{2d}
+    =
+    \frac{r_{\mathrm{mean}}\Delta r}{d},
 \end{equation}
-el cual reinyecta de forma continua la trayectoria dentro del dominio analítico unívoco $[-\lambda_0/2, \, \lambda_0/2]$ antes de alimentar las ecuaciones de inversión~(\ref{eq:coordenada_x_analitica}) y~(\ref{eq:coordenada_y_analitica}), garantizando la estabilidad y continuidad métrica de las trayectorias $(x(t), y(t))$.
+
+donde
+
+\begin{equation}
+    r_{\mathrm{mean}}=\frac{r_1+r_2}{2},
+    \qquad
+    \Delta r=r_1-r_2.
+\end{equation}
+
+En esta formulación, $\Delta r$ se obtiene directamente de las dos distancias
+ToA. No constituye un tercer observable independiente si se calcula a partir
+de los mismos valores $r_1$ y $r_2$.
+
+Con mediciones ruidosas, las circunferencias pueden no intersectarse
+exactamente. En ese caso, el radicando de la ecuación
+(\ref{eq:coordenada_y_analitica}) puede resultar negativo o muy próximo a
+cero. No es apropiado corregir automáticamente ese resultado mediante un
+recorte numérico sin evaluar antes la compatibilidad de las medidas. Una
+reconstrucción robusta debe considerar las incertidumbres de ambas distancias
+y, si es necesario, resolver un problema de mínimos cuadrados.
+
+\subsubsection{Diferencia de tiempos de llegada y geometría hiperbólica}
+
+Cuando el observable disponible es la diferencia de tiempos de llegada entre
+dos receptores, puede calcularse una diferencia de distancias
+
+\begin{equation}
+    \Delta r_{\mathrm{TDOA}} =
+    c(T)\left(t_1-t_2\right).
+    \label{eq:diferencia_distancias_tdoa}
+\end{equation}
+
+El conjunto de puntos que satisface
+
+\begin{equation}
+    r_1-r_2=\Delta r_{\mathrm{TDOA}}
+\end{equation}
+
+forma una hipérbola cuyos focos están en las posiciones de los dos
+receptores. Una única diferencia de tiempos no determina por sí sola una
+posición bidimensional única: la fuente puede encontrarse en cualquier punto
+de esa hipérbola. Se requiere información adicional, como una segunda
+diferencia independiente, una distancia absoluta o una restricción geométrica
+sobre la trayectoria.
+
+Por consiguiente, la reconstrucción por intersección de circunferencias y la
+localización hiperbólica TDOA son formulaciones relacionadas, pero no
+intercambiables. La primera utiliza dos distancias absolutas; la segunda
+utiliza diferencias de distancias.
+
+\subsubsection{Ambigüedad de fase y diferencia de camino}
+
+La diferencia de fase de una señal armónica proporciona una diferencia de
+camino módulo la longitud de onda:
+
+\begin{equation}
+    \Delta r_{\Phi} =
+    \frac{\lambda_0}{2\pi}
+    \left(\Delta\Phi+2\pi n\right),
+    \qquad n\in\mathbb{Z}.
+    \label{eq:ambiguedad_fase}
+\end{equation}
+
+El entero $n$ representa la ambigüedad de ciclo. La fase por sí sola no
+determina dicho entero. Para resolverlo se requiere información adicional,
+por ejemplo una estimación gruesa obtenida mediante ToA, una restricción
+sobre el desplazamiento entre mediciones sucesivas o una condición geométrica
+que limite la diferencia de camino.
+
+La operación de reducción módulo $\lambda_0$ puede representar la fase
+principal, pero no recupera por sí misma la diferencia de camino absoluta ni
+garantiza continuidad temporal. En particular, no debe aplicarse una
+corrección modular a una diferencia de distancias ya obtenida mediante ToA,
+salvo que se esté resolviendo explícitamente una ambigüedad de fase y se
+compruebe la compatibilidad con las distancias absolutas.
 
 % ==============================================================================
-% 2.6. ANÁLISIS COMPARATIVO DE INCERTEZAS Y REGÍMENES DE VALIDEZ
+% 2.6. COMPARACIÓN DE MÉTODOS
 % ==============================================================================
-\subsection{Análisis comparativo de incertezas y regímenes de validez instrumental}
 
-A modo de síntesis conceptual de este capítulo, la Tabla~\ref{tab:comparativa_metodos} contrasta los regímenes operativos, las fuentes dominantes de error y las ventajas físicas de cada modelo de inversión implementado en la arquitectura del instrumento WALO.
+\subsection{Comparación de observables y condiciones de validez}
+
+Los métodos descritos utilizan magnitudes físicas diferentes y presentan
+sensibilidades distintas frente a las condiciones de propagación, la
+geometría y la adquisición. La Tabla~\ref{tab:comparativa_metodos} resume sus
+principales características. Las prestaciones cuantitativas de cada método
+deben establecerse mediante la caracterización experimental correspondiente.
 
 \begin{table}[!htbp]
     \centering
     \small
     \renewcommand{\arraystretch}{1.35}
-    \begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash\bfseries}p{2.5cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+    \begin{tabularx}{\textwidth}{
+        @{}
+        >{\raggedright\arraybackslash\bfseries}p{2.5cm}
+        >{\raggedright\arraybackslash}p{2.4cm}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}X
+        @{}
+    }
         \toprule
-        \textbf{Magnitud / Método} & \textbf{Observable Base} & \textbf{Ventaja Física Principal} & \textbf{Limitación Dominante} \\
+        \textbf{Método} &
+        \textbf{Observable} &
+        \textbf{Ventaja principal} &
+        \textbf{Limitación dominante} \\
         \midrule
-        Distancia ToA & $t_{\text{arr}}$ (Vía 3) & Alta resolución temporal sub-microsegundo ($\Delta r \sim \SI{0.3}{\milli\metre}$). & Sensibilidad al retardo instrumental sistemático $t_{\text{off}}$. \\
+
+        ToA &
+        $t_{\mathrm{arr}}$ &
+        Proporciona una estimación de distancia absoluta cuando se conoce el
+        instante de emisión y se corrigen los retardos instrumentales. &
+        Sensibilidad a la detección del arribo, la sincronización y la
+        calibración temporal. \\
+
         \addlinespace
-        Distancia Energética & $A_{\text{RMS}}, \, \mathcal{E}$ (Vía 2) & Inmune al \textit{jitter} de detección de flancos en transitorios. & Requiere validez estricta del corte cuasi-anecoico ($c_{\text{room}} \to 0$). \\
+
+        TDOA &
+        $t_1-t_2$ &
+        Permite estimar diferencias de distancias sin requerir una referencia
+        temporal absoluta común al instante de emisión. &
+        La diferencia de distancias define un lugar geométrico y no una
+        posición bidimensional única. \\
+
         \addlinespace
-        Ángulo AoA (PDoA) & $\Delta\Phi$ (Rama A/B) & Resolución angular sub-grado en torno al plano \textit{broadside}. & Vulnerable al \textit{aliasing} espacial si la línea de base $d > \lambda_0/2$. \\
+
+        Energía recibida &
+        $A(r),\ \mathcal{E}_{\mathrm{dig}}(r)$ &
+        Permite estimar distancia mediante una calibración de amplitud o de
+        suma de cuadrados. &
+        Sensibilidad a la directividad, la ganancia, las reflexiones y la
+        definición de la ventana de integración. \\
+
         \addlinespace
-        Velocidad FDoA & $f_1(t), \, f_2(t)$ (Vía 1) & Cancelación analítica de la deriva térmica o inestabilidad del emisor. & Requiere emisión armónica continua en régimen subsónico ($v \ll c$). \\
+
+        PDoA &
+        $\Delta\Phi$ &
+        Permite estimar dirección a partir de diferencias de fase entre
+        receptores. &
+        Ambigüedad de fase, calibración intercanal, separación entre sensores
+        y propagación multitrayecto. \\
+
+        \addlinespace
+
+        Desequilibrio energético &
+        $\mathcal{E}_1,\ \mathcal{E}_2$ &
+        No depende de la fase de la portadora. &
+        Sensibilidad a diferencias de ganancia, directividad y distancia. \\
+
+        \addlinespace
+
+        FDoA &
+        $f_1,\ f_2$ &
+        El cociente diferencial reduce la dependencia respecto a la frecuencia
+        emitida común en el modelo ideal. &
+        Requiere geometría conocida, estimaciones espectrales comparables y
+        deriva suficientemente lenta durante los retardos de propagación. \\
+
         \bottomrule
     \end{tabularx}
-    \vspace{0.25cm}
-    \caption{Comparativa metrológica de los modelos de inversión cinemática implementados en el instrumento WALO, contrastando sus fortalezas físicas y condiciones operativas de validez.}
+
+    \caption{Comparación cualitativa de los observables utilizados para
+    estimar distancia, dirección y velocidad. Las prestaciones metrológicas
+    deben determinarse a partir de la caracterización experimental de cada
+    estimador.}
     \label{tab:comparativa_metodos}
 \end{table}
 
-La complementariedad de estos métodos demuestra que un instrumento científico abierto basado en SoC-FPGA no debe apoyarse en una única métrica aislada, sino en una arquitectura de procesamiento multirregime que combine de manera síncrona el dominio temporal, el espacio en cuadratura y el dominio recíproco de frecuencias.
+La combinación de estos observables permite abordar la localización acústica
+desde perspectivas complementarias. Los tiempos de llegada aportan
+información sobre la distancia recorrida; las diferencias de tiempo y fase
+relacionan las señales registradas por sensores separados; las magnitudes de
+amplitud y energía permiten construir estimadores radiales calibrados; y las
+frecuencias recibidas contienen información sobre el movimiento relativo
+entre la fuente y los receptores.
+
+La calidad de una reconstrucción conjunta depende de la consistencia entre
+estos observables, de la geometría del montaje y de la caracterización de sus
+incertidumbres. En consecuencia, las relaciones analíticas de este capítulo
+establecen los modelos de inversión que deberán contrastarse con los
+resultados experimentales.
