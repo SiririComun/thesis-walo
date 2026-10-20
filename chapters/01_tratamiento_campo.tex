@@ -4,8 +4,11 @@ En este capítulo se formaliza el tratamiento operacional empleado para transfor
 
 \paragraph{Nota de reproducibilidad y plataforma experimental.} La formulación matemática descrita en las siguientes secciones corresponde al modelo exacto de la cadena física de medición. Para garantizar la reproducibilidad metrológica y posibilitar la verificación directa de los experimentos, la totalidad del diseño digital sintetizado en lógica programable (VHDL), los controladores de adquisición síncrona y los algoritmos de procesamiento se encuentran documentados y disponibles en acceso abierto en los repositorios institucionales del proyecto:
 \begin{itemize}
-    \item \textbf{Lógica digital de adquisición y filtrado hardware:} \url{https://github.com/SiririComun/hw-xadc-dma-overlays} (Versión validada v1.5.3) \cite{SiririHW2026}.
-    \item \textbf{Controladores instrumentales y rutinas de procesamiento:} \url{https://github.com/SiririComun/sw-pynq-sound-localizer} (Versión validada v1.3.1) \cite{SiririSW2026}.
+    \item \textbf{Lógica digital de adquisición y filtrado hardware:}\\[2pt]
+    \url{https://github.com/SiririComun/hw-xadc-dma-overlays} \ (Versión validada v1.5.3)~\cite{SiririHW2026}.
+    \vspace{0.15cm}
+    \item \textbf{Controladores instrumentales y rutinas de procesamiento:}\\[2pt]
+    \url{https://github.com/SiririComun/sw-pynq-sound-localizer} \ (Versión validada v1.3.1)~\cite{SiririSW2026}.
 \end{itemize}
 
 % ==============================================================================
@@ -97,7 +100,7 @@ Dado que el periodo fundamental de la onda acústica ($T_0 = 1/f_0 \approx \SI{3
 \begin{equation}
     s_i[Mk - m] \approx s_i[Mk], \quad \forall m \in \{0, \dots, M-1\},
 \end{equation}
-de modo que la señal de interés se conserva con atenuación despreciable ($\tilde{s}_i[k] \approx s_i[Mk]$ con distorsión $< 0.1\,\%$). En contraste, para el término estocástico $\tilde{\epsilon}_i[k]$, la varianza de la suma de variables aleatorias independientes se reduce de acuerdo con el teorema del límite central \cite{bevington2003data}:
+de modo que la señal de interés se conserva con atenuación despreciable ($\tilde{s}_i[k] \approx s_i[Mk]$ con distorsión $<\SI{0.1}{\percent}$). En contraste, para el término estocástico $\tilde{\epsilon}_i[k]$, la varianza de la suma de variables aleatorias independientes se reduce de acuerdo con el teorema del límite central \cite{bevington2003data}:
 \begin{equation}
     \sigma_{\text{eff}}^2 = \text{Var}(\tilde{\epsilon}_i[k]) = \text{Var}\left( \frac{1}{M}\sum_{m=0}^{M-1} \epsilon_i[Mk - m] \right) = \frac{1}{M^2} \sum_{m=0}^{M-1} \sigma^2 = \frac{\sigma^2}{M}.
 \end{equation}
