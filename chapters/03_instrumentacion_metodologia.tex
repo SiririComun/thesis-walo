@@ -1,0 +1,986 @@
+% ==============================================================================
+% CAPÍTULO 3
+% INSTRUMENTACIÓN Y METODOLOGÍA EXPERIMENTAL
+% ==============================================================================
+
+\clearpage
+\section{INSTRUMENTACIÓN Y METODOLOGÍA EXPERIMENTAL}
+\label{chap:instrumentacion_metodologia}
+
+En este capítulo se describe la instrumentación empleada para adquirir
+y procesar las señales acústicas, así como los procedimientos utilizados
+para caracterizar experimentalmente los observables desarrollados en
+los capítulos anteriores. Se presentan la arquitectura general de
+WALO, la configuración de adquisición y los montajes experimentales
+para la estimación de distancia, dirección de llegada y movimiento
+de una fuente sonora.
+
+La metodología distingue entre las configuraciones utilizadas en
+los experimentos ya ejecutados y el protocolo previsto para la
+caracterización cinemática. Esta distinción permite documentar las
+condiciones efectivas de cada medición sin atribuir resultados
+experimentales a procedimientos que aún no han sido completados.
+
+% ==============================================================================
+% 3.1. ARQUITECTURA E INSTRUMENTACIÓN
+% ==============================================================================
+
+\subsection{Arquitectura e instrumentación de WALO}
+\label{sec:arquitectura_walo}
+
+WALO es una plataforma de adquisición y procesamiento de señales
+acústicas implementada sobre una tarjeta PYNQ-Z2. El sistema integra
+dos canales de recepción analógica, conversión analógico-digital,
+procesamiento digital programable en FPGA y una interfaz de control
+desarrollada en Python.
+
+La arquitectura se organiza en tres etapas funcionales:
+
+\begin{enumerate}
+    \item \textbf{Transducción:} conversión de las variaciones de
+    presión acústica en señales eléctricas mediante dos módulos
+    de micrófono.
+
+    \item \textbf{Adquisición y procesamiento digital:} conversión
+    de las señales analógicas mediante el XADC, acondicionamiento
+    digital y transferencia de los datos hacia memoria.
+
+    \item \textbf{Control y análisis:} configuración del hardware,
+    captura de registros, extracción de observables y estimación
+    de magnitudes físicas mediante rutinas de Python.
+\end{enumerate}
+
+\subsubsection{Unidad de procesamiento y adquisición}
+
+La plataforma utiliza una tarjeta PYNQ-Z2 basada en el dispositivo
+Zynq-7000 XC7Z020. Este integra un sistema de procesamiento
+ARM y una matriz de lógica programable FPGA. La separación entre
+ambos dominios permite ejecutar las tareas de control y análisis
+en software, mientras que la adquisición y determinadas operaciones
+de procesamiento se realizan mediante bloques de hardware
+configurados en la lógica programable.
+
+La conversión analógico-digital se realiza mediante el XADC
+integrado en el dispositivo. Los dos canales de recepción se
+conectan a las entradas analógicas A0 y A1 de la tarjeta,
+correspondientes a los canales auxiliares Vaux1 y Vaux9,
+respectivamente.
+
+La arquitectura de adquisición utiliza el secuenciador dual del
+XADC para registrar ambos canales de manera simultánea. La
+configuración nominal corresponde a una tasa agregada de
+\SI{1}{MSPS}, equivalente a una tasa de
+\SI{500}{kSPS} por canal. La sincronización de los canales se
+verificó mediante una prueba con una señal común: no se observó
+diferencia temporal entre ambos registros a la resolución de
+la prueba. Este resultado debe interpretarse como un retardo
+intercanal no resuelto experimentalmente, y no como una
+demostración de retardo físico exactamente nulo.
+
+\subsubsection{Transductores y excitación acústica}
+
+La recepción acústica se realiza mediante dos módulos de micrófono
+electret con preamplificación MAX4466. Cada módulo entrega una
+señal analógica cuya amplitud depende de la presión acústica
+incidente, de la respuesta del transductor y de la ganancia
+configurada en el circuito.
+
+Durante los experimentos de caracterización se utilizó la
+configuración de ganancia máxima disponible en ambos módulos.
+No se dispone de una calibración absoluta de dicha ganancia ni
+de una caracterización independiente de su linealidad. Por esta
+razón, las amplitudes registradas se tratan como magnitudes
+eléctricas de los canales y no como mediciones directas de
+presión acústica en pascales.
+
+La excitación acústica se produjo mediante un buzzer activo
+con frecuencia nominal cercana a \SI{2660}{\hertz}. Para los
+experimentos pulsados, el buzzer se accionó mediante una salida
+digital de la tarjeta, conectada a un transistor 2N2222A que
+controla su alimentación. Esta etapa permite generar pulsos
+acústicos bajo el control temporal del sistema digital.
+
+\subsubsection{Arquitectura de procesamiento digital}
+
+La lógica programable ejecuta la adquisición de los canales,
+la reducción programable de la tasa de muestreo y la transferencia
+de los registros mediante interfaces DMA. La arquitectura de
+hardware utilizada en los experimentos corresponde a la versión
+1.5.3 del overlay.
+
+La señal adquirida se distribuye hacia las rutas de procesamiento
+temporal y espectral. La primera permite conservar registros
+temporales para la detección de arribos y el análisis de amplitud.
+La segunda permite obtener información espectral, incluyendo
+magnitud y fase de las componentes de frecuencia.
+
+La configuración de decimación determina la tasa efectiva de
+salida de cada canal. En esta tesis, la caracterización de
+localización se efectuó únicamente en modo Audio ($M=10$); los
+otros modos se documentan como posibilidades de configuración.
+La plataforma dispone de varios factores de decimación,
+que se resumen en la Tabla~\ref{tab:modos_adquisicion}.
+Estos modos describen capacidades de configuración del
+instrumento; su disponibilidad no implica que todos hayan
+sido utilizados o validados experimentalmente en esta tesis.
+
+\begin{table}[!htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Modo} &
+        \textbf{Factor $M$} &
+        \textbf{Tasa por canal} &
+        \textbf{Aplicación}
+        \\
+        \midrule
+        Osciloscopio & 1  & \SI{500}{kSPS} & Señal temporal y arribos \\
+        Audio        & 10 & \SI{50}{kSPS}  & Procesamiento acústico \\
+        Voz          & 20 & \SI{25}{kSPS}  & Señales de voz \\
+        Bajos        & 50 & \SI{10}{kSPS}  & Señales de baja frecuencia \\
+        \bottomrule
+    \end{tabular}
+    \caption{Modos de adquisición disponibles mediante la
+    decimación programable de WALO. Las tasas corresponden
+    a cada canal de recepción.}
+    \label{tab:modos_adquisicion}
+\end{table}
+
+En los experimentos de distancia y dirección se utilizó
+el modo Audio, con factor de decimación $M=10$ y una tasa
+de \SI{50}{kSPS} por canal. Esta es la configuración
+experimental empleada para la caracterización acústica
+presentada en este trabajo. Los demás modos de la tabla
+se documentan como capacidades de la plataforma y no
+como configuraciones validadas en estos experimentos.
+
+\begin{figure}[!htbp]
+    \centering
+    \input{figures/fig7_arquitectura_walo.tex}
+    \caption{Arquitectura funcional de WALO. Se distinguen la
+    recepción analógica, la adquisición mediante XADC, el
+    procesamiento en FPGA y la transferencia de datos hacia
+    el sistema de procesamiento.}
+    \label{fig:arquitectura_walo}
+\end{figure}
+
+% ==============================================================================
+% 3.2. CONFIGURACIÓN DE ADQUISICIÓN Y PROCESAMIENTO
+% ==============================================================================
+
+\subsection{Configuración de adquisición y procesamiento}
+\label{sec:configuracion_adquisicion}
+
+La configuración de adquisición depende del observable que se
+desea estimar. Los experimentos de distancia y dirección emplean
+excitación pulsada, mientras que el experimento cinemático requiere
+una adquisición continua para seguir la variación temporal de
+la frecuencia recibida.
+
+\subsubsection{Adquisición pulsada}
+
+En los experimentos de distancia y dirección, el sistema genera
+un pulso de excitación mediante la salida digital AR2. El instante
+de activación proporciona una referencia temporal para la
+captura de la respuesta acústica.
+
+La adquisición se realiza simultáneamente en ambos canales.
+El registro temporal permite identificar la llegada de la señal
+directa y extraer las magnitudes asociadas a la ventana de
+observación. La duración de la ventana se define en relación
+con la frecuencia nominal del buzzer y con el número de ciclos
+analizados.
+
+Para la caracterización de distancia se utilizó una ventana
+correspondiente a tres ciclos de la señal nominal. La duración
+aproximada de esta ventana es
+
+\begin{equation}
+    T_{\mathrm{gate}} =
+    \frac{K}{f_0},
+    \label{eq:ventana_gate_exp}
+\end{equation}
+
+donde $K=3$ y $f_0$ es la frecuencia nominal de la fuente.
+Para $f_0=\SI{2660}{\hertz}$, la duración es aproximadamente
+\SI{1.13}{\milli\second}.
+
+La selección de esta ventana busca restringir el análisis a
+la parte inicial de la respuesta recibida y privilegiar la
+contribución de la trayectoria directa. La separación efectiva
+entre la llegada directa y las reflexiones depende de la
+geometría del montaje; por tanto, la duración de tres ciclos
+no garantiza por sí sola la ausencia de reflexiones dentro
+de la ventana. El recinto no se considera físicamente
+anecoico.
+
+\subsubsection{Adquisición continua}
+
+Para el estudio del movimiento de la fuente se requiere una
+secuencia temporal continua de ambos canales. En esta
+configuración se utiliza una tasa de
+\SI{50}{kSPS} por canal, que permite seguir la evolución de
+la frecuencia de la señal durante el movimiento.
+
+La adquisición continua conserva la evolución temporal de
+las señales y permite estimar la frecuencia recibida en
+ventanas sucesivas. A partir de las dos frecuencias se
+construye una estimación de velocidad relativa, de acuerdo
+con el modelo Doppler desarrollado en el capítulo anterior.
+
+La duración y el número de registros deben mantenerse
+constantes dentro de cada serie experimental para facilitar
+la comparación entre ensayos.
+
+\subsubsection{Calibración temporal de los canales}
+
+La estimación absoluta de distancia mediante ToA requiere
+caracterizar el retardo entre la orden de emisión y la
+detección del arribo acústico. Este retardo incluye
+contribuciones de la etapa de excitación, del transductor
+emisor, de los micrófonos, de la electrónica de recepción
+y del procesamiento digital.
+
+Para cada canal se utiliza una medición de referencia a
+distancia conocida $r_{\mathrm{ref}}$. Si el tiempo de
+llegada medido es $t_{\mathrm{arr,ref}}$, el retardo efectivo
+se determina mediante
+
+\begin{equation}
+    t_{\mathrm{off}} =
+    t_{\mathrm{arr,ref}}
+    -t_{\mathrm{em}}
+    -\frac{r_{\mathrm{ref}}}{c(T)},
+    \label{eq:offset_calibracion_exp}
+\end{equation}
+
+donde $t_{\mathrm{em}}$ representa el instante de referencia
+asociado a la orden digital de excitación, y $c(T)$ la
+velocidad del sonido utilizada para la temperatura del ensayo.
+Esta referencia corresponde al evento eléctrico de activación
+del buzzer y no debe confundirse con el instante exacto en
+que comienza la radiación acústica. El retardo entre ambos
+eventos queda incluido en el retardo efectivo determinado
+mediante la calibración.
+
+La calibración se realiza de manera independiente para
+cada micrófono. Los valores obtenidos se almacenan en el
+perfil de calibración utilizado por las rutinas de
+estimación. La corrección temporal no debe interpretarse
+como una eliminación de todos los retardos variables:
+su estabilidad depende de que las condiciones de
+adquisición y procesamiento permanezcan comparables.
+
+% ==============================================================================
+% 3.3. CARACTERIZACIÓN EXPERIMENTAL DE DISTANCIA
+% ==============================================================================
+
+\subsection{Caracterización experimental de distancia}
+\label{sec:exp01_distancia}
+
+El primer experimento caracteriza la respuesta de cada
+canal de recepción en función de la distancia entre el
+buzzer y el micrófono. Se estudian las variaciones de
+amplitud, energía digital y tiempo de llegada, con el
+propósito de establecer modelos empíricos para la
+estimación radial.
+
+\subsubsection{Montaje experimental}
+
+El montaje utiliza un buzzer activo como fuente acústica
+y un micrófono como receptor. Los dos canales se
+caracterizan de manera independiente, manteniendo la
+misma configuración geométrica y electrónica.
+
+La fuente y el micrófono se ubicaron a una altura
+aproximada de \SI{50}{\centi\metre} sobre una mesa de
+madera. La orientación fue axial: la salida del buzzer
+se dirigió hacia la cara del micrófono. La distancia
+se midió entre el centro de la salida acústica del
+buzzer y el centro de la membrana del micrófono.
+
+Las distancias se determinaron mediante una cinta o
+regla con resolución indicada de \SI{1}{\milli\metre}.
+Esta resolución no debe confundirse con la incertidumbre
+total de la referencia geométrica, que también depende
+de la alineación y de la identificación de los centros
+de los transductores.
+
+\begin{figure}[!htbp]
+    \centering
+    \input{figures/fig8_montaje_exp01.tex}
+    \caption{Montaje experimental para la caracterización
+    radial. La fuente y el micrófono se mantienen a una
+    altura aproximadamente constante y enfrentados sobre
+    el eje de propagación.}
+    \label{fig:montaje_exp01}
+\end{figure}
+
+\subsubsection{Condiciones de medición}
+
+La fuente se operó a una frecuencia nominal cercana a
+\SI{2660}{\hertz}. La temperatura de referencia utilizada
+en el procesamiento fue de \SI{20}{\degreeCelsius},
+con una velocidad del sonido aproximada de
+\SI{343.2}{\metre\per\second}.
+
+Se realizaron mediciones en nueve posiciones radiales:
+
+\begin{equation}
+    r \in
+    \{15,20,25,30,40,50,60,80,100\}
+    \ \si{\centi\metre}.
+\end{equation}
+
+En cada posición se registraron veinte pulsos por canal.
+Por tanto, cada micrófono cuenta con ciento ochenta
+registros distribuidos en las nueve distancias.
+
+La configuración de ganancia de ambos módulos se mantuvo
+en el máximo disponible. La caracterización se realizó
+primero para un canal y luego para el otro, conservando
+la geometría del montaje.
+
+\subsubsection{Magnitudes registradas}
+
+Para cada pulso se conservaron las señales temporales
+y las magnitudes calculadas por la rutina de adquisición.
+Entre las variables de interés se encuentran:
+
+\begin{itemize}
+    \item amplitud RMS de la señal recibida;
+    \item magnitud digital asociada a la energía directa;
+    \item tiempo de llegada detectado;
+    \item nivel de ruido previo al pulso;
+    \item relación señal-ruido estimada.
+\end{itemize}
+
+La amplitud RMS se expresa como una magnitud eléctrica
+del canal. La variable denominada energía directa,
+$E_{\mathrm{direct}}$, se trata como un observable digital
+dependiente de la implementación, de la ventana temporal,
+de la tasa de muestreo y de la representación numérica
+utilizada. No se interpreta como energía acústica absoluta
+ni se expresa en unidades físicas del SI.
+
+La definición computacional exacta de esta magnitud,
+incluyendo su normalización y los límites de integración,
+debe corresponder a la implementación utilizada para
+generar los registros. Por ello, no se le asigna aquí
+una expresión de energía física en unidades del SI.
+
+\subsubsection{Calibración y caracterización radial}
+
+Los parámetros de los modelos radiales se determinan
+a partir de las mediciones de amplitud y energía digital.
+Para la amplitud se considera el modelo
+
+\begin{equation}
+    A(r)=\frac{k_A}{r},
+\end{equation}
+
+mientras que para la magnitud digital asociada a la
+energía se considera
+
+\begin{equation}
+    \mathcal{E}_{\mathrm{dig}}(r)=\frac{k_E}{r^2}.
+\end{equation}
+
+Los parámetros $k_A$ y $k_E$ se estiman de manera
+independiente para cada canal. Estos coeficientes
+representan calibraciones empíricas del sistema
+completo bajo las condiciones del montaje.
+
+La calibración temporal se realiza de manera
+independiente para cada micrófono mediante una
+distancia de referencia de \SI{10}{\centi\metre}
+y una serie de pulsos de calibración. El retardo
+efectivo se incorpora posteriormente en la
+estimación de distancia por ToA.
+
+La evaluación de los modelos radiales debe distinguir
+entre los datos utilizados para determinar los
+coeficientes y aquellos empleados para evaluar su
+capacidad predictiva. Cuando se utilizan las mismas
+mediciones para ambas operaciones, el error obtenido
+describe el ajuste dentro de la muestra y no constituye
+una validación independiente.
+
+\subsubsection{Condiciones de propagación}
+
+El montaje se realizó en un recinto interior con
+superficies reflectantes. La elevación de los
+transductores sobre la mesa y el uso de excitación
+pulsada buscan reducir la contribución de reflexiones
+tardías dentro de la ventana temporal analizada.
+
+La ventana de observación se selecciona para analizar
+la respuesta inicial y privilegiar la contribución de
+la trayectoria directa. Esta elección puede reducir
+la influencia de reflexiones tardías, pero no garantiza
+que todas las contribuciones reflejadas queden fuera
+de la ventana analizada.
+
+La presencia de superficies reflectantes, incluida la
+mesa de madera, impide asumir condiciones anecoicas.
+Por tanto, la compatibilidad de los datos con las
+dependencias radiales esperadas se evalúa
+experimentalmente y se interpreta dentro de las
+condiciones concretas del montaje.
+
+% ==============================================================================
+% 3.4. CARACTERIZACIÓN EXPERIMENTAL ANGULAR
+% ==============================================================================
+
+\subsection{Caracterización experimental de dirección de llegada}
+\label{sec:exp02_angular}
+
+El segundo experimento evalúa la capacidad del arreglo
+de dos micrófonos para estimar la dirección de llegada
+de una señal acústica. Se comparan dos procedimientos:
+la estimación basada en diferencias de tiempos de
+llegada (TDOA) y la estimación basada en diferencias
+de fase intercanal (PDoA).
+
+\subsubsection{Geometría del arreglo}
+
+Los dos micrófonos se dispusieron sobre una línea
+recta, con una separación entre centros de
+\SI{5}{\centi\metre}. El centro geométrico del arreglo
+se utilizó como referencia para definir la posición
+angular de la fuente.
+
+El buzzer se ubicó a una distancia radial aproximada
+de \SI{30}{\centi\metre} del centro del arreglo y se
+orientó hacia ambos micrófonos. La altura de los
+transductores se mantuvo aproximadamente en
+\SI{50}{\centi\metre} sobre la mesa.
+
+\begin{figure}[!htbp]
+    \centering
+    \input{figures/fig9_montaje_exp02.tex}
+    \caption{Montaje del experimento angular. Los micrófonos
+    forman una línea base de \SI{5}{\centi\metre} y la
+    fuente se desplaza sobre posiciones angulares
+    definidas respecto al centro del arreglo.}
+    \label{fig:montaje_exp02}
+\end{figure}
+
+\subsubsection{Posiciones angulares y referencia}
+
+La posición de la fuente se estableció mediante
+marcas angulares respecto al eje normal al arreglo.
+Se consideraron nueve posiciones:
+
+\begin{equation}
+    \theta_{\mathrm{ref}}\in
+    \{-60^\circ,-45^\circ,-30^\circ,-15^\circ,
+    0^\circ,15^\circ,30^\circ,45^\circ,60^\circ\}.
+\end{equation}
+
+La distancia radial se mantuvo aproximadamente
+constante durante el barrido. La referencia angular
+se determinó mediante el montaje geométrico y el
+instrumento de medición angular disponible. La
+incertidumbre de esta referencia se estima en
+aproximadamente \SI{1}{\degree}; este valor debe
+entenderse como una estimación del procedimiento
+de posicionamiento y no como una resolución angular
+intrínseca del sistema WALO.
+
+Para cada posición se registraron diez pulsos.
+El conjunto de datos utilizado contiene, por tanto,
+noventa registros. Esta cantidad corresponde a la
+serie experimental procesada; no debe sustituirse
+por el número de pulsos descrito en versiones
+anteriores del cuaderno de adquisición.
+
+\subsubsection{Adquisición y estimadores evaluados}
+
+La adquisición se realizó en modo Audio, con factor
+de decimación $M=10$ y una tasa de
+\SI{50}{kSPS} por canal. La excitación pulsada
+proporciona una referencia temporal común y permite
+analizar la respuesta inicial de ambos micrófonos.
+
+Para cada registro se obtuvieron estimaciones
+angulares mediante dos métodos:
+
+\begin{enumerate}
+    \item \textbf{TDOA:} se identifican los tiempos
+    de llegada en ambos canales y se convierte su
+    diferencia en una estimación angular mediante
+    la geometría de la línea base.
+
+    \item \textbf{PDoA:} se estima la diferencia de
+    fase intercanal de la componente acústica de
+    interés y se obtiene el ángulo mediante el
+    modelo interferométrico.
+\end{enumerate}
+
+La evaluación de ambos métodos utiliza el mismo
+conjunto de posiciones de referencia. Para cada
+posición se calculan primero las estadísticas de
+las diez adquisiciones correspondientes. Las métricas
+globales se obtienen posteriormente a partir de los
+resultados por posición, evitando tratar las noventa
+capturas como si correspondieran a una única
+condición angular.
+
+La caracterización angular se centra en TDOA y
+PDoA. Las pruebas exploratorias de estimación
+angular mediante desequilibrio energético no se
+incluyen como método principal de comparación,
+debido a su desempeño inferior en el conjunto
+de datos disponible.
+
+\subsubsection{Control de sincronización y coherencia intercanal}
+
+La estimación angular depende de que las diferencias
+temporales y de fase entre los canales correspondan
+a la propagación acústica y no a retardos introducidos
+por la adquisición.
+
+La arquitectura de hardware utiliza adquisición
+simultánea de ambos canales. Adicionalmente, se
+realizó una prueba de sincronización mediante una
+señal común aplicada a las dos entradas. En dicha
+prueba no se observó diferencia temporal entre
+los registros a la resolución utilizada.
+
+Este control respalda la sincronización del sistema
+en las condiciones de prueba. La calibración y
+la repetibilidad de la respuesta analógica de los
+dos módulos siguen siendo relevantes para la
+interpretación de las diferencias de fase y de
+tiempo.
+
+% ==============================================================================
+% 3.5. PROTOCOLO DE CARACTERIZACIÓN CINEMÁTICA
+% ==============================================================================
+
+\subsection{Protocolo de caracterización cinemática}
+\label{sec:exp04_cinematica}
+
+El experimento cinemático está diseñado para estudiar
+la estimación de velocidad de una fuente acústica
+en movimiento mediante el desplazamiento Doppler
+diferencial registrado por dos micrófonos fijos.
+A diferencia de los experimentos anteriores, que
+utilizan excitación pulsada, esta medición requiere
+una adquisición continua durante el movimiento.
+
+El protocolo descrito en esta sección corresponde
+al montaje previsto para la adquisición de datos.
+Su desempeño no se considera validado hasta que
+se complete la adquisición, el seguimiento de
+la posición de referencia y la comparación
+cuantitativa entre ambas estimaciones.
+
+\subsubsection{Montaje mecánico}
+
+El montaje utiliza un riel rectilíneo de longitud
+aproximada \SI{2}{\metre}. Un carro de masa nominal
+\SI{200}{\gram} se desplaza sobre el riel y está
+conectado a elementos elásticos situados en ambos
+extremos. El buzzer se instala sobre el carro y
+constituye la fuente acústica móvil.
+
+Se disponen dos micrófonos fijos en extremos
+opuestos del recorrido. El micrófono 1 se ubica
+en el extremo inicial y el micrófono 2 en el
+extremo final. El buzzer se orienta hacia el
+micrófono 1 y en sentido opuesto al micrófono 2.
+
+Los elementos elásticos se disponen de forma
+aproximadamente perpendicular al eje del riel.
+Sus puntos de interacción se ubican cerca de
+los extremos del recorrido, aproximadamente
+a \SI{10}{\centi\metre} y
+\SI{190}{\centi\metre}, respectivamente.
+
+La masa indicada corresponde al valor nominal
+del conjunto móvil. Su valor efectivo debe
+determinarse mediante pesaje antes de utilizarlo
+en el análisis dinámico.
+
+\begin{figure}[!htbp]
+    \centering
+    \input{figures/fig10_montaje_exp04.tex}
+    \caption{Esquema del montaje cinemático previsto.
+    El carro con la fuente acústica se desplaza sobre
+    un riel entre dos micrófonos fijos. Los elementos
+    elásticos proporcionan la fuerza restauradora.}
+    \label{fig:montaje_exp04}
+\end{figure}
+
+\subsubsection{Condiciones de adquisición}
+
+La adquisición se realizará en modo de audio,
+con una tasa de \SI{50}{kSPS} por canal. Se
+registrarán simultáneamente ambos canales durante
+\SI{10}{\second} por ensayo.
+
+El carro se liberará desde el extremo correspondiente
+al micrófono 1, utilizando la misma posición inicial
+en cada repetición. La liberación debe realizarse
+sin proporcionar un impulso adicional apreciable,
+de manera que las condiciones iniciales sean
+comparables entre ensayos.
+
+Se prevén diez ensayos bajo esta configuración.
+El uso de una posición inicial común busca reducir
+la variabilidad entre repeticiones y facilitar
+la comparación de las trayectorias estimadas.
+
+La excitación acústica se mantiene continua
+durante el registro, ya que el observable de
+interés es la variación temporal de la frecuencia
+recibida. En esta configuración no se utiliza
+la secuencia de pulsos empleada en los experimentos
+de distancia y dirección.
+
+\subsubsection{Estimación de velocidad y posición}
+
+A partir de las señales registradas se estima
+la frecuencia instantánea en cada canal mediante
+el procesamiento temporal y espectral descrito
+en el capítulo 1. Las frecuencias $f_1(t)$ y
+$f_2(t)$ se utilizan como entradas del modelo
+Doppler diferencial:
+
+\begin{equation}
+    \hat{v}_{\mathrm{diff}}(t)=
+    c(T)
+    \frac{f_2(t)-f_1(t)}
+    {f_1(t)+f_2(t)}.
+    \label{eq:velocidad_exp04}
+\end{equation}
+
+La convención de signo se fija tomando como
+sentido positivo el desplazamiento desde el
+micrófono 1 hacia el micrófono 2. Con esta
+convención, un movimiento de la fuente en ese
+sentido debe producir $f_2>f_1$ en el modelo
+ideal y, por tanto, una velocidad diferencial
+positiva.
+
+La relación proporciona una estimación de la
+componente de velocidad bajo la geometría
+idealizada de dos receptores opuestos. Su
+aplicación experimental requiere que las
+frecuencias comparadas sean representativas
+de estados de movimiento suficientemente
+próximos y que las trayectorias acústicas
+dominantes sean compatibles con el modelo.
+Como las señales recibidas corresponden a
+instantes de emisión y propagación distintos,
+la cancelación de variaciones comunes de la
+frecuencia de la fuente no es exacta en
+condiciones generales; su validez depende
+de las hipótesis del modelo y de que la
+deriva de frecuencia sea suficientemente lenta.
+
+La posición puede estimarse mediante integración
+temporal de la velocidad:
+
+\begin{equation}
+    \hat{x}(t)=x_0+
+    \int_{t_0}^{t}\hat{v}_{\mathrm{diff}}(\tau)
+    \,\mathrm{d}\tau,
+    \label{eq:posicion_integrada_exp04}
+\end{equation}
+
+donde $x_0$ es la posición inicial de referencia.
+La integración acumula los errores de velocidad,
+por lo que cualquier sesgo sistemático puede
+producir una desviación creciente en la posición
+estimada.
+
+La corrección de deriva, el tratamiento de los
+extremos del movimiento y la comparación con
+la posición de referencia deben evaluarse
+experimentalmente. No se presupone que la
+integración esté libre de deriva.
+
+\subsubsection{Modelo dinámico de referencia}
+
+El movimiento del carro puede aproximarse,
+en primera instancia, mediante un oscilador
+armónico amortiguado:
+
+Se define el desplazamiento respecto a la
+posición de equilibrio como
+$u=x-x_{\mathrm{eq}}$. El modelo se escribe
+entonces como
+
+\begin{equation}
+    m\ddot{u}+b\dot{u}+ku=0,
+    \label{eq:oscilador_exp04}
+\end{equation}
+
+donde $m$ representa la masa móvil, $b$ un
+coeficiente efectivo de amortiguamiento y $k$
+la constante elástica equivalente.
+
+Para el régimen subamortiguado, la solución
+para la coordenada física $x$ puede expresarse como
+
+\begin{equation}
+    x(t)=x_{\mathrm{eq}}+
+    A e^{-\gamma t}
+    \cos(\omega_d t+\phi),
+    \label{eq:solucion_oscilador_exp04}
+\end{equation}
+
+con
+
+\begin{equation}
+    \gamma=\frac{b}{2m},
+    \qquad
+    \omega_d=
+    \sqrt{\frac{k}{m}-\gamma^2}.
+\end{equation}
+
+Este modelo proporciona una descripción de
+referencia para analizar la evolución del
+movimiento. La respuesta real puede apartarse
+de la forma ideal debido a la histéresis de
+los elementos elásticos, la holgura mecánica,
+la fricción, la variación de la fuerza
+restauradora y los impactos en los extremos.
+
+Por tanto, la compatibilidad del movimiento
+con el modelo armónico amortiguado debe
+determinarse a partir de los registros
+experimentales y no asumirse como una
+propiedad del montaje.
+
+% ==============================================================================
+% 3.6. TRATAMIENTO DE DATOS E INCERTIDUMBRES
+% ==============================================================================
+
+\subsection{Tratamiento de datos e incertidumbres}
+\label{sec:tratamiento_incertidumbres}
+
+El análisis experimental requiere distinguir entre
+la incertidumbre de las magnitudes de referencia,
+la dispersión de las mediciones repetidas y el
+error de los estimadores. Estas cantidades describen
+aspectos diferentes del proceso de medición y no
+deben utilizarse indistintamente.
+
+\subsubsection{Estadística de las mediciones repetidas}
+
+Para una magnitud $q$ medida $N$ veces, el valor
+medio se calcula como
+
+\begin{equation}
+    \bar{q}=\frac{1}{N}\sum_{i=1}^{N}q_i.
+    \label{eq:media_mediciones}
+\end{equation}
+
+La dispersión de las mediciones se caracteriza
+mediante la desviación estándar muestral:
+
+\begin{equation}
+    s_q=
+    \sqrt{
+    \frac{1}{N-1}
+    \sum_{i=1}^{N}(q_i-\bar{q})^2
+    }.
+    \label{eq:desviacion_estandar_mediciones}
+\end{equation}
+
+Cuando las mediciones pueden considerarse
+independientes y representativas de una misma
+condición, el error estándar de la media es
+
+\begin{equation}
+    \mathrm{SEM}=
+    \frac{s_q}{\sqrt{N}}.
+    \label{eq:sem_mediciones}
+\end{equation}
+
+La desviación estándar caracteriza la dispersión
+de las observaciones individuales, mientras que
+el SEM caracteriza la incertidumbre estadística
+asociada a la estimación de la media bajo las
+hipótesis indicadas. No son magnitudes
+intercambiables.
+
+\subsubsection{Error de estimación}
+
+Para una magnitud lineal, el error individual
+entre una estimación $q_i$ y su referencia
+$q_{i,\mathrm{ref}}$ se define como
+
+\begin{equation}
+    e_i=q_i-q_{i,\mathrm{ref}}.
+    \label{eq:error_individual}
+\end{equation}
+
+En el caso de magnitudes angulares, la diferencia
+debe envolverse al intervalo principal para
+evitar errores artificiales al cruzar el límite
+de $-180^\circ/180^\circ$. En la expresión
+siguiente, los ángulos se expresan en radianes.
+Se define
+
+\begin{equation}
+    \Delta\theta_i=
+    \theta_i-\theta_{i,\mathrm{ref}},
+\end{equation}
+
+y el error angular envuelto como
+
+\begin{equation}
+    e_{\theta,i}=
+    \operatorname{atan2}
+    \left[
+    \sin(\Delta\theta_i),
+    \cos(\Delta\theta_i)
+    \right].
+    \label{eq:error_angular_envuelto}
+\end{equation}
+
+Las métricas angulares MAE, RMSE y sesgo se
+calculan utilizando $e_{\theta,i}$ en lugar
+de la diferencia angular sin envolver. Si se
+reportan en grados, el error obtenido en radianes
+se convierte antes de calcular o presentar las
+métricas.
+
+El error absoluto medio (MAE) y la raíz del
+error cuadrático medio (RMSE) se calculan como
+
+\begin{equation}
+    \mathrm{MAE}=
+    \frac{1}{N}\sum_{i=1}^{N}|e_i|,
+    \label{eq:mae}
+\end{equation}
+
+\begin{equation}
+    \mathrm{RMSE}=
+    \sqrt{
+    \frac{1}{N}\sum_{i=1}^{N}e_i^2
+    }.
+    \label{eq:rmse}
+\end{equation}
+
+El sesgo medio se expresa mediante
+
+\begin{equation}
+    \mathrm{Bias}=
+    \frac{1}{N}\sum_{i=1}^{N}e_i.
+    \label{eq:bias}
+\end{equation}
+
+Estas métricas permiten evaluar la diferencia
+entre las estimaciones y sus referencias.
+No representan por sí mismas la incertidumbre
+instrumental ni permiten identificar de forma
+aislada el origen de los errores.
+
+\subsubsection{Referencias geométricas e instrumentales}
+
+En el experimento de distancia, la referencia
+radial se determina mediante una regla o cinta
+con resolución indicada de
+\SI{1}{\milli\metre}. La incertidumbre efectiva
+también depende de la alineación de los
+transductores y de la determinación de sus
+centros geométricos.
+
+En el experimento angular, la referencia se
+establece mediante las posiciones marcadas
+respecto al centro del arreglo. La incertidumbre
+angular de referencia se estima en aproximadamente
+\SI{1}{\degree}. Este valor debe distinguirse
+del error observado en los estimadores TDOA
+y PDoA.
+
+En el experimento cinemático, la masa del
+conjunto móvil y la referencia de posición
+deben determinarse mediante instrumentos
+cuya resolución e incertidumbre se documenten
+antes del análisis. La posición de referencia
+obtenida mediante seguimiento externo debe
+tratarse como una medición, no como un valor
+exacto.
+
+\subsubsection{Propagación de incertidumbres}
+
+Cuando una magnitud estimada depende de varias
+variables independientes, la incertidumbre
+combinada puede aproximarse mediante la
+propagación de primer orden. Para una función
+$q=f(x_1,\ldots,x_n)$ se tiene
+
+\begin{equation}
+    u_q^2 \simeq
+    \sum_{j=1}^{n}
+    \left(
+    \frac{\partial f}{\partial x_j}
+    \right)^2
+    u_{x_j}^2,
+    \label{eq:propagacion_incertidumbre}
+\end{equation}
+
+donde $u_{x_j}$ representa la incertidumbre
+estándar de cada variable. Si existen
+correlaciones entre las variables, deben
+incorporarse los términos de covarianza
+correspondientes.
+
+La aplicación de esta expresión constituye
+una aproximación local de primer orden y requiere
+identificar las fuentes de incertidumbre
+relevantes para cada estimador. En particular,
+la estimación temporal depende de la referencia
+de emisión, del retardo instrumental, de la
+detección del arribo y de la velocidad del
+sonido. La estimación angular depende de la
+separación entre sensores, de la sincronización,
+de la respuesta de los canales y de la
+determinación de la referencia angular.
+La estimación cinemática depende, además,
+de la incertidumbre de las frecuencias
+instantáneas y de la integración temporal.
+La expresión supone que las incertidumbres
+son suficientemente pequeñas para aproximar
+localmente la función mediante sus derivadas;
+si esta condición no se cumple, debe utilizarse
+un tratamiento de incertidumbre más completo.
+
+\subsubsection{Trazabilidad y conservación de los datos}
+
+Los registros originales de cada experimento
+se conservan como base del análisis. Las
+transformaciones, filtros, estimadores y
+criterios de selección deben poder relacionarse
+con los datos de origen y con la configuración
+de adquisición utilizada.
+
+La evaluación de los resultados debe distinguir
+entre datos de calibración, datos empleados
+para ajustar los modelos y datos destinados
+a validación independiente. Cuando no existe
+una separación entre ajuste y evaluación,
+los indicadores obtenidos deben identificarse
+como resultados dentro de la muestra.
+
+No se eliminan mediciones únicamente por
+apartarse del comportamiento esperado. Cualquier
+criterio de exclusión debe estar definido y
+justificado por una condición instrumental
+o experimental identificable. En ausencia
+de dicho criterio, las anomalías se conservan
+y se discuten como parte de la caracterización
+del sistema.
+
+% ==============================================================================
+% FIN DEL CAPÍTULO 3
+% ==============================================================================

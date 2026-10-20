@@ -1,0 +1,75 @@
+
+\begin{tikzpicture}[
+    >=Latex,
+    font=\small,
+    block/.style={
+        draw,
+        rounded corners=2pt,
+        align=center,
+        minimum width=2.5cm,
+        minimum height=0.9cm,
+        inner sep=5pt
+    },
+    smallblock/.style={
+        draw,
+        rounded corners=2pt,
+        align=center,
+        minimum width=2.3cm,
+        minimum height=0.8cm,
+        inner sep=5pt
+    },
+    arrow/.style={->, thick}
+]
+
+% Recepción analógica
+\node[block] (mic1) at (0,2.0) {Micrófono 1};
+\node[block] (mic2) at (0,0.5) {Micrófono 2};
+
+\node[block] (xadc) at (3.4,1.25)
+    {XADC\\Conversión A/D};
+
+\node[block] (zynq) at (6.9,1.25)
+    {Zynq-7000\\PYNQ-Z2};
+
+\node[smallblock] (dma) at (10.2,2.15)
+    {DMA\\Transferencia};
+
+\node[smallblock] (processing) at (10.2,0.35)
+    {Procesamiento\\digital};
+
+\node[block] (software) at (13.6,2.15)
+    {Software\\de control};
+
+\node[smallblock] (analysis) at (13.6,0.35)
+    {Análisis\\de señales};
+
+% Conexiones de recepción
+\draw[arrow] (mic1.east) -- (xadc.west);
+\draw[arrow] (mic2.east) -- (xadc.west);
+
+\draw[arrow] (xadc.east) -- (zynq.west);
+\draw[arrow] (zynq.east) -- (dma.west);
+\draw[arrow] (zynq.east) -- (processing.west);
+
+\draw[arrow] (dma.east) -- (software.west);
+\draw[arrow] (processing.east) -- (software.south west);
+\draw[arrow] (software.south) -- (analysis.north);
+
+% Ruta de excitación desde la tarjeta
+\node[smallblock] (pulse) at (3.4,-1.25)
+    {Pulso digital\\de salida AR2};
+
+\node[smallblock] (driver) at (7.1,-1.25)
+    {Etapa de excitación\\Transistor 2N2222A};
+
+\node[block] (buzzer) at (10.6,-1.25)
+    {Buzzer activo};
+
+\draw[arrow] (pulse.east) -- (driver.west);
+\draw[arrow] (driver.east) -- (buzzer.west);
+
+% Relación de la salida digital con la tarjeta
+\draw[arrow, dashed] (zynq.south) -- ++(0,-0.55)
+    -| (pulse.north);
+
+\end{tikzpicture}
