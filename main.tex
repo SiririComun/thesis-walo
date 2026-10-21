@@ -1,41 +1,18 @@
 
-% ==============================================================================
-% DOCUMENTO PRINCIPAL
-% WALO: Localización de fuentes de ondas acústicas
-% Trabajo de grado - Instituto de Física, Universidad de Antioquia
-% ==============================================================================
+\documentclass[12pt,letterpaper]{report}
 
-\documentclass[12pt,letterpaper]{article}
-
-% ------------------------------------------------------------------------------
-% Configuración general
-% ------------------------------------------------------------------------------
 \input{preamble.tex}
 
-% ==============================================================================
-% INICIO DEL DOCUMENTO
-% ==============================================================================
 \begin{document}
 
-% ------------------------------------------------------------------------------
-% PÁGINAS PRELIMINARES
-% ------------------------------------------------------------------------------
-% La portada institucional conserva su propia composición.
-% Se desactivan temporalmente los anclajes para evitar conflictos
-% con la numeración posterior.
-
+% Portada sin mostrar numeración de página.
 \hypersetup{pageanchor=false}
 
 \input{frontmatter/titlepage.tex}
 
 \clearpage
 
-% ------------------------------------------------------------------------------
-% TABLA DE CONTENIDO
-% ------------------------------------------------------------------------------
-% La numeración comienza en la página física 3, después de las
-% dos páginas preliminares.
-
+% Reactivar anclas y establecer la numeración del documento.
 \hypersetup{pageanchor=true}
 
 \pagenumbering{arabic}
@@ -45,50 +22,31 @@
 
 \clearpage
 
-% ==============================================================================
-% CUERPO PRINCIPAL
-% ==============================================================================
-
-% ------------------------------------------------------------------------------
-% CAPÍTULO 1
-% ------------------------------------------------------------------------------
+% Capítulo 1: tratamiento del campo acústico.
+\chapter{Tratamiento del campo acústico y extracción de observables físicos}
 \input{chapters/01_tratamiento_campo.tex}
 
 \clearpage
 
-% ------------------------------------------------------------------------------
-% CAPÍTULO 2
-% ------------------------------------------------------------------------------
+% Capítulo 2: modelos de localización e inversión.
+\chapter{Localización acústica: modelos geométricos y estimación cinemática}
 \input{chapters/02_modelos_inversion.tex}
 
 \clearpage
 
-% ------------------------------------------------------------------------------
-% CAPÍTULO 3
-% ------------------------------------------------------------------------------
+% Capítulo 3: instrumentación y metodología.
+\chapter{Instrumentación y metodología experimental}
 \input{chapters/03_instrumentacion_metodologia.tex}
 
 \clearpage
 
-% ------------------------------------------------------------------------------
-% CAPÍTULO 4
-% ------------------------------------------------------------------------------
+% Capítulo 4: resultados y discusión.
 \input{chapters/04_resultados_discusion.tex}
 
 \clearpage
 
-% ==============================================================================
-% BIBLIOGRAFÍA
-% ==============================================================================
-
-% Incluye todas las referencias declaradas en el archivo .bib,
-% incluso aquellas que todavía no se citan explícitamente.
-
+% Bibliografía.
 \nocite{*}
-
 \bibliography{references}
 
-% ==============================================================================
-% FIN DEL DOCUMENTO
-% ==============================================================================
 \end{document}
