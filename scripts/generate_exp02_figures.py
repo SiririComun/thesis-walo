@@ -4,12 +4,11 @@
 """
 Experimento 02 — caracterización angular.
 
-Genera tres figuras a partir de:
+Genera dos figuras a partir de:
     data/angle_benchmark_patched_prototype.csv
 
 Salidas (PNG y PDF):
     figures/exp02_fig1_angle_benchmark
-    figures/exp02_fig2_ray_reconstruction
     figures/exp02_fig3_angular_residuals
 
 Se utilizan exclusivamente:
@@ -293,85 +292,11 @@ def generate_figure_1(summary, metrics, radius_cm):
 
 
 # ============================================================
-# FIGURA 2 — RECONSTRUCCIÓN GEOMÉTRICA 2D
-# ============================================================
-
-def generate_figure_2(summary, radius_cm):
-    print("\nGenerando Figura 2: reconstrucción angular 2D...")
-
-    if not np.isfinite(radius_cm) or radius_cm <= 0:
-        raise ValueError("No hay una distancia positiva válida para la reconstrucción.")
-
-    fig, ax = plt.subplots(figsize=(7.2, 5.8))
-
-    circle = plt.Circle(
-        (0, 0), radius_cm, fill=False, linestyle=":",
-        linewidth=1.5, color=COLOR_IDEAL, alpha=0.65
-    )
-    ax.add_patch(circle)
-
-    for target in summary["target_deg"]:
-        xi, yi = polar_to_cartesian(radius_cm, target)
-        ax.plot(
-            [0, xi], [0, yi], "--",
-            color=COLOR_IDEAL, linewidth=1.0, alpha=0.55, zorder=1
-        )
-
-    for _, row in summary.iterrows():
-        xp, yp = polar_to_cartesian(radius_cm, row["phase_mean"])
-        xt, yt = polar_to_cartesian(radius_cm, row["tdoa_mean"])
-
-        ax.annotate(
-            "", xy=(xp, yp), xytext=(0, 0),
-            arrowprops={"arrowstyle": "->", "color": COLOR_PHASE, "lw": 2.0, "alpha": 0.90},
-            zorder=3
-        )
-        ax.annotate(
-            "", xy=(xt, yt), xytext=(0, 0),
-            arrowprops={"arrowstyle": "->", "color": COLOR_TDOA, "lw": 2.0, "alpha": 0.90},
-            zorder=2
-        )
-
-    mic_x = BASELINE_CM / 2.0
-    ax.scatter(
-        [-mic_x, mic_x], [0, 0], s=100,
-        color=COLORS["reference"], edgecolor="black", linewidth=0.5,
-        zorder=5, label=f"Micrófonos (separación = {BASELINE_CM:.0f} cm)"
-    )
-    ax.text(-mic_x - 1.0, 1.5, "Mic. 1", color=COLORS["reference"],
-            fontsize=8.5, fontweight="bold", ha="right")
-    ax.text(mic_x + 1.0, 1.5, "Mic. 2", color=COLORS["reference"],
-            fontsize=8.5, fontweight="bold", ha="left")
-
-    ax.plot([], [], "--", color=COLOR_IDEAL, label="Dirección de referencia")
-    ax.plot([], [], color=COLOR_PHASE, linewidth=2.2, label="Dirección PDoA")
-    ax.plot([], [], color=COLOR_TDOA, linewidth=2.2, label="Dirección TDoA")
-
-    ax.set_title(
-        "Reconstrucción geométrica: PDoA y TDoA\n"
-        f"(r ≈ {radius_cm:.1f} cm, d = {BASELINE_CM:.1f} cm)",
-        pad=12
-    )
-    ax.set_xlabel("Posición x [cm]")
-    ax.set_ylabel("Posición y [cm]")
-
-    limit = radius_cm + 8.0
-    ax.set_xlim(-limit, limit)
-    ax.set_ylim(-8, limit + 2)
-    ax.set_aspect("equal")
-    ax.legend(loc="upper right", framealpha=0.95)
-    fig.tight_layout()
-
-    save_figure(fig, "exp02_fig2_ray_reconstruction")
-    return fig
-
-
-# ============================================================
 # FIGURA 3 — RESIDUOS ANGULARES
 # ============================================================
 
 def generate_figure_3(df):
-    print("\nGenerando Figura 3: residuos angulares...")
+    print("\nGenerando figura de residuos angulares...")
 
     work = df.copy()
     work["residual_phase_deg"] = angular_error(
@@ -441,15 +366,15 @@ def generate_figure_3(df):
         label="TDoA: media ± 1σ", zorder=4
     )
 
-    ax.set_xlabel(r"Ángulo de referencia $\theta_{\mathrm{target}}$ [°]", fontsize=9.5)
-    ax.set_ylabel(r"Residuo angular $e_\theta$ [°]", fontsize=9.5)
-    ax.set_title("Residuos angulares: PDoA y TDoA", fontsize=10, pad=10)
+    ax.set_xlabel(r"Ángulo de referencia $\theta_{\mathrm{target}}$ [°]")
+    ax.set_ylabel(r"Residuo angular $e_\theta$ [°]")
+    ax.set_title("Residuos angulares: PDoA y TDoA", pad=12)
     targets = np.sort(work["target_deg"].unique())
     ax.set_xticks(targets)
     ax.minorticks_on()
     ax.grid(True, which="major", linestyle="-", alpha=0.25)
     ax.grid(True, which="minor", linestyle=":", alpha=0.15)
-    ax.legend(loc="best", fontsize=10, framealpha=0.95)
+    ax.legend(loc="best", framealpha=0.96)
 
     all_residuals = np.concatenate([
         work["residual_phase_deg"].dropna().to_numpy(),
@@ -523,8 +448,7 @@ def main():
         )
     radius_cm = float(valid_distances.median())
 
-    fig1 = generate_figure_1(summary, metrics, radius_cm)
-    fig2 = generate_figure_2(summary, radius_cm)
+    generate_figure_1(summary, metrics, radius_cm)
     residual_data = generate_figure_3(df)
 
     print_results(summary, metrics, residual_data)
@@ -534,7 +458,7 @@ def main():
     else:
         plt.close("all")
 
-    print("\nProceso terminado. Se generaron las tres figuras.")
+    print("\nProceso terminado. Se generaron el benchmark y los residuos angulares.")
 
 
 if __name__ == "__main__":
