@@ -370,36 +370,91 @@ def plot_calibration(
 # ============================================================
 
 def plot_mock_distance(amp_fits):
-    """Predicción sintética basada exclusivamente en amplitud RMS.
+    """Predicción sintética RMS con la misma composición que la figura ToA.
 
-    Los dos paneles muestran por separado la inversión de la
-    calibración para cada micrófono. No se utiliza energía digital.
+    Panel superior: media estimada por distancia de referencia ± 1σ.
+    Panel inferior: residuos individuales y media ± 1σ por posición.
+
+    Se generan repeticiones sintéticas únicamente para visualizar la
+    estructura gráfica; no son observaciones ni estimaciones medidas.
     """
     rng = np.random.default_rng(20261020)
     r_ref_cm = np.array([15, 20, 25, 30, 40, 50, 60, 80, 100], dtype=float)
-    r_ref_m = r_ref_cm / 100.0
+    n_repeats = 10
 
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharex=True, sharey=True)
-    for ax, name, color in zip(axes, CSV_FILES, (COLORS["Micrófono 1"], COLORS["Micrófono 2"])):
+    fig, (ax_top, ax_res) = plt.subplots(
+        2, 1, figsize=FIGSIZE_TALL, sharex=True,
+        gridspec_kw={"height_ratios": [1.35, 1.0], "hspace": 0.10},
+    )
+
+    offsets = {"Micrófono 1": -0.65, "Micrófono 2": 0.65}
+    all_estimates, all_residuals = [], []
+
+    for name in CSV_FILES:
+        color = COLORS[name]
         k_a = amp_fits[name][0]
-        noise = rng.normal(0.0, 0.035, size=r_ref_cm.size)
-        amp_synthetic = (k_a / r_ref_m) * (1.0 + noise)
-        r_est_cm = (k_a / amp_synthetic) * 100.0
+        offset = offsets[name]
+        r_ref_m = r_ref_cm / 100.0
 
-        ax.plot(r_ref_cm, r_est_cm, "o-", color=color, ms=4.5,
-                label="Distancia estimada")
-        ax.plot([10, 105], [10, 105], "--", color=COLORS["reference"],
-                lw=1.2, label="Estimación ideal")
-        ax.set_title(name)
-        ax.set_xlabel(r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]")
-        ax.legend(loc="upper left", framealpha=0.95)
-        style_axis(ax)
+        # Variación relativa sintética alrededor de la amplitud ideal.
+        relative_noise = rng.normal(0.0, 0.035, size=(n_repeats, r_ref_cm.size))
+        amp_synthetic = (k_a / r_ref_m)[None, :] * (1.0 + relative_noise)
+        estimates = (k_a / amp_synthetic) * 100.0
+        residuals_mm = (estimates - r_ref_cm[None, :]) * 10.0
 
-    axes[0].set_ylabel(r"Distancia estimada $\hat r$ [cm]")
-    fig.suptitle("Predicción de distancia a partir de amplitud RMS", y=1.02)
-    fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
-             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
-    fig.tight_layout(rect=(0, 0.035, 1, 0.97))
+        mean_est = np.mean(estimates, axis=0)
+        std_est = np.std(estimates, axis=0, ddof=1)
+        mean_res = np.mean(residuals_mm, axis=0)
+        std_res = np.std(residuals_mm, axis=0, ddof=1)
+
+        ax_top.errorbar(
+            r_ref_cm, mean_est, yerr=std_est, fmt="o-", color=color,
+            ecolor=color, markersize=6, capsize=4, elinewidth=1.5,
+            linewidth=2.0, markeredgecolor="white", markeredgewidth=0.7,
+            label=name, zorder=4,
+        )
+
+        xj = r_ref_cm + offset
+        for row in residuals_mm:
+            ax_res.scatter(xj, row, s=20, color=color, alpha=0.22,
+                           edgecolors="none", zorder=2)
+        ax_res.errorbar(
+            xj, mean_res, yerr=std_res, fmt="o", color=color,
+            ecolor=color, markersize=5.5, capsize=4, elinewidth=1.5,
+            markeredgecolor="white", markeredgewidth=0.6,
+            label=f"{name}: media ± 1σ", zorder=4,
+        )
+        all_estimates.extend(estimates.ravel().tolist())
+        all_residuals.extend(residuals_mm.ravel().tolist())
+
+    ideal = np.linspace(r_ref_cm.min(), r_ref_cm.max(), 250)
+    ax_top.plot(ideal, ideal, "--", color=COLORS["reference"],
+                linewidth=1.6, label="Referencia ideal", zorder=1)
+    ax_top.set_ylabel(r"Distancia estimada $\hat r$ [cm]")
+    ax_top.set_title("(a) Estimación de distancia", pad=10)
+    ax_top.legend(loc="upper left", ncol=2)
+    style_axis(ax_top)
+
+    ax_res.axhline(0, color=COLORS["reference"], linestyle="--",
+                   linewidth=1.5, label="Residuo nulo", zorder=1)
+    ax_res.set_xlabel(r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]")
+    ax_res.set_ylabel(r"Residuo $e_i$ [mm]")
+    ax_res.set_title("(b) Residuos de estimación", pad=10)
+    ax_res.legend(loc="upper left", ncol=2)
+    style_axis(ax_res)
+
+    ax_top.set_xlim(r_ref_cm.min() - 4, r_ref_cm.max() + 4)
+    low = min(r_ref_cm.min(), np.min(all_estimates))
+    high = max(r_ref_cm.max(), np.max(all_estimates))
+    margin = 0.08 * (high - low)
+    ax_top.set_ylim(low - margin, high + margin)
+    lim = max(abs(np.min(all_residuals)), abs(np.max(all_residuals)), 1.0) * 1.18
+    ax_res.set_ylim(-lim, lim)
+
+    fig.text(0.5, 0.015,
+             "MOCK — datos sintéticos; no son mediciones experimentales",
+             ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
+    fig.subplots_adjust(left=0.14, right=0.97, top=0.96, bottom=0.10, hspace=0.28)
     save_figure(fig, "exp01_fig3_distance_prediction_MOCK")
 
 
