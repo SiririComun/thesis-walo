@@ -228,10 +228,12 @@ def plot_frequencies(trials, output_dir):
     axes[1].legend(loc="upper right")
 
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
-             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+             ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.035, 1, 1))
+    # Ajuste manual: evita el aviso de tight_layout con el texto MOCK externo.
+    fig.subplots_adjust(left=0.13, right=0.97, top=0.93,
+                        bottom=0.11, hspace=0.34)
     save_figure(fig, output_dir / "mock_exp03_fig1_doppler_frequencies")
 
 
@@ -240,7 +242,7 @@ def plot_velocity(trials, output_dir):
     vw = np.array([tr["v_walo"] for tr in trials])
     vt = np.array([tr["v_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
 
     panels = [
         (axes[0], vw, "WALO — Doppler diferencial", "WALO"),
@@ -266,10 +268,10 @@ def plot_velocity(trials, output_dir):
 
     axes[0].set_ylabel("Velocidad [cm/s]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
-             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+             ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.035, 1, 1))
+    fig.tight_layout(rect=(0, 0.055, 1, 1))
     save_figure(fig, output_dir / "mock_exp03_fig2_velocity_comparison")
 
 
@@ -278,7 +280,7 @@ def plot_position(trials, output_dir):
     xw = np.array([tr["x_walo"] for tr in trials])
     xt = np.array([tr["x_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
 
     panels = [
         (axes[0], xw, "WALO — Posición integrada", COLORS["mic1"]),
@@ -304,14 +306,14 @@ def plot_position(trials, output_dir):
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
         ax.set_ylim(-5, 205)
-        ax.legend(loc="best", fontsize=7.5, framealpha=0.95)
+        ax.legend(loc="best", framealpha=0.96)
 
     axes[0].set_ylabel("Posición [cm]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
-             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+             ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.035, 1, 1))
+    fig.tight_layout(rect=(0, 0.055, 1, 1))
     save_figure(fig, output_dir / "mock_exp03_fig3_position_comparison")
 
 
