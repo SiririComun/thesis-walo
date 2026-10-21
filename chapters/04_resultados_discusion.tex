@@ -5,8 +5,8 @@
 % WALO: Localización de fuentes de ondas acústicas
 % ==============================================================================
 
-\section{Resultados y discusión}
-\label{sec:resultados_discusion}
+\chapter{Resultados y discusión}
+\label{chap:resultados_discusion}
 
 En este capítulo se evalúa el comportamiento de WALO a partir de
 tres experimentos complementarios. El primero estudia la respuesta
@@ -22,12 +22,13 @@ y, finalmente, se considera la reconstrucción del movimiento.
 En cada experimento se presentan las observaciones y su
 interpretación, junto con las limitaciones relevantes.
 
+
 % ==============================================================================
 % 4.1 EXPERIMENTO 01
 % ==============================================================================
 
-\subsection{Caracterización de la respuesta espacial: Experimento 01}
-\label{subsec:exp01}
+\section{Caracterización de la respuesta espacial: Experimento 01}
+\label{sec:exp01}
 
 El primer experimento estudia la dependencia de la señal acústica
 registrada con la distancia entre la fuente y los micrófonos.
@@ -35,7 +36,13 @@ El propósito es caracterizar la respuesta radial del sistema y
 examinar si las magnitudes extraídas de las señales permiten
 obtener información sobre la separación entre emisor y receptor.
 
-\subsubsection{Calibración de amplitud RMS}
+
+% ------------------------------------------------------------------------------
+% 4.1.1 CALIBRACIÓN DE AMPLITUD RMS
+% ------------------------------------------------------------------------------
+
+\subsection{Calibración de amplitud RMS}
+\label{subsec:exp01_amplitude}
 
 Para caracterizar la respuesta en amplitud se considera el valor
 RMS de la señal registrada en cada canal. En condiciones de
@@ -55,7 +62,7 @@ obtenida para los dos canales de recepción.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]
+    \includegraphics[width=0.92\textwidth]
     {figures/exp01_fig1_amplitude_calibration.pdf}
     \caption{
         Calibración de la amplitud RMS en función del inverso
@@ -89,7 +96,13 @@ en las condiciones experimentales consideradas y no implica
 por sí mismo que la relación se conserve fuera del intervalo
 caracterizado.
 
-\subsubsection{Predicción de distancia}
+
+% ------------------------------------------------------------------------------
+% 4.1.2 PREDICCIÓN DE DISTANCIA
+% ------------------------------------------------------------------------------
+
+\subsection{Predicción de distancia}
+\label{subsec:exp01_distance}
 
 Una vez caracterizada la dependencia de la amplitud con la
 distancia, puede plantearse el problema inverso: estimar la
@@ -99,17 +112,18 @@ RMS registrada.
 La Figura~\ref{fig:exp01_distance_mock} presenta una primera
 visualización de este procedimiento. Esta figura corresponde
 a una versión sintética de la predicción y se incorpora
-exclusivamente para evaluar la organización gráfica y
-argumental del apartado.
+exclusivamente para ilustrar la organización y el procedimiento
+de inversión de la calibración.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]
+    \includegraphics[width=0.92\textwidth]
     {figures/exp01_fig3_distance_prediction_MOCK.pdf}
     \caption{
         Predicción de distancia a partir de la amplitud RMS.
-        Visualización sintética utilizada para ilustrar el
-        procedimiento de inversión de la calibración.
+        La figura presenta la estimación y sus residuos para
+        ambos canales. Visualización sintética utilizada para
+        ilustrar el procedimiento de inversión de la calibración.
     }
     \label{fig:exp01_distance_mock}
 \end{figure}
@@ -125,7 +139,13 @@ de la precisión de la estimación. Para establecer dicha precisión
 será necesario reemplazar esta visualización por la reconstrucción
 obtenida a partir de las mediciones reales.
 
-\subsubsection{Caracterización mediante tiempo de llegada}
+
+% ------------------------------------------------------------------------------
+% 4.1.3 CARACTERIZACIÓN MEDIANTE ToA
+% ------------------------------------------------------------------------------
+
+\subsection{Caracterización mediante tiempo de llegada}
+\label{subsec:exp01_toa}
 
 Además de la amplitud, el tiempo de llegada de la señal constituye
 una magnitud de interés para estimar distancias. En un modelo
@@ -134,15 +154,18 @@ con la separación entre fuente y receptor mediante la velocidad
 del sonido.
 
 La Figura~\ref{fig:exp01_toa} presenta la caracterización
-realizada a partir del observable temporal.
+realizada a partir del observable temporal. Se muestra tanto
+la distancia estimada como la distribución de los residuos
+respecto a las distancias de referencia.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]
-    {figures/exp01_fig4_toa_range.png}
+    \includegraphics[width=0.92\textwidth]
+    {figures/exp01_fig4_toa_range.pdf}
     \caption{
-        Caracterización del alcance mediante el tiempo de llegada
-        de la señal acústica.
+        Caracterización de la estimación de distancia mediante
+        el tiempo de llegada de la señal acústica. Se presentan
+        las estimaciones y sus residuos para ambos canales.
     }
     \label{fig:exp01_toa}
 \end{figure}
@@ -165,13 +188,13 @@ observables proporcionan información complementaria, aunque
 su utilización cuantitativa requiere considerar las condiciones
 de calibración y las limitaciones instrumentales.
 
+
 % ==============================================================================
 % 4.2 EXPERIMENTO 02
 % ==============================================================================
 
-\subsection{Caracterización angular y comparación de métodos:
-Experimento 02}
-\label{subsec:exp02}
+\section{Caracterización angular y comparación de métodos: Experimento 02}
+\label{sec:exp02}
 
 El segundo experimento evalúa la capacidad de WALO para estimar
 la dirección de llegada de una fuente acústica. Para ello se
@@ -184,7 +207,13 @@ distribuidas entre $-60^\circ$ y $60^\circ$, con intervalos
 de $15^\circ$. Para cada posición se realizaron diez mediciones,
 obteniéndose un total de 90 registros válidos.
 
-\subsubsection{Benchmark de estimación angular}
+
+% ------------------------------------------------------------------------------
+% 4.2.1 BENCHMARK ANGULAR
+% ------------------------------------------------------------------------------
+
+\subsection{Benchmark de estimación angular}
+\label{subsec:exp02_benchmark}
 
 La primera comparación considera los ángulos de referencia
 y las estimaciones obtenidas mediante ambos métodos.
@@ -193,7 +222,7 @@ de los estimadores a lo largo del intervalo angular evaluado.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]
+    \includegraphics[width=0.92\textwidth]
     {figures/exp02_fig1_angle_benchmark.pdf}
     \caption{
         Comparación entre los ángulos de referencia y las
@@ -211,36 +240,13 @@ de cada método.
 Para complementar esta comparación se utilizan métricas
 globales calculadas a partir de los residuos angulares.
 
-\subsubsection{Reconstrucción geométrica angular}
 
-La estimación de dirección puede representarse geométricamente
-mediante la reconstrucción de las semirrectas asociadas a
-los ángulos obtenidos por los dos métodos.
+% ------------------------------------------------------------------------------
+% 4.2.2 RESIDUOS Y MÉTRICAS
+% ------------------------------------------------------------------------------
 
-La Figura~\ref{fig:exp02_rays} presenta la reconstrucción
-geométrica bidimensional. Esta representación permite visualizar
-la orientación estimada respecto a la geometría de referencia
-del experimento.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.95\textwidth]
-    {figures/exp02_fig2_ray_reconstruction.pdf}
-    \caption{
-        Reconstrucción geométrica bidimensional de las direcciones
-        estimadas mediante PDoA y TDoA.
-    }
-    \label{fig:exp02_rays}
-\end{figure}
-
-La reconstrucción representa direcciones de llegada y no debe
-interpretarse, por sí sola, como una localización cartesiana
-completa de la fuente. Para obtener una posición espacial
-es necesario incorporar información adicional, como una
-estimación de distancia o una segunda restricción geométrica
-independiente.
-
-\subsubsection{Residuos y métricas de estimación}
+\subsection{Residuos y métricas de estimación}
+\label{subsec:exp02_residuals}
 
 Para cuantificar las diferencias entre las estimaciones
 y los ángulos de referencia se define el residuo angular como
@@ -293,7 +299,7 @@ de ambos métodos.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]
+    \includegraphics[width=0.92\textwidth]
     {figures/exp02_fig3_angular_residuals.pdf}
     \caption{
         Distribución de los residuos angulares obtenidos
@@ -323,12 +329,13 @@ una dispersión apreciable.
 En consecuencia, la evaluación angular requiere considerar
 conjuntamente la exactitud y la dispersión de las estimaciones.
 
+
 % ==============================================================================
 % 4.3 DISCUSIÓN TRANSVERSAL
 % ==============================================================================
 
-\subsection{Discusión transversal}
-\label{subsec:discusion_transversal}
+\section{Discusión transversal}
+\label{sec:discusion_transversal}
 
 Los experimentos anteriores examinan dos aspectos distintos
 del problema de localización acústica. El primero estudia
@@ -361,10 +368,13 @@ diferente; por tanto, sus limitaciones no son necesariamente
 equivalentes.
 
 Una limitación importante de la evaluación angular es que
-la reconstrucción de semirrectas determina direcciones,
-pero no una posición completa sin información adicional.
-De manera análoga, la estimación radial requiere una
-calibración que relacione la señal registrada con la distancia.
+la estimación de dirección no determina, por sí sola,
+una posición completa de la fuente. Para ello se requiere
+incorporar información adicional, como una estimación
+de distancia o una segunda restricción geométrica
+independiente. De manera análoga, la estimación radial
+requiere una calibración que relacione la señal registrada
+con la distancia.
 
 La evaluación cinemática presentada en el siguiente experimento
 extiende este análisis al caso de una fuente móvil. En este
@@ -372,13 +382,13 @@ escenario, la información acústica no se limita a describir
 una posición o dirección, sino que permite estudiar la
 evolución temporal del movimiento mediante el efecto Doppler.
 
+
 % ==============================================================================
 % 4.4 EXPERIMENTO 03
 % ==============================================================================
 
-\subsection{Reconstrucción cinemática mediante efecto Doppler:
-Experimento 03}
-\label{subsec:exp03}
+\section{Reconstrucción cinemática mediante efecto Doppler: Experimento 03}
+\label{sec:exp03}
 
 El tercer experimento aborda la reconstrucción del movimiento
 de una fuente sonora a partir de las variaciones de frecuencia
@@ -391,16 +401,22 @@ se desplaza sobre un riel de aproximadamente 2 m. Los dos
 micrófonos se encuentran ubicados en los extremos del recorrido,
 con una separación correspondiente a la longitud del riel.
 El movimiento se inicia desde uno de los extremos y se
-consideran diez repeticiones experimentales.
+consideran diez repeticiones.
 
-La reconstrucción prevista comprende tres etapas: el análisis
+La reconstrucción comprende tres etapas: el análisis
 de las frecuencias recibidas, la estimación de velocidad
 a partir del modelo Doppler y la obtención de posición
 mediante integración temporal de la velocidad. La trayectoria
 reconstruida se contrasta con una referencia óptica obtenida
 mediante Tracker.
 
-\subsubsection{Evolución de las frecuencias recibidas}
+
+% ------------------------------------------------------------------------------
+% 4.4.1 FRECUENCIAS RECIBIDAS
+% ------------------------------------------------------------------------------
+
+\subsection{Evolución de las frecuencias recibidas}
+\label{subsec:exp03_frequencies}
 
 La primera etapa consiste en examinar la evolución temporal
 de las frecuencias estimadas en los dos canales. Su comparación
@@ -413,8 +429,8 @@ su componente común.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.98\textwidth]
-    {figures/mock_exp03_fig1_doppler_frequencies.png}
+    \includegraphics[width=0.92\textwidth]
+    {figures/mock_exp03_fig1_doppler_frequencies.pdf}
     \caption{
         Evolución temporal de las frecuencias Doppler recibidas
         por los dos micrófonos y representación de la componente
@@ -436,7 +452,13 @@ y considerar la geometría del montaje. La figura se incluye
 para mostrar la presentación prevista del análisis, no
 como evidencia de una medición real.
 
-\subsubsection{Reconstrucción y comparación de velocidad}
+
+% ------------------------------------------------------------------------------
+% 4.4.2 VELOCIDAD
+% ------------------------------------------------------------------------------
+
+\subsection{Reconstrucción y comparación de velocidad}
+\label{subsec:exp03_velocity}
 
 A partir de las frecuencias estimadas en ambos canales,
 el modelo Doppler permite obtener una estimación temporal
@@ -449,8 +471,8 @@ prevista para esta comparación.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.98\textwidth]
-    {figures/mock_exp03_fig2_velocity_comparison.png}
+    \includegraphics[width=0.92\textwidth]
+    {figures/mock_exp03_fig2_velocity_comparison.pdf}
     \caption{
         Comparación de la velocidad reconstruida mediante
         el modelo Doppler y la velocidad obtenida mediante
@@ -477,7 +499,13 @@ En esta etapa, la figura permite visualizar la organización
 del resultado que se espera obtener, pero no permite
 establecer la precisión real del estimador Doppler.
 
-\subsubsection{Reconstrucción de posición}
+
+% ------------------------------------------------------------------------------
+% 4.4.3 POSICIÓN
+% ------------------------------------------------------------------------------
+
+\subsection{Reconstrucción de posición}
+\label{subsec:exp03_position}
 
 La velocidad estimada proporciona una descripción temporal
 del movimiento. Para obtener la posición de la fuente
@@ -501,8 +529,8 @@ obtenida mediante WALO y la referencia óptica.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.98\textwidth]
-    {figures/mock_exp03_fig3_position_comparison.png}
+    \includegraphics[width=0.92\textwidth]
+    {figures/mock_exp03_fig3_position_comparison.pdf}
     \caption{
         Comparación de la posición reconstruida mediante
         integración de la velocidad Doppler y la posición
@@ -531,12 +559,13 @@ destinadas a establecer la presentación del análisis.
 No se extraen de ellas métricas de desempeño ni conclusiones
 sobre la precisión experimental de WALO.
 
+
 % ==============================================================================
 % 4.5 SÍNTESIS DEL CAPÍTULO
 % ==============================================================================
 
-\subsection{Síntesis}
-\label{subsec:sintesis_cap4}
+\section{Síntesis}
+\label{sec:sintesis_cap4}
 
 Los experimentos presentados abordan de manera complementaria
 la obtención de información espacial y cinemática a partir
