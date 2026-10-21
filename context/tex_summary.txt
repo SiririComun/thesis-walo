@@ -1,20 +1,27 @@
 ==============================================================================
 ⚙️  PROJECT ENVIRONMENT & TOOLCHAIN CONSTRAINTS
 ==============================================================================
-• Repository State    : main @ 6932609
+• Repository State    : main @ 2fd2bd6
 ==============================================================================
 
 Git Context & Branch Topology:
 
 ```log
-Current Branch: main | Working Tree: Dirty (17 modified/untracked files)
+Current Branch: main | Working Tree: Dirty (5 modified/untracked files)
 
 Branch Tracking & Divergence Status:
-* main                6932609 [origin/main] Update compiled thesis manuscript
-  remotes/origin/main 6932609 Update compiled thesis manuscript
+* main                2fd2bd6 [origin/main] docs(thesis): update compiled manuscript PDF
+  remotes/origin/main 2fd2bd6 docs(thesis): update compiled manuscript PDF
 
 Multi-Branch Git Commit Graph:
-* 6932609  (HEAD -> main, origin/main) - 2026-10-20 : Update compiled thesis manuscript (SiririComun)
+* 2fd2bd6  (HEAD -> main, origin/main) - 2026-10-20 : docs(thesis): update compiled manuscript PDF (SiririComun)
+* 971784d  - 2026-10-20 : refactor(thesis): restructure results and discussion chapter (SiririComun)
+* 2af0b51  - 2026-10-20 : chore(exp03): update synthetic demonstration figures (SiririComun)
+* 4bae436  - 2026-10-20 : feat(exp02): update experimental figures (SiririComun)
+* 32a4147  - 2026-10-20 : feat(exp01): update experimental figures (SiririComun)
+* ab1c8ec  - 2026-10-20 : refactor(figures): update shared plotting style (SiririComun)
+* d4db864  - 2026-10-20 : feat(context): integrate Cog submodule and initialize LaTeX manuscript configuration (SiririComun)
+* 6932609  - 2026-10-20 : Update compiled thesis manuscript (SiririComun)
 * 0faca9f  - 2026-10-20 : Add results and discussion chapter (SiririComun)
 * a589b42  - 2026-10-20 : Add synthetic data for experiment 03 (SiririComun)
 * a227255  - 2026-10-20 : Regenerate thesis figures with unified style (SiririComun)
@@ -22,13 +29,6 @@ Multi-Branch Git Commit Graph:
 * b700622  - 2026-10-20 : Add mock visualization figures for experiment 03 (SiririComun)
 * ebe251a  - 2026-10-20 : Add mock figure generation for experiment 03 (SiririComun)
 * 9ca1145  - 2026-10-20 : docs: add experiment 02 result figures (SiririComun)
-* be5b5c1  - 2026-10-20 : feat: add experiment 02 analysis pipeline (SiririComun)
-* 48c5599  - 2026-10-20 : docs: update experiment 01 figures (SiririComun)
-* 034a108  - 2026-10-20 : refactor: unify experiment 01 figure generation (SiririComun)
-* bc3fbb0  - 2026-10-20 : docs: revise theoretical chapters and manuscript (SiririComun)
-* b5560c8  - 2026-10-20 : docs: add experiment 01 result figures (SiririComun)
-* ea129ff  - 2026-10-20 : feat: add experiment 01 analysis pipeline (SiririComun)
-* 75dda3b  - 2026-10-20 : docs: add instrumentation and methodology chapter (SiririComun)
 ```
 
 01_tratamiento_campo.tex: (chapters/01_tratamiento_campo.tex)
@@ -4721,7 +4721,7 @@ titlepage.tex: (frontmatter/titlepage.tex)
 main.tex: (main.tex)
 
 ```latex
-\documentclass[12pt,letterpaper]{article}
+\documentclass[12pt,letterpaper]{report}
 
 \input{preamble.tex}
 
@@ -4742,14 +4742,17 @@ main.tex: (main.tex)
 
 \clearpage
 
+\chapter{Tratamiento del campo acústico y extracción de observables físicos}
 \input{chapters/01_tratamiento_campo.tex}
 
 \clearpage
 
+\chapter{Localización acústica: modelos geométricos y estimación cinemática}
 \input{chapters/02_modelos_inversion.tex}
 
 \clearpage
 
+\chapter{Instrumentación y metodología experimental}
 \input{chapters/03_instrumentacion_metodologia.tex}
 
 \clearpage
@@ -4759,7 +4762,6 @@ main.tex: (main.tex)
 \clearpage
 
 \nocite{*}
-
 \bibliography{references}
 
 \end{document}
