@@ -28,6 +28,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_axis, save_figure as common_save_figure
 
 
 # ============================================================
@@ -43,31 +44,12 @@ DPI = 300
 SAVE_PDF = True
 SHOW_FIGURES = True
 
-# Convención angular del montaje:
-# 0° sobre +y; ángulos positivos hacia +x.
-# x = r sin(theta), y = r cos(theta).
+COLOR_PHASE = COLORS["phase"]
+COLOR_TDOA = COLORS["tdoa"]
+COLOR_IDEAL = COLORS["reference"]
+COLOR_ZERO = COLORS["reference"]
+apply_style()
 
-COLOR_PHASE = "#B34BC2"
-COLOR_TDOA = "#159F94"
-COLOR_IDEAL = "#777777"
-COLOR_ZERO = "#666666"
-
-plt.rcParams.update({
-    "font.family": "serif",
-    "font.size": 11,
-    "axes.labelsize": 12,
-    "axes.titlesize": 13,
-    "legend.fontsize": 10,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10,
-    "figure.dpi": DPI,
-    "savefig.dpi": DPI,
-    "axes.grid": True,
-    "grid.alpha": 0.25,
-    "grid.linestyle": "-",
-    "lines.linewidth": 1.8,
-    "lines.markersize": 6,
-})
 
 
 # ============================================================
@@ -122,17 +104,7 @@ def polar_to_cartesian(radius, angle_deg):
 
 
 def save_figure(fig, stem):
-    """Guarda una figura en PNG y, si está habilitado, en PDF."""
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-
-    png = FIGURES_DIR / f"{stem}.png"
-    fig.savefig(png, dpi=DPI, bbox_inches="tight")
-    print(f"  PNG: {png.relative_to(ROOT)}")
-
-    if SAVE_PDF:
-        pdf = FIGURES_DIR / f"{stem}.pdf"
-        fig.savefig(pdf, bbox_inches="tight")
-        print(f"  PDF: {pdf.relative_to(ROOT)}")
+    common_save_figure(fig, FIGURES_DIR, stem)
 
 
 # ============================================================
@@ -259,19 +231,19 @@ def calculate_metrics(df):
 def generate_figure_1(summary, metrics, radius_cm):
     print("\nGenerando Figura 1: benchmark angular...")
 
-    fig, ax = plt.subplots(figsize=(9.0, 6.2))
+    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
     targets = summary["target_deg"].to_numpy()
 
     x = np.linspace(-70, 70, 300)
     ax.fill_between(
         x, x - 4.0, x + 4.0,
         color=COLOR_TDOA, alpha=0.10,
-        label=r"$\pm4^\circ$ Acceptance Corridor",
+        label=r"Corredor de aceptación ($\pm4^\circ$)",
         zorder=1
     )
     ax.plot(
         x, x, "--", color=COLOR_IDEAL, linewidth=1.8,
-        label="Ideal (y = x)", zorder=2
+        label="Referencia ideal", zorder=2
     )
 
     ax.errorbar(
@@ -281,7 +253,7 @@ def generate_figure_1(summary, metrics, radius_cm):
         fmt="o-", color=COLOR_PHASE, ecolor=COLOR_PHASE,
         capsize=4, elinewidth=1.4, markersize=7,
         label=(
-            f"Phase AoA (MAE = {metrics['phase']['mae']:.1f}°, "
+            f"PDoA (MAE = {metrics['phase']['mae']:.1f}°, "
             f"σ = {metrics['phase']['sigma']:.1f}°)"
         ),
         zorder=4
@@ -294,21 +266,21 @@ def generate_figure_1(summary, metrics, radius_cm):
         fmt="s-", color=COLOR_TDOA, ecolor=COLOR_TDOA,
         capsize=4, elinewidth=1.4, markersize=7,
         label=(
-            f"TDOA AoA (MAE = {metrics['tdoa']['mae']:.1f}°, "
+            f"TDoA (MAE = {metrics['tdoa']['mae']:.1f}°, "
             f"σ = {metrics['tdoa']['sigma']:.1f}°)"
         ),
         zorder=3
     )
 
     ax.set_title(
-        "Angle of Arrival Benchmark: Phase vs. TDOA\n"
-        f"(r ≈ {radius_cm:.1f} cm, baseline d = {BASELINE_CM:.1f} cm)",
+        "Benchmark angular: PDoA y TDoA\n"
+        f"(r ≈ {radius_cm:.1f} cm, separación d = {BASELINE_CM:.1f} cm)",
         pad=12
     )
     ax.set_xlabel(
-        r"Ground Truth Target Angle $\theta_{\mathrm{target}}$ [°]"
+        r"Ángulo de referencia $\theta_{\mathrm{ref}}$ [°]"
     )
-    ax.set_ylabel(r"Estimated Angle $\hat{\theta}$ [°]")
+    ax.set_ylabel(r"Ángulo estimado $\hat{\theta}$ [°]")
     ax.set_xlim(-70, 70)
     ax.set_ylim(-100, 100)
     ax.set_xticks(np.arange(-60, 61, 20))
@@ -330,7 +302,7 @@ def generate_figure_2(summary, radius_cm):
     if not np.isfinite(radius_cm) or radius_cm <= 0:
         raise ValueError("No hay una distancia positiva válida para la reconstrucción.")
 
-    fig, ax = plt.subplots(figsize=(8.5, 7.0))
+    fig, ax = plt.subplots(figsize=(7.2, 5.8))
 
     circle = plt.Circle(
         (0, 0), radius_cm, fill=False, linestyle=":",
@@ -363,25 +335,25 @@ def generate_figure_2(summary, radius_cm):
     mic_x = BASELINE_CM / 2.0
     ax.scatter(
         [-mic_x, mic_x], [0, 0], s=100,
-        color="#00cfe8", edgecolor="black", linewidth=0.5,
-        zorder=5, label=f"Mics (baseline = {BASELINE_CM:.0f} cm)"
+        color=COLORS["reference"], edgecolor="black", linewidth=0.5,
+        zorder=5, label=f"Micrófonos (separación = {BASELINE_CM:.0f} cm)"
     )
-    ax.text(-mic_x - 1.0, 1.5, "Mic 1", color="#00a9bd",
-            fontsize=10, fontweight="bold", ha="right")
-    ax.text(mic_x + 1.0, 1.5, "Mic 2", color="#00a9bd",
-            fontsize=10, fontweight="bold", ha="left")
+    ax.text(-mic_x - 1.0, 1.5, "Mic. 1", color=COLORS["reference"],
+            fontsize=8.5, fontweight="bold", ha="right")
+    ax.text(mic_x + 1.0, 1.5, "Mic. 2", color=COLORS["reference"],
+            fontsize=8.5, fontweight="bold", ha="left")
 
-    ax.plot([], [], "--", color=COLOR_IDEAL, label="Ideal target direction")
-    ax.plot([], [], color=COLOR_PHASE, linewidth=2.2, label="Phase ray vector")
-    ax.plot([], [], color=COLOR_TDOA, linewidth=2.2, label="TDOA ray vector")
+    ax.plot([], [], "--", color=COLOR_IDEAL, label="Dirección de referencia")
+    ax.plot([], [], color=COLOR_PHASE, linewidth=2.2, label="Dirección PDoA")
+    ax.plot([], [], color=COLOR_TDOA, linewidth=2.2, label="Dirección TDoA")
 
     ax.set_title(
-        "2D Acoustic Ray Reconstruction: Phase vs. TDOA\n"
+        "Reconstrucción geométrica: PDoA y TDoA\n"
         f"(r ≈ {radius_cm:.1f} cm, d = {BASELINE_CM:.1f} cm)",
         pad=12
     )
-    ax.set_xlabel("x [cm]")
-    ax.set_ylabel("y [cm]")
+    ax.set_xlabel("Posición x [cm]")
+    ax.set_ylabel("Posición y [cm]")
 
     limit = radius_cm + 8.0
     ax.set_xlim(-limit, limit)
@@ -427,7 +399,7 @@ def generate_figure_3(df):
     phase_stats = stats[stats["method"] == "phase"]
     tdoa_stats = stats[stats["method"] == "tdoa"]
 
-    fig, ax = plt.subplots(figsize=(10, 6.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
     rng = np.random.default_rng(42)
     jitter = 1.5
 
@@ -458,7 +430,7 @@ def generate_figure_3(df):
         yerr=phase_stats["std"],
         fmt="o-", color=COLOR_PHASE, markersize=7,
         linewidth=1.8, capsize=4, elinewidth=1.5,
-        label="Phase AoA: media ± 1σ", zorder=4
+        label="PDoA: media ± 1σ", zorder=4
     )
     ax.errorbar(
         tdoa_stats["target_deg"] + jitter,
@@ -466,12 +438,12 @@ def generate_figure_3(df):
         yerr=tdoa_stats["std"],
         fmt="s-", color=COLOR_TDOA, markersize=7,
         linewidth=1.8, capsize=4, elinewidth=1.5,
-        label="TDOA AoA: media ± 1σ", zorder=4
+        label="TDoA: media ± 1σ", zorder=4
     )
 
-    ax.set_xlabel(r"Ángulo de referencia $\theta_{\mathrm{target}}$ [°]", fontsize=13)
-    ax.set_ylabel(r"Residuo angular $e_\theta$ [°]", fontsize=13)
-    ax.set_title("Residuos angulares: Phase AoA vs. TDOA AoA", fontsize=15, pad=14)
+    ax.set_xlabel(r"Ángulo de referencia $\theta_{\mathrm{target}}$ [°]", fontsize=9.5)
+    ax.set_ylabel(r"Residuo angular $e_\theta$ [°]", fontsize=9.5)
+    ax.set_title("Residuos angulares: PDoA y TDoA", fontsize=10, pad=10)
     targets = np.sort(work["target_deg"].unique())
     ax.set_xticks(targets)
     ax.minorticks_on()
@@ -487,6 +459,7 @@ def generate_figure_3(df):
     limit = max(10.0, np.ceil(max_abs / 10.0) * 10.0)
     ax.set_ylim(-limit * 1.15, limit * 1.15)
 
+    style_axis(ax)
     fig.tight_layout()
     save_figure(fig, "exp02_fig3_angular_residuals")
 
@@ -504,7 +477,7 @@ def print_results(summary, metrics, residual_data):
     print(f"Posiciones angulares: {len(summary)}")
     print(f"Mediciones válidas:   {len(residual_data)}")
 
-    for name, key in [("Phase AoA", "phase"), ("TDOA AoA", "tdoa")]:
+    for name, key in [("PDoA", "phase"), ("TDoA", "tdoa")]:
         m = metrics[key]
         print(f"\n{name}")
         print("-" * 42)

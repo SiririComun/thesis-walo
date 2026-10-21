@@ -11,7 +11,6 @@ Entradas:
 
 Salidas:
     figures/exp01_fig1_amplitude_calibration.png
-    figures/exp01_fig2_energy_calibration.png
     figures/exp01_fig3_distance_prediction_MOCK.png
     figures/exp01_fig4_toa_range.png
 
@@ -29,7 +28,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoMinorLocator
+from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_axis as common_style_axis, save_figure as common_save_figure
 
 
 # ============================================================
@@ -46,52 +45,12 @@ CSV_FILES = {
     "Micrófono 2": DATA_DIR / "distance_characterization_raw_mic2.csv",
 }
 
-COLORS = {
-    "Micrófono 1": "#008766",
-    "Micrófono 2": "#E47732",
-    "reference": "#555555",
-    "grid": "#D9DEE3",
-}
-
 REQUIRED_COLUMNS = {
-    "r_tape_cm",
-    "amp_direct_mv",
-    "energy_direct",
-    "r_toa_cm",
-    "pulse_num",
+    "r_tape_cm", "amp_direct_mv", "r_toa_cm", "pulse_num",
 }
 
-plt.rcParams.update({
-    "figure.facecolor": "white",
-    "axes.facecolor": "white",
-    "savefig.facecolor": "white",
+apply_style()
 
-    "font.family": "serif",
-    "font.size": 10,
-
-    "axes.titlesize": 11,
-    "axes.labelsize": 10,
-
-    "legend.fontsize": 8.5,
-
-    "xtick.labelsize": 9,
-    "ytick.labelsize": 9,
-
-    "axes.edgecolor": "#444444",
-    "axes.linewidth": 0.8,
-
-    "axes.grid": True,
-    "grid.color": COLORS["grid"],
-    "grid.linewidth": 0.65,
-    "grid.alpha": 0.8,
-
-    "lines.linewidth": 1.7,
-
-    "savefig.dpi": 400,
-
-    "pdf.fonttype": 42,
-    "ps.fonttype": 42,
-})
 
 
 # ============================================================
@@ -125,7 +84,6 @@ def load_data():
         numeric_columns = [
             "r_tape_cm",
             "amp_direct_mv",
-            "energy_direct",
             "r_toa_cm",
             "pulse_num",
         ]
@@ -246,59 +204,11 @@ def calculate_metrics(df):
 # ============================================================
 
 def style_axis(ax):
-
-    ax.grid(
-        True,
-        which="major",
-        color=COLORS["grid"],
-        linewidth=0.65,
-        alpha=0.8,
-    )
-
-    ax.grid(
-        True,
-        which="minor",
-        color=COLORS["grid"],
-        linewidth=0.35,
-        alpha=0.4,
-    )
-
-    ax.xaxis.set_minor_locator(AutoMinorLocator())
-    ax.yaxis.set_minor_locator(AutoMinorLocator())
-
-    ax.tick_params(
-        which="both",
-        direction="in",
-        top=True,
-        right=True,
-    )
+    common_style_axis(ax)
 
 
 def save_figure(fig, stem):
-    """
-    Exporta únicamente PNG.
-
-    Los archivos PDF de las figuras individuales no se generan,
-    de acuerdo con la política de conservación del repositorio.
-    """
-
-    FIGURES_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    output = FIGURES_DIR / f"{stem}.png"
-
-    fig.savefig(
-        output,
-        dpi=400,
-        bbox_inches="tight",
-        facecolor="white",
-    )
-
-    plt.close(fig)
-
-    print(f"  Guardado: {output.relative_to(ROOT)}")
+    common_save_figure(fig, FIGURES_DIR, stem)
 
 
 # ============================================================
@@ -318,7 +228,7 @@ def plot_calibration(
     fig, (ax_lin, ax_phys) = plt.subplots(
         1,
         2,
-        figsize=(10.8, 4.15),
+        figsize=FIGSIZE_WIDE,
     )
 
     fit_results = {}
@@ -459,148 +369,38 @@ def plot_calibration(
 # 6. FIGURA 3: ESTIMACIÓN DE DISTANCIA (MOCK)
 # ============================================================
 
-def plot_mock_distance(data, amp_fits, energy_fits):
+def plot_mock_distance(amp_fits):
+    """Predicción sintética basada exclusivamente en amplitud RMS.
+
+    Los dos paneles muestran por separado la inversión de la
+    calibración para cada micrófono. No se utiliza energía digital.
     """
-    Figura provisional construida con datos sintéticos.
-
-    Los observables se generan a partir de los coeficientes
-    de calibración y se invierten para ilustrar la estimación
-    de distancia.
-
-    Esta figura NO constituye una validación experimental.
-    """
-
     rng = np.random.default_rng(20261020)
-
-    r_ref_cm = np.array(
-        [15, 20, 25, 30, 40, 50, 60, 80, 100],
-        dtype=float,
-    )
-
+    r_ref_cm = np.array([15, 20, 25, 30, 40, 50, 60, 80, 100], dtype=float)
     r_ref_m = r_ref_cm / 100.0
 
-    fig, (ax_amp, ax_energy) = plt.subplots(
-        1,
-        2,
-        figsize=(10.8, 4.2),
-    )
-
-    for name in CSV_FILES:
-
-        color = COLORS[name]
-
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharex=True, sharey=True)
+    for ax, name, color in zip(axes, CSV_FILES, (COLORS["Micrófono 1"], COLORS["Micrófono 2"])):
         k_a = amp_fits[name][0]
-        k_e = energy_fits[name][0]
+        noise = rng.normal(0.0, 0.035, size=r_ref_cm.size)
+        amp_synthetic = (k_a / r_ref_m) * (1.0 + noise)
+        r_est_cm = (k_a / amp_synthetic) * 100.0
 
-        # Ruido sintético ilustrativo.
-        amp_noise = rng.normal(
-            0.0,
-            0.035,
-            size=r_ref_cm.size,
-        )
-
-        energy_noise = rng.normal(
-            0.0,
-            0.055,
-            size=r_ref_cm.size,
-        )
-
-        amp_synthetic = (
-            k_a / r_ref_m
-        ) * (1.0 + amp_noise)
-
-        energy_synthetic = (
-            k_e / r_ref_m**2
-        ) * (1.0 + energy_noise)
-
-        r_amp_est_cm = (
-            k_a / amp_synthetic
-        ) * 100.0
-
-        r_energy_est_cm = (
-            np.sqrt(k_e / energy_synthetic)
-        ) * 100.0
-
-        ax_amp.plot(
-            r_ref_cm,
-            r_amp_est_cm,
-            "o-",
-            ms=4,
-            color=color,
-            label=name,
-        )
-
-        ax_energy.plot(
-            r_ref_cm,
-            r_energy_est_cm,
-            "o-",
-            ms=4,
-            color=color,
-            label=name,
-        )
-
-    lo, hi = 10, 105
-
-    for ax in (ax_amp, ax_energy):
-
-        ax.plot(
-            [lo, hi],
-            [lo, hi],
-            "--",
-            color=COLORS["reference"],
-            lw=1.3,
-            label="Estimación ideal",
-        )
-
-        ax.set_xlim(lo, hi)
-        ax.set_ylim(lo, hi)
-
-        ax.set_xlabel(
-            r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]"
-        )
-
-        ax.set_ylabel(
-            r"Distancia estimada $\hat r$ [cm]"
-        )
-
-        ax.legend(frameon=True)
-
+        ax.plot(r_ref_cm, r_est_cm, "o-", color=color, ms=4.5,
+                label="Distancia estimada")
+        ax.plot([10, 105], [10, 105], "--", color=COLORS["reference"],
+                lw=1.2, label="Estimación ideal")
+        ax.set_title(name)
+        ax.set_xlabel(r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]")
+        ax.legend(loc="upper left", framealpha=0.95)
         style_axis(ax)
 
-    ax_amp.set_title(
-        r"(a) Estimación mediante $A_{\mathrm{RMS}}$"
-    )
-
-    ax_energy.set_title(
-        r"(b) Estimación mediante $E_{\mathrm{dig}}$"
-    )
-
-    fig.suptitle(
-        "FIGURA PROVISIONAL — DATOS SINTÉTICOS, NO EXPERIMENTALES",
-        color="#A32626",
-        fontsize=11,
-        fontweight="bold",
-        y=1.04,
-    )
-
-    fig.text(
-        0.5,
-        0.005,
-        "Mock reproducible. No representa mediciones experimentales.",
-        ha="center",
-        va="bottom",
-        fontsize=8.5,
-        color="#A32626",
-    )
-
-    fig.tight_layout(
-        rect=(0, 0.04, 1, 0.96)
-    )
-
-    save_figure(
-        fig,
-        "exp01_fig3_distance_prediction_MOCK",
-    )
+    axes[0].set_ylabel(r"Distancia estimada $\hat r$ [cm]")
+    fig.suptitle("Predicción de distancia a partir de amplitud RMS", y=1.02)
+    fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
+             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+    fig.tight_layout(rect=(0, 0.035, 1, 0.97))
+    save_figure(fig, "exp01_fig3_distance_prediction_MOCK")
 
 
 # ============================================================
@@ -628,7 +428,7 @@ def plot_toa(data):
     fig, (ax_top, ax_res) = plt.subplots(
         2,
         1,
-        figsize=(8.2, 7.8),
+        figsize=FIGSIZE_TALL,
         sharex=True,
         gridspec_kw={
             "height_ratios": [1.35, 1.0],
@@ -940,32 +740,11 @@ def main():
     )
 
     # --------------------------------------------------------
-    # Figura 2
+    # Figura 3: predicción mock basada solo en amplitud RMS
     # --------------------------------------------------------
 
-    print("\nGenerando Figura 2: calibración de energía digital...")
-
-    energy_fits = plot_calibration(
-        data=data,
-        observable="energy_direct",
-        power=2,
-        ylabel=r"Energía digital $E_{\mathrm{dig}}$ [unid. arb.]",
-        title="Calibración radial de energía digital",
-        stem="exp01_fig2_energy_calibration",
-        unit_label=r"m$^{-2}$",
-    )
-
-    # --------------------------------------------------------
-    # Figura 3
-    # --------------------------------------------------------
-
-    print("\nGenerando Figura 3: estimación de distancia (MOCK)...")
-
-    plot_mock_distance(
-        data,
-        amp_fits,
-        energy_fits,
-    )
+    print("\nGenerando Figura 3: estimación de distancia (MOCK, RMS)...")
+    plot_mock_distance(amp_fits)
 
     # --------------------------------------------------------
     # Figura 4
@@ -986,7 +765,6 @@ def main():
     for name in CSV_FILES:
 
         ka, r2a = amp_fits[name]
-        ke, r2e = energy_fits[name]
 
         print(f"\n{name}")
 
@@ -995,10 +773,6 @@ def main():
             f"R² = {r2a:.5f}"
         )
 
-        print(
-            f"  Energía:  kE = {ke:.6g}, "
-            f"R² = {r2e:.5f}"
-        )
 
     # --------------------------------------------------------
     # Métricas ToA
@@ -1037,11 +811,7 @@ def main():
     print("\nProceso terminado.")
     print("Revisa las figuras en figures/.")
 
-    print(
-        "\nADVERTENCIA: la Figura 3 contiene datos sintéticos "
-        "de demostración y no debe presentarse como resultado "
-        "experimental."
-    )
+    print("\nADVERTENCIA: la Figura 3 es sintética y no constituye evidencia experimental.")
 
 
 # ============================================================

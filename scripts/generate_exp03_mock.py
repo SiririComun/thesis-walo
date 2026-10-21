@@ -19,23 +19,14 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_axis, save_figure as common_save_figure
 
 
 # ---------------------------------------------------------------------
 # Estilo y constantes del montaje
 # ---------------------------------------------------------------------
 
-plt.rcParams.update({
-    "font.family": "serif",
-    "font.size": 11,
-    "axes.titlesize": 13,
-    "axes.labelsize": 12,
-    "legend.fontsize": 9,
-    "figure.dpi": 140,
-    "savefig.dpi": 220,
-    "axes.grid": True,
-    "grid.alpha": 0.25,
-})
+apply_style()
 
 RAIL_LENGTH_CM = 200.0
 X_START_CM = 10.0
@@ -196,17 +187,13 @@ def simulate_trial(trial_index, t_walo, rng, tracker_rate):
 
 
 def save_figure(fig, output_base):
-    fig.savefig(output_base.with_suffix(".png"), bbox_inches="tight")
-    fig.savefig(output_base.with_suffix(".pdf"), bbox_inches="tight")
-    plt.close(fig)
-    print(f"  PNG: {output_base.with_suffix('.png')}")
-    print(f"  PDF: {output_base.with_suffix('.pdf')}")
+    common_save_figure(fig, output_base.parent, output_base.name)
 
 
 def plot_frequencies(trials, output_dir):
-    fig, axes = plt.subplots(2, 1, figsize=(11.5, 7.4), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=FIGSIZE_TALL, sharex=True, gridspec_kw={"height_ratios": [1.35, 1.0], "hspace": 0.28})
 
-    colors = {"f1": "#0072B2", "f2": "#D55E00", "common": "#009E73"}
+    colors = {"f1": COLORS["mic1"], "f2": COLORS["mic2"], "common": COLORS["reference"]}
 
     # Diez ensayos en transparencia; el primer ensayo se destaca.
     for i, trial in enumerate(trials):
@@ -240,9 +227,11 @@ def plot_frequencies(trials, output_dir):
     axes[1].set_xlabel("Tiempo [s]")
     axes[1].legend(loc="upper right")
 
-    fig.suptitle("MOCK — Frecuencias Doppler y deriva común\n"
-                 "10 ensayos sintéticos", y=0.99)
-    fig.tight_layout()
+    fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
+             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+    for ax in axes:
+        style_axis(ax)
+    fig.tight_layout(rect=(0, 0.035, 1, 1))
     save_figure(fig, output_dir / "mock_exp03_fig1_doppler_frequencies")
 
 
@@ -251,7 +240,7 @@ def plot_velocity(trials, output_dir):
     vw = np.array([tr["v_walo"] for tr in trials])
     vt = np.array([tr["v_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.0), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharey=True)
 
     panels = [
         (axes[0], vw, "WALO — Doppler diferencial", "WALO"),
@@ -263,7 +252,7 @@ def plot_velocity(trials, output_dir):
         std = np.std(values, axis=0, ddof=1)
 
         for i, row in enumerate(values):
-            ax.plot(t, row, color="#0072B2" if label == "WALO" else "#D55E00",
+            ax.plot(t, row, color=COLORS["mic1"] if label == "WALO" else COLORS["mic2"],
                     alpha=0.17, lw=0.8)
 
         color = "#0072B2" if label == "WALO" else "#D55E00"
@@ -276,9 +265,11 @@ def plot_velocity(trials, output_dir):
         ax.legend(loc="upper right")
 
     axes[0].set_ylabel("Velocidad [cm/s]")
-    fig.suptitle("MOCK — Comparación de velocidad reconstruida\n"
-                 "10 ensayos sintéticos", y=1.02)
-    fig.tight_layout()
+    fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
+             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+    for ax in axes:
+        style_axis(ax)
+    fig.tight_layout(rect=(0, 0.035, 1, 1))
     save_figure(fig, output_dir / "mock_exp03_fig2_velocity_comparison")
 
 
@@ -287,11 +278,11 @@ def plot_position(trials, output_dir):
     xw = np.array([tr["x_walo"] for tr in trials])
     xt = np.array([tr["x_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.2), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE, sharey=True)
 
     panels = [
-        (axes[0], xw, "WALO — Posición integrada", "#0072B2"),
-        (axes[1], xt, "Tracker — Posición óptica", "#D55E00"),
+        (axes[0], xw, "WALO — Posición integrada", COLORS["mic1"]),
+        (axes[1], xt, "Tracker — Posición óptica", COLORS["mic2"]),
     ]
 
     for ax, values, title, color in panels:
@@ -306,19 +297,21 @@ def plot_position(trials, output_dir):
         ax.plot(t, mean, color=color, lw=2.1, label=r"Media $\bar{x}(t)$")
         ax.axhline(X_EQ_CM, color="0.2", ls="--", lw=1.0,
                    label="Centro del recorrido (100 cm)")
-        ax.axhline(X_START_CM, color="#CC3311", ls=":", lw=1.1,
+        ax.axhline(X_START_CM, color=COLORS["reference"], ls=":", lw=1.1,
                    label="Posición inicial (10 cm)")
-        ax.axhline(X_END_CM, color="#CC3311", ls=":", lw=1.1,
+        ax.axhline(X_END_CM, color=COLORS["reference"], ls=":", lw=1.1,
                    label="Extremo útil opuesto (190 cm)")
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
         ax.set_ylim(-5, 205)
-        ax.legend(loc="best", fontsize=8)
+        ax.legend(loc="best", fontsize=7.5, framealpha=0.95)
 
     axes[0].set_ylabel("Posición [cm]")
-    fig.suptitle("MOCK — Comparación de posición reconstruida\n"
-                 "10 ensayos sintéticos", y=1.02)
-    fig.tight_layout()
+    fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
+             ha="center", va="bottom", fontsize=8, color=COLORS["mock"])
+    for ax in axes:
+        style_axis(ax)
+    fig.tight_layout(rect=(0, 0.035, 1, 1))
     save_figure(fig, output_dir / "mock_exp03_fig3_position_comparison")
 
 
