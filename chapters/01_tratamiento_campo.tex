@@ -1,6 +1,4 @@
-
-\section{TRATAMIENTO DEL CAMPO ACÚSTICO Y EXTRACCIÓN DE OBSERVABLES FÍSICOS}
-\label{sec:tratamiento_campo}
+\label{chap:tratamiento_campo}
 
 En este capítulo se establecen los fundamentos físicos y matemáticos del
 tratamiento de las señales acústicas adquiridas por WALO. El objetivo es
@@ -9,46 +7,19 @@ transformarse en magnitudes observables relacionadas con la propagación
 acústica, la distancia, la dirección de llegada y el movimiento de una
 fuente.
 
-La exposición sigue la cadena general de medición: descripción del campo
-acústico, transducción, adquisición digital, representación temporal y
-espectral y extracción de observables. Se presta especial atención a las
-hipótesis necesarias para interpretar cada magnitud y a las limitaciones
-que introduce la instrumentación.
+La exposición sigue la cadena de medición: campo acústico, transducción,
+adquisición digital, representación temporal y espectral y extracción
+de observables. Esta secuencia establece las bases para interpretar las
+señales registradas y relacionarlas con la distancia, la dirección de
+llegada y el movimiento de una fuente.
 
-Se distingue entre las definiciones matemáticas de los procedimientos y
-los parámetros particulares de su implementación. Esta distinción es
-necesaria porque la frecuencia de muestreo, las ventanas temporales, los
-filtros y las condiciones de adquisición dependen de la configuración
-utilizada en cada experimento. Los parámetros específicos que requieren
-verificación contra el código y la configuración de hardware se
-documentan en el capítulo de instrumentación y metodología.
+Se presentan primero los principios físicos y las definiciones
+matemáticas que sustentan el procesamiento. Los parámetros de adquisición
+y las configuraciones particulares de filtros, ventanas y frecuencia de
+muestreo se especifican en el capítulo de instrumentación y metodología,
+donde se describe su uso en cada experimento.
 
-\paragraph{Implementación y reproducibilidad.}
-
-La implementación digital de WALO se encuentra organizada en dos
-repositorios de acceso abierto:
-
-\begin{itemize}
-    \item \textbf{Lógica digital de adquisición y procesamiento:}
-    \url{https://github.com/SiririComun/hw-xadc-dma-overlays}
-    \cite{SiririHW2026}.
-
-    \item \textbf{Controladores y rutinas de procesamiento:}
-    \url{https://github.com/SiririComun/sw-pynq-sound-localizer}
-    \cite{SiririSW2026}.
-\end{itemize}
-
-La consulta de estos repositorios permite examinar la arquitectura y
-la implementación del instrumento. Sin embargo, reproducir un resultado
-experimental requiere identificar también la versión del hardware, la
-configuración utilizada, los datos originales y el procedimiento de
-análisis aplicado.
-
-% =============================================================================
-% 1.1. CAMPO ACÚSTICO Y PROPAGACIÓN
-% =============================================================================
-
-\subsection{Campo acústico y propagación}
+\section{Campo acústico y propagación}
 
 El sonido puede describirse como una perturbación mecánica que se propaga
 en un medio material. Para perturbaciones de pequeña amplitud en un medio
@@ -89,12 +60,10 @@ $\SI{20}{\celsius}$ se obtiene aproximadamente:
     \label{eq:velocidad_sonido_20}
 \end{equation}
 
-Este valor constituye una referencia para los cálculos realizados en
-condiciones de laboratorio. La velocidad efectiva depende de las
-condiciones del medio, por lo que una estimación precisa de distancias
-o velocidades debe considerar la temperatura correspondiente a cada
-ensayo. La humedad y la composición del aire también pueden introducir
-variaciones respecto de la aproximación anterior.
+Este valor se adopta como referencia para los cálculos en condiciones
+de laboratorio. Cuando se requiere mayor exactitud, la velocidad del
+sonido se determina a partir de la temperatura del medio; la humedad
+y la composición del aire también pueden incorporarse al modelo.
 
 Para una fuente puntual en un medio homogéneo e ilimitado, la solución
 armónica de la ecuación de onda puede expresarse, en el régimen de campo
@@ -139,13 +108,13 @@ donde $p_{\mathrm{dir}}$ representa la contribución directa, los términos
 $p_{\mathrm{ref},q}$ corresponden a las reflexiones y
 $p_{\mathrm{amb}}$ agrupa las perturbaciones acústicas ambientales.
 
-Esta descripción permite distinguir entre la propagación ideal utilizada
-para construir los modelos y las condiciones reales de medición. En
-particular, las relaciones de amplitud y energía con la distancia deben
-interpretarse considerando la geometría del montaje, la respuesta de
-los transductores y la presencia de reflexiones.
+Esta descripción conecta el modelo ideal de propagación con el campo
+registrado en el experimento. Por ello, la relación entre amplitud,
+magnitud cuadrática y distancia se estudia junto con la geometría del
+montaje, la respuesta de los transductores y las contribuciones
+reflejadas.
 
-\subsubsection{Señales en las posiciones de recepción}
+\subsection{Señales en las posiciones de recepción}
 
 Se consideran dos receptores ubicados en las posiciones espaciales
 $\vec{r}_1$ y $\vec{r}_2$. La separación entre ambos define la línea de
@@ -197,11 +166,7 @@ presiones absolutas. No obstante, pueden utilizarse como observables
 eléctricos para construir estimadores relativos o calibrados de distancia
 y dirección.
 
-% =============================================================================
-% 1.2. ADQUISICIÓN Y REPRESENTACIÓN DISCRETA
-% =============================================================================
-
-\subsection{Adquisición y representación discreta}
+\section{Adquisición y representación discreta}
 
 La adquisición transforma las señales eléctricas procedentes de los
 receptores en secuencias discretas que pueden procesarse digitalmente.
@@ -218,7 +183,7 @@ temporal y espectral.
     \label{fig:discretizacion_flujo}
 \end{figure}
 
-\subsubsection{Muestreo y cuantización}
+\subsection{Muestreo y cuantización}
 
 Sean $v_1(t)$ y $v_2(t)$ las señales eléctricas de entrada. La conversión
 analógico-digital produce las secuencias:
@@ -289,7 +254,7 @@ de la electrónica de entrada. Por ello, la resolución nominal del
 convertidor no determina por sí sola la resolución efectiva de una
 medición.
 
-\subsubsection{Temporización entre canales}
+\subsection{Temporización entre canales}
 
 La comparación de las señales de dos receptores requiere una referencia
 temporal común. En una adquisición multicanal, la diferencia entre los
@@ -314,22 +279,18 @@ una diferencia de fase:
 \end{equation}
 
 La existencia de una temporización común en la lógica programable
-favorece la coherencia temporal entre canales. Sin embargo, no demuestra
-por sí sola que el desfase físico entre las señales adquiridas sea
-exactamente nulo. Este depende también de la temporización efectiva de
-los convertidores, las rutas de señal y la electrónica analógica.
+favorece la coherencia temporal entre canales, pero no demuestra por sí
+sola que el desfase físico entre las señales adquiridas sea nulo, pues
+este también depende de los convertidores, las rutas de señal y la
+electrónica analógica. Por tanto, cuando se requiere asignar una
+incertidumbre específica a las diferencias de tiempo o fase, el desfase
+residual debe caracterizarse experimentalmente, considerando la
+resolución y el límite de detección del procedimiento utilizado.
 
-Por tanto, el desfase residual debe caracterizarse experimentalmente
-cuando se requiere asignar una incertidumbre específica a las diferencias
-de tiempo o fase. Una medición compatible con cero debe expresarse
-considerando la resolución y el límite de detección del procedimiento
-utilizado.
-
-\subsubsection{Reducción de la tasa de muestreo}
+\subsection{Reducción de la tasa de muestreo}
 
 Una forma de reducir la cantidad de datos consiste en agrupar muestras
 consecutivas y calcular su promedio. Para un bloque de $M$ muestras,
-la salida puede expresarse como:
 
 \begin{equation}
     \tilde{v}_i[k]
@@ -385,7 +346,7 @@ modo de operación son parámetros de implementación. Su descripción
 detallada se presenta junto con la arquitectura de adquisición en el
 capítulo de instrumentación.
 
-\subsubsection{Formación de bloques}
+\subsection{Formación de bloques}
 
 Para el procesamiento digital, las muestras pueden organizarse en
 bloques de longitud $N$. Un bloque del canal $i$ se representa como:
@@ -402,10 +363,13 @@ bloques de longitud $N$. Un bloque del canal $i$ se representa como:
     \label{eq:bloque_temporal}
 \end{equation}
 
-La longitud del bloque determina el intervalo temporal analizado y,
-en el caso de la transformada discreta de Fourier, la separación entre
-frecuencias discretas. La selección de $N$ implica un compromiso entre
-resolución espectral, duración de observación y respuesta temporal.
+
+
+La longitud del bloque fija la duración del intervalo analizado y,
+para la transformada discreta de Fourier, determina la separación
+entre frecuencias discretas. La elección de $N$ establece el
+compromiso entre resolución espectral, duración de observación y
+respuesta temporal.
 
 No todas las operaciones requieren el mismo tratamiento de los bloques.
 El análisis espectral suele utilizar ventanas para reducir la fuga
@@ -413,32 +377,114 @@ espectral, mientras que la detección de tiempos de llegada requiere
 conservar la evolución temporal de la señal
 \cite{harris1978use,oppenheim1999discrete}.
 
-% =============================================================================
-% 1.3. REPRESENTACIÓN TEMPORAL
-% =============================================================================
-
-\subsection{Representación temporal y extracción de observables}
+\section{Representación temporal y extracción de observables}
 
 El procesamiento temporal permite estudiar la evolución de las señales
 recibidas y obtener magnitudes relacionadas con su amplitud, fase y
 tiempo de llegada. Estas magnitudes constituyen entradas para los modelos
 de estimación desarrollados en el capítulo siguiente.
 
+
+
+\subsection{Filtrado pasabanda}
+
+Las señales registradas pueden contener componentes espectrales
+adicionales a la emisión de interés. Un filtro pasabanda centrado
+alrededor de la frecuencia portadora $f_0$ permite seleccionar la
+banda utilizada en el análisis. La Figura~\ref{fig:filtrado_pasabanda} ilustra el
+principio de esta operación: la respuesta en frecuencia del filtro
+determina la banda de componentes que se conservan, mientras que las
+componentes externas a ella se atenúan.
+
+
 \begin{figure}[htbp]
     \centering
-    \input{figures/fig2_rama_a.tex}
-    \vspace{0.3cm}
-    \caption{Representación general del procesamiento temporal de las
-    señales recibidas.}
-    \label{fig:rama_a_flujo}
+    \begin{tikzpicture}[
+        x=0.9cm,
+        y=0.9cm,
+        >=stealth,
+        line cap=round,
+        line join=round,
+        font=\small
+    ]
+
+    % -------------------------------------------------
+    % ETAPA 1: SEÑAL DE ENTRADA
+    % -------------------------------------------------
+    \node[font=\small] at (2,4.0) {Señal de entrada};
+
+    \draw[->, thin] (0.4,0.65) -- (0.4,2.9)
+        node[above] {$v_i[n]$};
+    \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
+        node[right] {$t$};
+
+    % Señal compuesta: componente de interés + componente no deseada
+    \draw[blue, thick, domain=0:3.45, samples=250]
+        plot ({0.4+\x},{1.75
+        +0.48*sin(deg(2*pi*1.6*\x))
+        +0.23*sin(deg(2*pi*4.2*\x))});
+
+    % -------------------------------------------------
+    % CONEXIÓN 1
+    % -------------------------------------------------
+    \draw[->, thick] (4.35,1.75) -- (5.45,1.75)
+        node[midway, above] {$t$};
+
+    % -------------------------------------------------
+    % ETAPA 2: RESPUESTA DEL FILTRO
+    % -------------------------------------------------
+    \node[font=\small] at (8.0,4.0) {Filtro pasabanda};
+    \node at (8.0,3.45) {$|H(f)|$};
+
+    \draw[->, thin] (6.0,0.65) -- (6.0,2.9);
+    \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
+        node[right] {$f$};
+
+    % Respuesta idealizada de magnitud pasabanda
+    \draw[orange!90!black, thick]
+        (6.15,0.75)
+        .. controls (6.65,0.75) and (6.8,2.25) .. (7.45,2.25)
+        -- (8.55,2.25)
+        .. controls (9.2,2.25) and (9.35,0.75) .. (9.85,0.75);
+
+    % Nivel de referencia
+    \draw[dashed, gray] (7.45,2.25) -- (8.55,2.25);
+
+    \node[align=center] at (8.0,0.25)
+        {Banda alrededor de $f_0$};
+
+    % -------------------------------------------------
+    % CONEXIÓN 2
+    % -------------------------------------------------
+    \draw[->, thick] (10.35,1.75) -- (11.45,1.75)
+        node[midway, above] {$f$};
+
+    % -------------------------------------------------
+    % ETAPA 3: SEÑAL FILTRADA
+    % -------------------------------------------------
+    \node[font=\small] at (14.0,4.0) {Señal filtrada};
+
+    \draw[->, thin] (12.4,0.65) -- (12.4,2.9)
+        node[above] {$y_i[n]$};
+    \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
+        node[right] {$t$};
+
+    % Componente conservada tras el filtrado
+    \draw[blue, thick, domain=0:3.35, samples=250]
+        plot ({12.4+\x},{1.75+0.48*sin(deg(2*pi*1.6*\x))});
+
+    \end{tikzpicture}
+
+    \caption{Representación esquemática del filtrado pasabanda.
+    Se ilustran una señal de entrada con distintas componentes
+    espectrales, la respuesta en magnitud de un filtro pasabanda
+    y la señal resultante después del filtrado. Las formas de onda
+    y la respuesta en frecuencia son representaciones didácticas:
+    no corresponden a mediciones experimentales ni a la respuesta
+    numérica de un filtro específico.}
+    \label{fig:filtrado_pasabanda}
 \end{figure}
 
-\subsubsection{Filtrado pasabanda}
-
-Las señales registradas pueden contener componentes espectrales que
-no corresponden a la emisión de interés. Para reducir su contribución
-puede aplicarse un filtro pasabanda centrado alrededor de la frecuencia
-portadora $f_0$.
 
 La señal filtrada se representa de forma general como:
 
@@ -495,7 +541,7 @@ dependen de la configuración de procesamiento correspondiente. En
 consecuencia, no se asignan aquí frecuencias de corte ni órdenes
 específicos sin identificar previamente la implementación utilizada.
 
-\subsubsection{Señal analítica, amplitud y fase instantáneas}
+\subsection{Señal analítica, amplitud y fase instantáneas}
 
 Para una señal real de banda estrecha, la amplitud y la fase pueden
 estimarse mediante la señal analítica. La transformada de Hilbert de
@@ -547,8 +593,15 @@ y la fase instantánea:
     \label{eq:fase_instantanea}
 \end{equation}
 
-La fase puede desenvolverse para eliminar las discontinuidades
-artificiales de $2\pi$:
+La fase calculada mediante el argumento de una señal compleja suele
+representarse dentro de un intervalo de longitud $2\pi$. Cuando su
+evolución atraviesa uno de los límites de ese intervalo, pueden aparecer
+saltos aparentes entre muestras consecutivas. El desenvolvimiento de
+fase (\textit{phase unwrapping}) corrige esos saltos sumando o restando
+múltiplos de $2\pi$, de modo que se obtenga una evolución continua
+siempre que la variación entre muestras permita resolverla sin
+ambigüedad. Esta operación facilita el cálculo de la frecuencia
+instantánea a partir de la derivada de la fase:
 
 \begin{equation}
     \Phi_{i,u}(t)
@@ -556,7 +609,8 @@ artificiales de $2\pi$:
     \operatorname{unwrap}(\Phi_i(t)).
 \end{equation}
 
-La frecuencia instantánea se obtiene derivando la fase desenvuelta:
+A partir de la fase desenvuelta se obtiene la frecuencia instantánea
+mediante su derivada temporal:
 
 \begin{equation}
     f_{i,\mathrm{inst}}(t)
@@ -566,7 +620,7 @@ La frecuencia instantánea se obtiene derivando la fase desenvuelta:
     \label{eq:frecuencia_instantanea}
 \end{equation}
 
-En señales discretas, la derivada se aproxima mediante diferencias
+En señales discretas, esta derivada se aproxima mediante diferencias
 finitas. Para muestras separadas por un periodo $T_s'$:
 
 \begin{equation}
@@ -586,7 +640,7 @@ las perturbaciones. Por ello, las estimaciones instantáneas deben
 interpretarse dentro de los intervalos en los que la señal recibida
 presenta una amplitud y una relación señal-ruido adecuadas.
 
-\subsubsection{Amplitud eficaz}
+\subsection{Amplitud eficaz}
 
 Para un conjunto de $N$ muestras de una señal eléctrica, la amplitud
 eficaz se define como:
@@ -625,12 +679,12 @@ donde:
     \sum_{n=0}^{N-1}v_i[n].
 \end{equation}
 
-La amplitud eficaz constituye una medida del nivel eléctrico de la
-señal en el intervalo considerado. No corresponde directamente a una
-presión acústica eficaz si no se conoce la sensibilidad del micrófono
-y la respuesta de la cadena de adquisición.
+La amplitud eficaz cuantifica el nivel eléctrico de la señal en el
+intervalo considerado. Su conversión a presión acústica eficaz se
+realiza mediante la sensibilidad del micrófono y la calibración de
+la cadena de adquisición.
 
-\subsubsection{Magnitud cuadrática acumulada}
+\subsection{Magnitud cuadrática acumulada}
 
 Una magnitud relacionada con la amplitud de la señal puede construirse
 mediante la suma de los cuadrados de las muestras en un intervalo
@@ -650,33 +704,20 @@ donde $n_0$ y $n_1$ delimitan el intervalo considerado y
 $\overline{y}_{i,\mathrm{gate}}$ es el valor medio de las muestras
 dentro de esa ventana.
 
-La expresión anterior define una suma cuadrática discreta. Su valor
-depende de la amplitud de la señal, de la duración de la ventana, de
-la frecuencia de muestreo y de la escala numérica utilizada.
+La expresión define una suma cuadrática discreta cuyo valor depende
+de la amplitud de la señal, la duración de la ventana, la frecuencia
+de muestreo y la escala numérica. En este capítulo, $Q_i$ se utiliza
+como indicador digital del nivel de señal. Su relación con magnitudes
+acústicas absolutas se establece mediante la sensibilidad del
+transductor, la respuesta de la cadena electrónica y la normalización
+temporal.
 
-En consecuencia, $Q_i$ debe interpretarse como una magnitud digital
-asociada al nivel de señal. No constituye por sí sola una energía
-acústica expresada en joules ni una medida absoluta de intensidad
-acústica. Para establecer una relación con magnitudes acústicas físicas
-se requiere conocer la sensibilidad del transductor, la respuesta de
-la cadena electrónica y la normalización temporal correspondiente.
+\section{Detección de tiempos de llegada}
 
-La expresión anterior presenta la definición general de una suma
-cuadrática. La fórmula y la ventana efectivamente utilizadas para
-obtener la variable \texttt{energy\_direct} en el procesamiento
-experimental deben identificarse a partir de la implementación
-correspondiente antes de atribuirle esta definición particular.
-
-% =============================================================================
-% 1.4. TIEMPOS DE LLEGADA
-% =============================================================================
-
-\subsection{Detección de tiempos de llegada}
-
-El tiempo de llegada (*Time of Arrival*, ToA) representa el instante
-en que una señal emitida por la fuente alcanza un receptor. Su
-estimación permite relacionar el tiempo de propagación con la distancia
-recorrida por la onda acústica.
+El tiempo de llegada (\textit{Time of Arrival}, ToA) es el instante
+en que la señal emitida alcanza un receptor. A partir de este tiempo
+y de la velocidad de propagación se estima la distancia recorrida
+por la onda acústica.
 
 En una propagación directa ideal, si se conoce el instante de emisión
 $t_0$, el tiempo de llegada $t_{\mathrm{arr},i}$ y la velocidad del
@@ -693,14 +734,11 @@ mediante:
     \label{eq:distancia_toa}
 \end{equation}
 
-En la práctica, la detección requiere establecer un criterio que
-permita distinguir el frente de onda del ruido, de los transitorios
-electrónicos y de las reflexiones.
-
-Una posibilidad consiste en utilizar un umbral de amplitud que habilite
-la detección y, posteriormente, identificar un cruce ascendente por
-cero de la señal filtrada. Si el cruce ocurre entre las muestras
-$k_0$ y $k_0+1$, se cumple:
+La detección se realiza mediante un criterio que identifica el
+frente de onda dentro de la señal recibida. Una estrategia consiste
+en habilitar la búsqueda mediante un umbral de amplitud y localizar
+después un cruce ascendente por cero de la señal filtrada. Si el
+cruce ocurre entre las muestras $k_0$ y $k_0+1$, se cumple:
 
 \begin{equation}
     y_i[k_0]\leq 0,
@@ -727,20 +765,14 @@ El instante de cruce puede estimarse mediante interpolación lineal:
 donde $t_b$ es el instante correspondiente al inicio del bloque y
 $k_0$ es el índice local de la primera muestra del intervalo de cruce.
 
-La interpolación permite obtener un instante con valores fraccionarios
-del periodo de muestreo. Sin embargo, no aumenta la frecuencia de
-muestreo ni garantiza por sí misma una exactitud temporal determinada.
-La incertidumbre depende del ruido, de la pendiente del cruce, de la
-distorsión de la señal, de la respuesta de los canales y del criterio
-utilizado para seleccionar el frente de onda.
+La interpolación proporciona una estimación submuestral del instante
+de cruce. Su desempeño depende de la relación señal-ruido, la pendiente
+del cruce, la forma de onda y la respuesta de los canales. En señales
+pulsadas, el criterio de detección se aplica sobre la región temporal
+de la llegada directa para separar el frente de onda de las
+contribuciones reflejadas.
 
-En mediciones pulsadas también es necesario distinguir la llegada
-directa de las contribuciones reflejadas. Una reflexión puede producir
-un máximo posterior en la señal y alterar la detección si el criterio
-de llegada no está restringido a la región temporal correspondiente
-a la propagación directa.
-
-\subsubsection{Diferencia de tiempos de llegada}
+\subsection{Diferencia de tiempos de llegada}
 
 Cuando se dispone de dos receptores, puede calcularse la diferencia
 entre sus tiempos de llegada:
@@ -754,7 +786,7 @@ entre sus tiempos de llegada:
     \label{eq:delta_t_toa}
 \end{equation}
 
-La diferencia de tiempos de llegada (*Time Difference of Arrival*,
+La diferencia de tiempos de llegada (\textit{Time Difference of Arrival},
 TDOA) se relaciona con la diferencia de distancias recorridas:
 
 \begin{equation}
@@ -764,21 +796,14 @@ TDOA) se relaciona con la diferencia de distancias recorridas:
     \label{eq:delta_r_tdoa}
 \end{equation}
 
-El signo de esta diferencia depende de la convención adoptada para
-ordenar los receptores. Su magnitud contiene información sobre la
-dirección desde la que llega la onda, mientras que su interpretación
-geométrica depende de la separación y disposición de los sensores.
+El signo de la diferencia depende del orden asignado a los receptores.
+Su valor se relaciona con la dirección de llegada y, mediante la
+geometría y separación del arreglo, con la diferencia de caminos
+acústicos. Por tanto, el TDOA aporta una restricción geométrica que
+se combina con el modelo del arreglo para estimar la posición de
+la fuente.
 
-Una diferencia temporal entre dos receptores no equivale a una
-distancia absoluta desde la fuente. En particular, el TDOA define una
-diferencia de caminos y debe combinarse con la geometría del arreglo
-y otras restricciones para determinar una posición.
-
-% =============================================================================
-% 1.5. REPRESENTACIÓN ESPECTRAL
-% =============================================================================
-
-\subsection{Representación espectral y estimación de frecuencia}
+\section{Representación espectral y estimación de frecuencia}
 
 El análisis espectral permite estudiar la distribución de las componentes
 armónicas de las señales adquiridas. En el contexto de WALO, esta
@@ -794,7 +819,7 @@ construir observables asociados al efecto Doppler.
     \label{fig:rama_b_flujo}
 \end{figure}
 
-\subsubsection{Transformada discreta de Fourier}
+\subsection{Transformada discreta de Fourier}
 
 Para un bloque de $N$ muestras, la transformada discreta de Fourier
 (DFT) se define como
@@ -841,12 +866,12 @@ Su magnitud y fase son:
     \label{eq:fase_espectral}
 \end{equation}
 
-La fase espectral depende de la referencia temporal del bloque, de la
-ventana aplicada y de la respuesta instrumental. Por tanto, una
-diferencia de fase entre dos canales no puede atribuirse exclusivamente
-a la propagación acústica sin considerar estos factores.
+La fase espectral está referida al origen temporal del bloque y
+depende de la ventana y de la respuesta instrumental. En la comparación
+entre canales, estos elementos se consideran junto con la diferencia
+de fase asociada a la propagación acústica.
 
-\subsubsection{Ventanas espectrales}
+\subsection{Ventanas espectrales}
 
 La aplicación de una ventana antes de calcular la DFT permite reducir
 la fuga espectral asociada a la observación de un intervalo finito.
@@ -876,18 +901,105 @@ como:
 
 donde los coeficientes dependen de la variante utilizada.
 
-La ventana modifica la amplitud efectiva de las componentes espectrales.
-Por ello, la estimación de amplitud debe considerar la ganancia coherente
-de la ventana y la normalización aplicada. La ventana espectral tampoco
-debe trasladarse indiscriminadamente a las operaciones temporales:
-la ponderación puede modificar la forma de los frentes de onda y
-afectar la detección de instantes de llegada
-\cite{harris1978use,oppenheim1999discrete}.
+Antes de calcular la transformada discreta de Fourier, puede
+aplicarse una ventana temporal a la secuencia de muestras. Esta operación
+pondera cada muestra mediante una función definida sobre la longitud del
+bloque, reduciendo su amplitud hacia los extremos. La
+Figura~\ref{fig:ventaneo_temporal} ilustra el proceso de ventaneo
+y el efecto de la ponderación sobre la señal original.
 
-La ventana y su parametrización efectiva deben corresponder a la
-implementación utilizada en cada procedimiento experimental.
 
-\subsubsection{Resolución espectral}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        x=0.9cm,
+        y=0.9cm,
+        >=stealth,
+        line cap=round,
+        line join=round,
+        font=\small
+    ]
+
+    % -------------------------------------------------
+    % ETAPA 1: SEÑAL ORIGINAL
+    % -------------------------------------------------
+    \node[font=\small] at (2,4.0) {Señal original};
+
+    \draw[->, thin] (0.4,0.65) -- (0.4,2.9)
+        node[above] {$v[n]$};
+    \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
+        node[right] {$n$};
+
+    % Señal sinusoidal sin ponderar
+    \draw[blue, thick, domain=0:3.4, samples=250]
+        plot ({0.4+\x},{1.75+0.65*sin(deg(2*pi*2.0*\x))});
+
+    % -------------------------------------------------
+    % CONEXIÓN 1
+    % -------------------------------------------------
+    \draw[->, thick] (4.35,1.75) -- (5.45,1.75);
+
+    % -------------------------------------------------
+    % ETAPA 2: VENTANA
+    % -------------------------------------------------
+    \node[font=\small] at (8.0,4.0) {Ventana temporal};
+    \node at (8.0,3.45) {$w[n]$};
+
+    \draw[->, thin] (6.0,0.65) -- (6.0,2.9);
+    \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
+        node[right] {$n$};
+
+    % Curva de ventana ilustrativa tipo Hann
+    \draw[orange!90!black, thick, domain=0:3.5, samples=150]
+        plot ({6.15+\x},
+        {0.75+1.75*(0.5-0.5*cos(deg(2*pi*\x/3.5)))});
+
+    \node at (8.0,0.25) {Ponderación};
+
+    % -------------------------------------------------
+    % CONEXIÓN 2
+    % -------------------------------------------------
+    \draw[->, thick] (10.35,1.75) -- (11.45,1.75);
+
+    % -------------------------------------------------
+    % ETAPA 3: SEÑAL PONDERADA
+    % -------------------------------------------------
+    \node[font=\small] at (14.0,4.0) {Señal ponderada};
+
+    \draw[->, thin] (12.4,0.65) -- (12.4,2.9)
+        node[above] {$v_w[n]$};
+    \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
+        node[right] {$n$};
+
+    % Producto ilustrativo entre señal y ventana
+    \draw[blue, thick, domain=0:3.4, samples=250]
+        plot ({12.4+\x},
+        {1.75+
+        0.65*(0.5-0.5*cos(deg(2*pi*\x/3.5)))
+        *sin(deg(2*pi*2.0*\x))});
+
+    \node at (14.15,0.25) {$v_w[n]=w[n]v[n]$};
+
+    \end{tikzpicture}
+
+    \caption{Representación esquemática del proceso de ventaneo
+    temporal. La señal original se multiplica muestra a muestra
+    por una función de ventana, dando lugar a una secuencia
+    ponderada cuya amplitud disminuye hacia los extremos del
+    bloque. Las curvas son ilustrativas y no corresponden a una
+    parametrización numérica específica.}
+    \label{fig:ventaneo_temporal}
+\end{figure}
+
+La ventana modifica la amplitud efectiva de las componentes
+espectrales; por ello, la estimación de amplitud incorpora la ganancia
+coherente y la normalización correspondiente. Su aplicación se reserva
+al análisis espectral: en la detección temporal, la ponderación puede
+alterar la forma de los frentes de onda y desplazar los instantes de
+llegada \cite{harris1978use,oppenheim1999discrete}. La ventana
+seleccionada se define de acuerdo con el procedimiento de análisis.
+
+\subsection{Resolución espectral}
 
 Para un bloque de $N$ muestras adquirido a una frecuencia $f_s'$, la
 separación entre bines de la DFT es:
@@ -899,11 +1011,10 @@ separación entre bines de la DFT es:
     \label{eq:resolucion_bin}
 \end{equation}
 
-Esta magnitud determina la separación entre las frecuencias discretas
-del espectro. No representa necesariamente el límite absoluto de
-precisión de un estimador de frecuencia, ya que bajo condiciones
-apropiadas es posible estimar la posición de un máximo entre dos bines
-mediante interpolación.
+Esta magnitud fija la separación entre las frecuencias discretas
+del espectro. La estimación de frecuencia puede refinarse mediante
+interpolación local del máximo espectral, incluso cuando este se
+encuentra entre dos bines.
 
 Sea $k_0$ el índice del bin de mayor magnitud en la región de interés.
 Una interpolación parabólica local sobre las magnitudes de los bines
@@ -930,21 +1041,14 @@ La frecuencia estimada es:
     \label{eq:frecuencia_interpolada}
 \end{equation}
 
-Esta interpolación constituye una aproximación local. Su sesgo depende
-de la ventana, de la posición del tono respecto de los bines, de la
-presencia de componentes cercanas y de la relación señal-ruido
-\cite{grandke1983interpolation,jacobsen2007fast}.
+La interpolación es una aproximación local cuyo sesgo depende de la
+ventana, de la posición del tono respecto de los bines, de las
+componentes espectrales cercanas y de la relación señal-ruido
+\cite{grandke1983interpolation,jacobsen2007fast}. La precisión
+alcanzable se caracteriza evaluando el estimador con señales de
+frecuencia conocida.
 
-La obtención de una frecuencia con más cifras que la separación nominal
-entre bines no implica automáticamente una incertidumbre menor. La
-incertidumbre efectiva debe establecerse mediante la caracterización
-del estimador y ensayos con señales de frecuencia conocida.
-
-% =============================================================================
-% 1.6. OBSERVABLES Y SU INTERPRETACIÓN FÍSICA
-% =============================================================================
-
-\subsection{Síntesis de observables y su interpretación física}
+\section{Síntesis de observables y su interpretación física}
 
 El procesamiento temporal y espectral produce un conjunto de magnitudes
 asociadas a las señales registradas por los receptores. Para organizar
@@ -965,11 +1069,11 @@ su interpretación se define el conjunto:
     \label{eq:vector_observables}
 \end{equation}
 
-No todos los elementos tienen necesariamente la misma dependencia
-temporal. Las amplitudes y frecuencias instantáneas pueden evaluarse
-muestra a muestra o por bloques, mientras que las magnitudes eficaces,
-las sumas cuadráticas y las frecuencias dominantes suelen asociarse
-al intervalo de análisis utilizado.
+Los observables se evalúan en la escala temporal adecuada a cada
+procedimiento. Las amplitudes y frecuencias instantáneas describen
+la evolución de la señal, mientras que las magnitudes eficaces, las
+sumas cuadráticas y las frecuencias dominantes caracterizan el
+intervalo de análisis.
 
 La relación entre estos observables y las magnitudes físicas que pueden
 estimarse se resume en la Tabla~\ref{tab:acoplamiento_observables}.
@@ -1051,80 +1155,26 @@ estimarse se resume en la Tabla~\ref{tab:acoplamiento_observables}.
     \label{tab:acoplamiento_observables}
 \end{table}
 
-La correspondencia entre un observable y una magnitud física no es
-necesariamente unívoca. Por ejemplo, la amplitud recibida depende de
-la distancia, pero también de la potencia acústica emitida, la
-directividad de la fuente, la orientación de los receptores, la
-respuesta de los micrófonos y las condiciones del recinto.
+Cada observable aporta información sobre una propiedad física
+específica y se interpreta mediante el modelo correspondiente. La
+amplitud recibida se relaciona con la distancia a través de la
+propagación y la calibración; la diferencia de fase aporta información
+angular en función de la longitud de onda y la separación entre
+receptores. La posición y la velocidad se obtienen al combinar estas
+magnitudes con los modelos de propagación y las restricciones
+geométricas desarrolladas en el capítulo siguiente.
 
-De manera análoga, una diferencia de fase puede relacionarse con la
-dirección de llegada, pero su interpretación requiere considerar la
-longitud de onda, la separación entre receptores, la referencia
-instrumental y las posibles ambigüedades espaciales.
+\section{Incertidumbre y limitaciones de los observables}
 
-En consecuencia, los observables no determinan por sí solos la posición
-o la velocidad de la fuente. Proporcionan las magnitudes experimentales
-que, combinadas con modelos de propagación y restricciones geométricas,
-permiten formular los problemas de inversión tratados en el capítulo
-siguiente.
-
-% =============================================================================
-% 1.7. INCERTIDUMBRE Y LIMITACIONES DE LOS OBSERVABLES
-% =============================================================================
-
-\subsection{Incertidumbre y limitaciones de los observables}
-
-La incertidumbre de una magnitud estimada depende de las contribuciones
-de la instrumentación, la geometría experimental, el procesamiento
-digital y la repetibilidad de las mediciones. La resolución nominal
-de un convertidor o el periodo de muestreo no determinan por sí solos
-la incertidumbre de los observables.
-
-La Guía para la Expresión de la Incertidumbre de Medida (GUM) proporciona
-un marco para propagar incertidumbres a través de modelos de medición
-\cite{jcg2008evaluation,taylor1997introduction}.
-
-Si un conjunto de magnitudes de entrada se representa mediante el
-vector $\mathbf{x}$ y los observables se calculan mediante una función:
-
-\begin{equation}
-    \mathbf{O}=\mathbf{f}(\mathbf{x}),
-\end{equation}
-
-la propagación de incertidumbre en la aproximación lineal de primer
-orden se expresa como:
-
-\begin{equation}
-    \mathbf{C}_{O}
-    =
-    \mathbf{J}
-    \mathbf{C}_{x}
-    \mathbf{J}^{T},
-    \label{eq:propagacion_gum}
-\end{equation}
-
-donde $\mathbf{C}_{x}$ es la matriz de covarianza de las magnitudes
-de entrada y $\mathbf{J}$ es la matriz jacobiana:
-
-\begin{equation}
-    J_{km}
-    =
-    \frac{\partial f_k}{\partial x_m}.
-\end{equation}
-
-Para un observable individual $O_k$, su incertidumbre estándar
-combinada se obtiene mediante:
-
-\begin{equation}
-    u(O_k)
-    =
-    \sqrt{(\mathbf{C}_{O})_{kk}}.
-\end{equation}
-
-La matriz de covarianza permite considerar correlaciones entre
-magnitudes de entrada. Estas correlaciones pueden aparecer por el
-ruido compartido, el filtrado, el promediado, la temporización y los
-procedimientos de estimación.
+La incertidumbre de los observables integra las contribuciones de
+la instrumentación, la geometría experimental, el procesamiento
+digital y la repetibilidad. Su evaluación se realiza siguiendo la
+Guía para la Expresión de la Incertidumbre de Medida (GUM), que
+establece el marco para propagar las incertidumbres de las magnitudes
+de entrada a través del modelo de medición
+\cite{jcg2008evaluation,taylor1997introduction}. La aplicación
+del marco se adapta a las magnitudes y al procedimiento de estimación
+de cada experimento.
 
 En la caracterización experimental deben distinguirse al menos tres
 contribuciones:
@@ -1143,30 +1193,27 @@ contribuciones:
     referencia.
 \end{enumerate}
 
-Estas contribuciones no son intercambiables. En particular, el error
-medio absoluto (MAE) y la raíz del error cuadrático medio (RMSE)
-caracterizan el desempeño de un estimador respecto de una referencia,
-pero no representan por sí solos la incertidumbre instrumental.
+Estas contribuciones describen aspectos distintos de la medición.
+El error medio absoluto (MAE) y la raíz del error cuadrático medio
+(RMSE) cuantifican el desempeño del estimador respecto de una
+referencia, mientras que la incertidumbre instrumental caracteriza
+la dispersión atribuible al proceso de medición.
 
-La interpretación de los resultados requiere considerar las
-limitaciones del modelo físico. Las reflexiones pueden modificar los
-tiempos de llegada, la amplitud y la fase. Las diferencias entre los
-transductores pueden introducir sesgos intercanal. La estabilidad de
-la fuente afecta las estimaciones de frecuencia, mientras que la
-relación señal-ruido condiciona la precisión de los estimadores
-temporales y espectrales.
+El comportamiento de los observables está determinado por el modelo
+físico y las condiciones de medición. Las reflexiones influyen en
+los tiempos de llegada, la amplitud y la fase; las diferencias entre
+transductores pueden producir sesgos entre canales; y la estabilidad
+de la fuente y la relación señal-ruido intervienen en la estimación
+de frecuencia y de parámetros temporales. Estos efectos se incorporan
+en la caracterización experimental de cada observable.
 
-Por estas razones, las prestaciones de WALO deben establecerse a
-partir de la caracterización experimental de cada observable y de
-las condiciones particulares en las que se aplica.
+\section{Alcance del tratamiento de señales}
 
-\subsection{Alcance del tratamiento de señales}
-
-El tratamiento descrito en este capítulo proporciona las magnitudes
+El tratamiento descrito en este capítulo establece las magnitudes
 necesarias para estudiar la propagación acústica y el movimiento de
 una fuente mediante dos receptores. Los observables temporales,
-espectrales y de amplitud permiten construir estimadores diferentes,
-cada uno sujeto a hipótesis y limitaciones específicas.
+espectrales y de amplitud constituyen las entradas de los estimadores
+desarrollados en los capítulos siguientes.
 
 La amplitud y las magnitudes cuadráticas pueden utilizarse para
 caracterizar la dependencia del nivel recibido con la distancia.
@@ -1176,8 +1223,8 @@ sobre la dirección de llegada, mientras que las frecuencias recibidas
 pueden relacionarse con el movimiento relativo mediante el efecto
 Doppler.
 
-La validez de estas estimaciones depende de la coherencia entre el
-modelo físico, la geometría experimental, la respuesta instrumental
-y el procedimiento de procesamiento. Sobre esta base, el capítulo
-siguiente desarrolla los modelos de inversión que relacionan los
-observables con las magnitudes geométricas y cinemáticas de interés.
+La estimación de estas magnitudes integra el modelo físico, la
+geometría experimental, la respuesta instrumental y el procesamiento
+digital. Sobre esta base, el capítulo siguiente desarrolla los
+modelos de inversión que relacionan los observables con las magnitudes
+geométricas y cinemáticas de interés.
