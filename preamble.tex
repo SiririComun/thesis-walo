@@ -1,14 +1,11 @@
 
-% ==============================================================================
-% PREÁMBULO
-% WALO: Localización de fuentes de ondas acústicas
-% Trabajo de grado - Instituto de Física, Universidad de Antioquia
-% ==============================================================================
+% ============================================================
+% Codificación e idioma
+% ============================================================
 
-% ------------------------------------------------------------------------------
-% Idioma y codificación
-% ------------------------------------------------------------------------------
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 \usepackage[
     spanish,
     es-nodecimaldot,
@@ -16,9 +13,11 @@
     es-noquoting
 ]{babel}
 
-% ------------------------------------------------------------------------------
-% Geometría de página
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Geometría del documento
+% ============================================================
+
 \usepackage[
     letterpaper,
     top=3.0cm,
@@ -27,9 +26,11 @@
     right=2.5cm
 ]{geometry}
 
-% ------------------------------------------------------------------------------
+
+% ============================================================
 % Tipografía
-% ------------------------------------------------------------------------------
+% ============================================================
+
 \IfFileExists{newtxtext.sty}{
     \usepackage{newtxtext}
     \usepackage{newtxmath}
@@ -39,26 +40,29 @@
 
 \usepackage{microtype}
 
-% ------------------------------------------------------------------------------
-% Espaciado
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Espaciado y párrafos
+% ============================================================
+
 \usepackage{setspace}
 \setstretch{1.15}
 
 \setlength{\parskip}{6pt}
 \setlength{\parindent}{0pt}
 
-% ------------------------------------------------------------------------------
-% Matemáticas
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Matemáticas y unidades
+% ============================================================
+
 \let\Bbbk\relax
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{bm}
 
-% Carga de physics si está disponible.
-% En caso contrario, se definen únicamente las funciones necesarias.
 \IfFileExists{physics.sty}{
     \usepackage{physics}
 }{
@@ -66,9 +70,6 @@
     \providecommand{\abs}[1]{\left\lvert#1\right\rvert}
 }
 
-% ------------------------------------------------------------------------------
-% Unidades físicas
-% ------------------------------------------------------------------------------
 \usepackage{siunitx}
 
 \sisetup{
@@ -77,12 +78,13 @@
     separate-uncertainty = true
 }
 
-% Unidad para expresar cantidades de muestras cuando sea necesario.
 \DeclareSIUnit\sample{sample}
 
-% ------------------------------------------------------------------------------
+
+% ============================================================
 % Figuras y gráficos
-% ------------------------------------------------------------------------------
+% ============================================================
+
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{tikz}
@@ -98,16 +100,20 @@
     decorations.pathmorphing
 }
 
-% ------------------------------------------------------------------------------
+
+% ============================================================
 % Tablas
-% ------------------------------------------------------------------------------
+% ============================================================
+
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{tabularx}
 
-% ------------------------------------------------------------------------------
-% Leyendas de figuras y tablas
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Formato de leyendas
+% ============================================================
+
 \usepackage{caption}
 
 \captionsetup{
@@ -116,11 +122,28 @@
     labelsep=period
 }
 
-% ------------------------------------------------------------------------------
-% Color y enlaces
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Colores
+% ============================================================
+
 \usepackage{xcolor}
+
 \definecolor{UdeAGreen}{HTML}{006837}
+
+
+% ============================================================
+% Bibliografía
+% ============================================================
+
+\usepackage[numbers,sort&compress]{natbib}
+
+\bibliographystyle{ieeetr}
+
+
+% ============================================================
+% Hipervínculos
+% ============================================================
 
 \usepackage{xurl}
 \usepackage{hyperref}
@@ -137,23 +160,20 @@
 
 \urlstyle{same}
 
-% ------------------------------------------------------------------------------
-% Bibliografía
-% ------------------------------------------------------------------------------
-\usepackage[numbers,sort&compress]{natbib}
-\bibliographystyle{ieeetr}
 
-% ------------------------------------------------------------------------------
+% ============================================================
 % Encabezados y pies de página
-% ------------------------------------------------------------------------------
+% ============================================================
+
 \usepackage{fancyhdr}
 
 \pagestyle{fancy}
 \fancyhf{}
 
-\fancyhead[L]{%
-    \small\textit{WALO: Localización de fuentes de ondas acústicas}%
+\fancyhead[L]{
+    \small\textit{WALO: Localización de fuentes de ondas acústicas}
 }
+
 \fancyhead[R]{\small\thepage}
 
 \renewcommand{\headrulewidth}{0.4pt}
@@ -161,7 +181,7 @@
 
 \setlength{\headheight}{15pt}
 
-% Estilo de páginas con formato plain.
+% Estilo de las páginas de apertura de capítulo.
 \fancypagestyle{plain}{
     \fancyhf{}
     \fancyhead[R]{\small\thepage}
@@ -169,32 +189,51 @@
     \renewcommand{\footrulewidth}{0pt}
 }
 
-% ------------------------------------------------------------------------------
-% Formato de títulos
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Jerarquía y formato de títulos
+% ============================================================
+
 \usepackage{titlesec}
 
+% Capítulos.
+\titleformat{\chapter}[display]
+    {\normalfont\bfseries}
+    {\large\chaptertitlename\ \thechapter}
+    {0.5ex}
+    {\Huge}
+
+\titlespacing*{\chapter}
+    {0pt}
+    {-10pt}
+    {24pt}
+
+% Secciones.
 \titleformat{\section}
     {\large\bfseries}
     {\thesection.}
     {0.5em}
     {}
 
+% Subsecciones.
 \titleformat{\subsection}
     {\normalsize\bfseries}
     {\thesubsection.}
     {0.5em}
     {}
 
+% Subsubsecciones.
 \titleformat{\subsubsection}
     {\small\bfseries}
     {\thesubsubsection.}
     {0.5em}
     {}
 
-% ------------------------------------------------------------------------------
-% Parámetros de flotación
-% ------------------------------------------------------------------------------
+
+% ============================================================
+% Distribución de elementos flotantes
+% ============================================================
+
 \renewcommand{\topfraction}{0.85}
 \renewcommand{\bottomfraction}{0.80}
 \renewcommand{\textfraction}{0.12}
@@ -203,7 +242,3 @@
 \setcounter{topnumber}{3}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
-
-% ==============================================================================
-% FIN DEL PREÁMBULO
-% ==============================================================================
