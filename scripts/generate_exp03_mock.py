@@ -242,7 +242,7 @@ def plot_velocity(trials, output_dir):
     vw = np.array([tr["v_walo"] for tr in trials])
     vt = np.array([tr["v_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.0, 6.8), sharey=True)
 
     panels = [
         (axes[0], vw, "WALO — Doppler diferencial", "WALO"),
@@ -257,21 +257,21 @@ def plot_velocity(trials, output_dir):
             ax.plot(t, row, color=COLORS["mic1"] if label == "WALO" else COLORS["mic2"],
                     alpha=0.17, lw=0.8)
 
-        color = "#0072B2" if label == "WALO" else "#D55E00"
+        color = COLORS["mic1"] if label == "WALO" else COLORS["mic2"]
         ax.fill_between(t, mean - std, mean + std, color=color,
                         alpha=0.18, label=r"Dispersión entre ensayos ($\pm1\sigma$)")
         ax.plot(t, mean, color=color, lw=2.0, label=r"Media $\bar{v}(t)$")
         ax.axhline(0, color="0.25", ls="--", lw=1.0)
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
-        ax.legend(loc="upper right")
+        ax.legend(loc="upper right", framealpha=.95)
 
     axes[0].set_ylabel("Velocidad [cm/s]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
              ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    fig.subplots_adjust(left=.09, right=.98, bottom=.13, top=.91, wspace=.22)
     save_figure(fig, output_dir / "mock_exp03_fig2_velocity_comparison")
 
 
@@ -280,7 +280,7 @@ def plot_position(trials, output_dir):
     xw = np.array([tr["x_walo"] for tr in trials])
     xt = np.array([tr["x_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.0, 6.8), sharey=True)
 
     panels = [
         (axes[0], xw, "WALO — Posición integrada", COLORS["mic1"]),
@@ -306,14 +306,14 @@ def plot_position(trials, output_dir):
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
         ax.set_ylim(-5, 205)
-        ax.legend(loc="best", framealpha=0.96)
+        ax.legend(loc="best", framealpha=0.96, fontsize=9)
 
     axes[0].set_ylabel("Posición [cm]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
              ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    fig.subplots_adjust(left=.09, right=.98, bottom=.13, top=.91, wspace=.22)
     save_figure(fig, output_dir / "mock_exp03_fig3_position_comparison")
 
 

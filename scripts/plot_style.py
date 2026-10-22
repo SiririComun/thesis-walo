@@ -20,9 +20,9 @@ COLORS = {
 }
 
 # Tamaños en pulgadas: más altura para evitar paneles excesivamente achatados.
-FIGSIZE_WIDE = (11.2, 6.2)
-FIGSIZE_TALL = (10.8, 7.6)
-FIGSIZE_SINGLE = (10.8, 6.4)
+FIGSIZE_WIDE = (13.0, 7.2)
+FIGSIZE_TALL = (11.5, 8.0)
+FIGSIZE_SINGLE = (12.0, 7.0)
 DPI = 300
 
 
@@ -35,7 +35,7 @@ def apply_style():
         "font.size": 12,
         "axes.titlesize": 14,
         "axes.labelsize": 13,
-        "legend.fontsize": 10.5,
+        "legend.fontsize": 10,
         "xtick.labelsize": 11,
         "ytick.labelsize": 11,
         "axes.edgecolor": "#444444",

@@ -227,10 +227,10 @@ def calculate_metrics(df):
 # FIGURA 1 — BENCHMARK ANGULAR
 # ============================================================
 
-def generate_figure_1(summary, metrics, radius_cm):
+def generate_figure_1(summary, metrics):
     print("\nGenerando Figura 1: benchmark angular...")
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
+    fig, ax = plt.subplots(figsize=(13.5, 7.4))
     targets = summary["target_deg"].to_numpy()
 
     x = np.linspace(-70, 70, 300)
@@ -271,11 +271,7 @@ def generate_figure_1(summary, metrics, radius_cm):
         zorder=3
     )
 
-    ax.set_title(
-        "Benchmark angular: PDoA y TDoA\n"
-        f"(r ≈ {radius_cm:.1f} cm, separación d = {BASELINE_CM:.1f} cm)",
-        pad=12
-    )
+    ax.set_title("Benchmark angular: comparación entre PDoA y TDoA", pad=14)
     ax.set_xlabel(
         r"Ángulo de referencia $\theta_{\mathrm{ref}}$ [°]"
     )
@@ -284,8 +280,9 @@ def generate_figure_1(summary, metrics, radius_cm):
     ax.set_ylim(-100, 100)
     ax.set_xticks(np.arange(-60, 61, 20))
     ax.set_yticks(np.arange(-100, 101, 25))
-    ax.legend(loc="upper left", framealpha=0.95)
-    fig.tight_layout()
+    ax.legend(loc="upper left", framealpha=0.95, ncol=2)
+    ax.set_aspect("auto")
+    fig.subplots_adjust(left=.11, right=.98, bottom=.13, top=.91)
 
     save_figure(fig, "exp02_fig1_angle_benchmark")
     return fig
@@ -324,7 +321,7 @@ def generate_figure_3(df):
     phase_stats = stats[stats["method"] == "phase"]
     tdoa_stats = stats[stats["method"] == "tdoa"]
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
+    fig, ax = plt.subplots(figsize=(13.5, 7.4))
     rng = np.random.default_rng(42)
     jitter = 1.5
 
@@ -374,7 +371,7 @@ def generate_figure_3(df):
     ax.minorticks_on()
     ax.grid(True, which="major", linestyle="-", alpha=0.25)
     ax.grid(True, which="minor", linestyle=":", alpha=0.15)
-    ax.legend(loc="best", framealpha=0.96)
+    ax.legend(loc="best", framealpha=0.96, ncol=2)
 
     all_residuals = np.concatenate([
         work["residual_phase_deg"].dropna().to_numpy(),
@@ -385,7 +382,7 @@ def generate_figure_3(df):
     ax.set_ylim(-limit * 1.15, limit * 1.15)
 
     style_axis(ax)
-    fig.tight_layout()
+    fig.subplots_adjust(left=.11, right=.98, bottom=.13, top=.91)
     save_figure(fig, "exp02_fig3_angular_residuals")
 
     return work
@@ -440,15 +437,7 @@ def main():
     summary = summarize_by_target(df)
     metrics = calculate_metrics(df)
 
-    valid_distances = df["distance_cm"].dropna()
-    if valid_distances.empty:
-        raise ValueError(
-            "La columna distance_cm no contiene datos válidos; "
-            "no se puede generar la reconstrucción 2D a escala."
-        )
-    radius_cm = float(valid_distances.median())
-
-    generate_figure_1(summary, metrics, radius_cm)
+    generate_figure_1(summary, metrics)
     residual_data = generate_figure_3(df)
 
     print_results(summary, metrics, residual_data)

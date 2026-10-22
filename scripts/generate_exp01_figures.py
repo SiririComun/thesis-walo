@@ -365,6 +365,108 @@ def plot_calibration(
     return fit_results
 
 
+
+
+def plot_combined_calibration(data):
+    """
+    Figura compuesta 2x2 que conserva la organización de las dos
+    calibraciones originales:
+      fila superior: amplitud RMS (1/r a la izquierda; r a la derecha)
+      fila inferior: energía digital (1/r² a la izquierda; r a la derecha)
+
+    En cada panel aparecen simultáneamente los dos micrófonos.
+    """
+    fig, axes = plt.subplots(2, 2, figsize=(16.0, 11.0))
+    ax_amp_lin, ax_amp_phys = axes[0]
+    ax_energy_lin, ax_energy_phys = axes[1]
+
+    observables = [
+        ("amp_direct_mv", 1, "amplitude", r"Amplitud RMS [mV]",
+         r"$1/r$ [m$^{-1}$]", r"$k/r$", "Calibración radial de amplitud"),
+        ("energy_direct", 2, "energy", r"Energía digital [u.a.]",
+         r"$1/r^2$ [m$^{-2}$]", r"$k/r^2$", "Calibración radial de energía digital"),
+    ]
+    fits = {"amplitude": {}, "energy": {}}
+
+    for row, (column, power, fit_key, ylabel, xlabel_lin, model_label, _) in enumerate(observables):
+        ax_lin = axes[row, 0]
+        ax_phys = axes[row, 1]
+        all_y = []
+        all_xlin = []
+
+        for name, df in data.items():
+            stats = grouped_stats(df, column)
+            if stats.empty:
+                raise ValueError(f"Sin datos válidos para {column}, {name}")
+
+            k, r2 = fit_power_inverse(stats, power)
+            fits[fit_key][name] = (k, r2)
+
+            r_cm = stats["r_tape_cm"].to_numpy(dtype=float)
+            r_m = r_cm / 100.0
+            mean = stats["mean"].to_numpy(dtype=float)
+            std = stats["std"].fillna(0).to_numpy(dtype=float)
+            xlin = 1.0 / (r_m ** power)
+            color = COLORS[name]
+            all_y.extend((mean - std).tolist())
+            all_y.extend((mean + std).tolist())
+            all_xlin.extend(xlin.tolist())
+
+            label_data = f"{name}: datos"
+            label_fit = fr"{name}: $k={k:.3g}$, $R^2={r2:.4f}$"
+
+            ax_lin.errorbar(
+                xlin, mean, yerr=std, fmt="o", ms=5, capsize=3,
+                color=color, ecolor=color, label=label_data, zorder=3
+            )
+            xfit_lin = np.linspace(0, max(xlin) * 1.04, 250)
+            ax_lin.plot(
+                xfit_lin, k * xfit_lin, color=color, lw=2.2,
+                label=label_fit, zorder=2
+            )
+
+            ax_phys.errorbar(
+                r_cm, mean, yerr=std, fmt="o", ms=5, capsize=3,
+                color=color, ecolor=color, label=label_data, zorder=3
+            )
+            rfit_cm = np.linspace(max(1.0, min(r_cm) * 0.92), max(r_cm) * 1.04, 300)
+            rfit_m = rfit_cm / 100.0
+            ax_phys.plot(
+                rfit_cm, k / (rfit_m ** power), color=color, lw=2.2,
+                label=fr"{name}: {model_label}", zorder=2
+            )
+
+        ax_lin.set_xlabel(xlabel_lin)
+        ax_lin.set_ylabel(ylabel)
+        ax_lin.set_title("(a) Dominio linealizado" if row == 0 else "(c) Dominio linealizado")
+        ax_lin.legend(loc="best", framealpha=0.95, fontsize=9)
+        style_axis(ax_lin)
+
+        ax_phys.set_xlabel(r"Distancia de referencia $r$ [cm]")
+        ax_phys.set_ylabel(ylabel)
+        ax_phys.set_title("(b) Dominio físico" if row == 0 else "(d) Dominio físico")
+        ax_phys.legend(loc="best", framealpha=0.95, fontsize=9)
+        style_axis(ax_phys)
+
+        # Escalas comparables entre los micrófonos dentro de cada observable.
+        if all_y:
+            ymin = min(0.0, min(all_y))
+            ymax = max(all_y)
+            pad = max((ymax - ymin) * 0.08, 0.5)
+            ax_lin.set_ylim(ymin - pad, ymax + pad)
+            ax_phys.set_ylim(ymin - pad, ymax + pad)
+
+    # Mantener una misma extensión horizontal para los dos paneles de cada dominio.
+    ax_amp_lin.set_xlim(left=0)
+    ax_energy_lin.set_xlim(left=0)
+    ax_amp_phys.set_xlim(10, 105)
+    ax_energy_phys.set_xlim(10, 105)
+
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.94,
+                        wspace=0.27, hspace=0.30)
+    save_figure(fig, "exp01_fig1_calibration_four_panel")
+    return fits
+
 # ============================================================
 # 6. FIGURA 3: ESTIMACIÓN DE DISTANCIA (MOCK)
 # ============================================================
@@ -449,7 +551,7 @@ def plot_mock_distance(amp_fits):
     margin = 0.08 * (high - low)
     ax_top.set_ylim(low - margin, high + margin)
     lim = max(abs(np.min(all_residuals)), abs(np.max(all_residuals)), 1.0) * 1.18
-    ax_res.set_ylim(-lim, lim)
+    ax_res.set_ylim(-1100, 1100)
 
     fig.text(0.5, 0.015,
              "MOCK — datos sintéticos; no son mediciones experimentales",
@@ -729,20 +831,8 @@ def plot_toa(data):
         upper_max + margin,
     )
 
-    residual_limit = max(
-        abs(np.min(all_residuals)),
-        abs(np.max(all_residuals)),
-    )
-
-    if residual_limit == 0:
-        residual_limit = 1.0
-
-    residual_limit *= 1.18
-
-    ax_res.set_ylim(
-        -residual_limit,
-        residual_limit,
-    )
+    # Escala común con la figura MOCK de distancia: no se autoajusta por figura.
+    ax_res.set_ylim(-1100, 1100)
 
     # --------------------------------------------------------
     # Exportación
@@ -769,104 +859,33 @@ def plot_toa(data):
 # ============================================================
 
 def main():
-
     print("\n" + "=" * 60)
     print("EXPERIMENTO 01 - CARACTERIZACIÓN RADIAL")
     print("=" * 60)
-
-    print("\nLeyendo datos experimentales...")
-
     data = load_data()
 
-    # --------------------------------------------------------
-    # Figura 1
-    # --------------------------------------------------------
+    print("\nGenerando calibración combinada de amplitud y energía...")
+    calibration_fits = plot_combined_calibration(data)
+    amp_fits = calibration_fits["amplitude"]
 
-    print("\nGenerando Figura 1: calibración de amplitud...")
-
-    amp_fits = plot_calibration(
-        data=data,
-        observable="amp_direct_mv",
-        power=1,
-        ylabel=r"Amplitud RMS $A_{\mathrm{RMS}}$ [mV]",
-        title="Calibración radial de amplitud",
-        stem="exp01_fig1_amplitude_calibration",
-        unit_label=r"m$^{-1}$",
-    )
-
-    # --------------------------------------------------------
-    # Figura 3: predicción mock basada solo en amplitud RMS
-    # --------------------------------------------------------
-
-    print("\nGenerando Figura 3: estimación de distancia (MOCK, RMS)...")
+    print("\nGenerando Figura 3: estimación de distancia (MOCK)...")
     plot_mock_distance(amp_fits)
 
-    # --------------------------------------------------------
-    # Figura 4
-    # --------------------------------------------------------
-
     print("\nGenerando Figura 4: estimación mediante ToA...")
-
     toa_metrics = plot_toa(data)
 
-    # --------------------------------------------------------
-    # Resultados de calibración
-    # --------------------------------------------------------
+    print("\nCOEFICIENTES DE CALIBRACIÓN")
+    for observable, results in calibration_fits.items():
+        print(f"\n{observable.upper()}")
+        for name, (k, r2) in results.items():
+            print(f"  {name}: k={k:.6g}, R²={r2:.5f}")
 
-    print("\n" + "=" * 60)
-    print("COEFICIENTES DE CALIBRACIÓN")
-    print("=" * 60)
-
-    for name in CSV_FILES:
-
-        ka, r2a = amp_fits[name]
-
-        print(f"\n{name}")
-
-        print(
-            f"  Amplitud: kA = {ka:.6g} mV·m, "
-            f"R² = {r2a:.5f}"
-        )
-
-
-    # --------------------------------------------------------
-    # Métricas ToA
-    # --------------------------------------------------------
-
-    print("\n" + "=" * 60)
-    print("EVALUACIÓN DE DISTANCIA MEDIANTE ToA")
-    print("=" * 60)
-
+    print("\nMÉTRICAS ToA")
     for name, result in toa_metrics.items():
-
-        print(f"\n{name}")
-        print("-" * 40)
-
-        print(
-            f"Número de mediciones : {result['n']}"
-        )
-
-        print(
-            f"Sesgo medio          : "
-            f"{result['bias']:+.3f} cm"
-        )
-
-        print(
-            f"MAE                  : "
-            f"{result['mae']:.3f} cm"
-        )
-
-        print(
-            f"RMSE                 : "
-            f"{result['rmse']:.3f} cm"
-        )
-
-    print("\n" + "=" * 60)
-
-    print("\nProceso terminado.")
-    print("Revisa las figuras en figures/.")
-
-    print("\nADVERTENCIA: la Figura 3 es sintética y no constituye evidencia experimental.")
+        print(f"\n{name}: N={result['n']}, sesgo={result['bias']:+.3f} cm, "
+              f"MAE={result['mae']:.3f} cm, RMSE={result['rmse']:.3f} cm")
+    print("\nProceso terminado. Revisa las figuras en figures/.")
+    print("La figura de predicción de distancia es sintética (MOCK).")
 
 
 # ============================================================
