@@ -1,20 +1,23 @@
 ==============================================================================
 ⚙️  PROJECT ENVIRONMENT & TOOLCHAIN CONSTRAINTS
 ==============================================================================
-• Repository State    : main @ 2fd2bd6
+• Repository State    : main @ f122e0d
 ==============================================================================
 
 Git Context & Branch Topology:
 
 ```log
-Current Branch: main | Working Tree: Dirty (5 modified/untracked files)
+Current Branch: main | Working Tree: Dirty (24 modified/untracked files)
 
 Branch Tracking & Divergence Status:
-* main                2fd2bd6 [origin/main] docs(thesis): update compiled manuscript PDF
-  remotes/origin/main 2fd2bd6 docs(thesis): update compiled manuscript PDF
+* main                f122e0d [origin/main] docs(thesis): update compiled manuscript
+  remotes/origin/main f122e0d docs(thesis): update compiled manuscript
 
 Multi-Branch Git Commit Graph:
-* 2fd2bd6  (HEAD -> main, origin/main) - 2026-10-20 : docs(thesis): update compiled manuscript PDF (SiririComun)
+* f122e0d  (HEAD -> main, origin/main) - 2026-10-20 : docs(thesis): update compiled manuscript (SiririComun)
+* 282c186  - 2026-10-20 : chore(context): update Cog context generation (SiririComun)
+* 1335a0a  - 2026-10-20 : refactor(thesis): restructure main LaTeX document (SiririComun)
+* 2fd2bd6  - 2026-10-20 : docs(thesis): update compiled manuscript PDF (SiririComun)
 * 971784d  - 2026-10-20 : refactor(thesis): restructure results and discussion chapter (SiririComun)
 * 2af0b51  - 2026-10-20 : chore(exp03): update synthetic demonstration figures (SiririComun)
 * 4bae436  - 2026-10-20 : feat(exp02): update experimental figures (SiririComun)
@@ -26,16 +29,12 @@ Multi-Branch Git Commit Graph:
 * a589b42  - 2026-10-20 : Add synthetic data for experiment 03 (SiririComun)
 * a227255  - 2026-10-20 : Regenerate thesis figures with unified style (SiririComun)
 * 7c78903  - 2026-10-20 : Unify figure generation styles (SiririComun)
-* b700622  - 2026-10-20 : Add mock visualization figures for experiment 03 (SiririComun)
-* ebe251a  - 2026-10-20 : Add mock figure generation for experiment 03 (SiririComun)
-* 9ca1145  - 2026-10-20 : docs: add experiment 02 result figures (SiririComun)
 ```
 
 01_tratamiento_campo.tex: (chapters/01_tratamiento_campo.tex)
 
 ```latex
-\section{TRATAMIENTO DEL CAMPO ACÚSTICO Y EXTRACCIÓN DE OBSERVABLES FÍSICOS}
-\label{sec:tratamiento_campo}
+\label{chap:tratamiento_campo}
 
 En este capítulo se establecen los fundamentos físicos y matemáticos del
 tratamiento de las señales acústicas adquiridas por WALO. El objetivo es
@@ -44,42 +43,19 @@ transformarse en magnitudes observables relacionadas con la propagación
 acústica, la distancia, la dirección de llegada y el movimiento de una
 fuente.
 
-La exposición sigue la cadena general de medición: descripción del campo
-acústico, transducción, adquisición digital, representación temporal y
-espectral y extracción de observables. Se presta especial atención a las
-hipótesis necesarias para interpretar cada magnitud y a las limitaciones
-que introduce la instrumentación.
+La exposición sigue la cadena de medición: campo acústico, transducción,
+adquisición digital, representación temporal y espectral y extracción
+de observables. Esta secuencia establece las bases para interpretar las
+señales registradas y relacionarlas con la distancia, la dirección de
+llegada y el movimiento de una fuente.
 
-Se distingue entre las definiciones matemáticas de los procedimientos y
-los parámetros particulares de su implementación. Esta distinción es
-necesaria porque la frecuencia de muestreo, las ventanas temporales, los
-filtros y las condiciones de adquisición dependen de la configuración
-utilizada en cada experimento. Los parámetros específicos que requieren
-verificación contra el código y la configuración de hardware se
-documentan en el capítulo de instrumentación y metodología.
+Se presentan primero los principios físicos y las definiciones
+matemáticas que sustentan el procesamiento. Los parámetros de adquisición
+y las configuraciones particulares de filtros, ventanas y frecuencia de
+muestreo se especifican en el capítulo de instrumentación y metodología,
+donde se describe su uso en cada experimento.
 
-\paragraph{Implementación y reproducibilidad.}
-
-La implementación digital de WALO se encuentra organizada en dos
-repositorios de acceso abierto:
-
-\begin{itemize}
-    \item \textbf{Lógica digital de adquisición y procesamiento:}
-    \url{https://github.com/SiririComun/hw-xadc-dma-overlays}
-    \cite{SiririHW2026}.
-
-    \item \textbf{Controladores y rutinas de procesamiento:}
-    \url{https://github.com/SiririComun/sw-pynq-sound-localizer}
-    \cite{SiririSW2026}.
-\end{itemize}
-
-La consulta de estos repositorios permite examinar la arquitectura y
-la implementación del instrumento. Sin embargo, reproducir un resultado
-experimental requiere identificar también la versión del hardware, la
-configuración utilizada, los datos originales y el procedimiento de
-análisis aplicado.
-
-\subsection{Campo acústico y propagación}
+\section{Campo acústico y propagación}
 
 El sonido puede describirse como una perturbación mecánica que se propaga
 en un medio material. Para perturbaciones de pequeña amplitud en un medio
@@ -120,12 +96,10 @@ $\SI{20}{\celsius}$ se obtiene aproximadamente:
     \label{eq:velocidad_sonido_20}
 \end{equation}
 
-Este valor constituye una referencia para los cálculos realizados en
-condiciones de laboratorio. La velocidad efectiva depende de las
-condiciones del medio, por lo que una estimación precisa de distancias
-o velocidades debe considerar la temperatura correspondiente a cada
-ensayo. La humedad y la composición del aire también pueden introducir
-variaciones respecto de la aproximación anterior.
+Este valor se adopta como referencia para los cálculos en condiciones
+de laboratorio. Cuando se requiere mayor exactitud, la velocidad del
+sonido se determina a partir de la temperatura del medio; la humedad
+y la composición del aire también pueden incorporarse al modelo.
 
 Para una fuente puntual en un medio homogéneo e ilimitado, la solución
 armónica de la ecuación de onda puede expresarse, en el régimen de campo
@@ -170,13 +144,13 @@ donde $p_{\mathrm{dir}}$ representa la contribución directa, los términos
 $p_{\mathrm{ref},q}$ corresponden a las reflexiones y
 $p_{\mathrm{amb}}$ agrupa las perturbaciones acústicas ambientales.
 
-Esta descripción permite distinguir entre la propagación ideal utilizada
-para construir los modelos y las condiciones reales de medición. En
-particular, las relaciones de amplitud y energía con la distancia deben
-interpretarse considerando la geometría del montaje, la respuesta de
-los transductores y la presencia de reflexiones.
+Esta descripción conecta el modelo ideal de propagación con el campo
+registrado en el experimento. Por ello, la relación entre amplitud,
+magnitud cuadrática y distancia se estudia junto con la geometría del
+montaje, la respuesta de los transductores y las contribuciones
+reflejadas.
 
-\subsubsection{Señales en las posiciones de recepción}
+\subsection{Señales en las posiciones de recepción}
 
 Se consideran dos receptores ubicados en las posiciones espaciales
 $\vec{r}_1$ y $\vec{r}_2$. La separación entre ambos define la línea de
@@ -228,7 +202,7 @@ presiones absolutas. No obstante, pueden utilizarse como observables
 eléctricos para construir estimadores relativos o calibrados de distancia
 y dirección.
 
-\subsection{Adquisición y representación discreta}
+\section{Adquisición y representación discreta}
 
 La adquisición transforma las señales eléctricas procedentes de los
 receptores en secuencias discretas que pueden procesarse digitalmente.
@@ -245,7 +219,7 @@ temporal y espectral.
     \label{fig:discretizacion_flujo}
 \end{figure}
 
-\subsubsection{Muestreo y cuantización}
+\subsection{Muestreo y cuantización}
 
 Sean $v_1(t)$ y $v_2(t)$ las señales eléctricas de entrada. La conversión
 analógico-digital produce las secuencias:
@@ -316,7 +290,7 @@ de la electrónica de entrada. Por ello, la resolución nominal del
 convertidor no determina por sí sola la resolución efectiva de una
 medición.
 
-\subsubsection{Temporización entre canales}
+\subsection{Temporización entre canales}
 
 La comparación de las señales de dos receptores requiere una referencia
 temporal común. En una adquisición multicanal, la diferencia entre los
@@ -341,22 +315,18 @@ una diferencia de fase:
 \end{equation}
 
 La existencia de una temporización común en la lógica programable
-favorece la coherencia temporal entre canales. Sin embargo, no demuestra
-por sí sola que el desfase físico entre las señales adquiridas sea
-exactamente nulo. Este depende también de la temporización efectiva de
-los convertidores, las rutas de señal y la electrónica analógica.
+favorece la coherencia temporal entre canales, pero no demuestra por sí
+sola que el desfase físico entre las señales adquiridas sea nulo, pues
+este también depende de los convertidores, las rutas de señal y la
+electrónica analógica. Por tanto, cuando se requiere asignar una
+incertidumbre específica a las diferencias de tiempo o fase, el desfase
+residual debe caracterizarse experimentalmente, considerando la
+resolución y el límite de detección del procedimiento utilizado.
 
-Por tanto, el desfase residual debe caracterizarse experimentalmente
-cuando se requiere asignar una incertidumbre específica a las diferencias
-de tiempo o fase. Una medición compatible con cero debe expresarse
-considerando la resolución y el límite de detección del procedimiento
-utilizado.
-
-\subsubsection{Reducción de la tasa de muestreo}
+\subsection{Reducción de la tasa de muestreo}
 
 Una forma de reducir la cantidad de datos consiste en agrupar muestras
 consecutivas y calcular su promedio. Para un bloque de $M$ muestras,
-la salida puede expresarse como:
 
 \begin{equation}
     \tilde{v}_i[k]
@@ -412,7 +382,7 @@ modo de operación son parámetros de implementación. Su descripción
 detallada se presenta junto con la arquitectura de adquisición en el
 capítulo de instrumentación.
 
-\subsubsection{Formación de bloques}
+\subsection{Formación de bloques}
 
 Para el procesamiento digital, las muestras pueden organizarse en
 bloques de longitud $N$. Un bloque del canal $i$ se representa como:
@@ -429,10 +399,11 @@ bloques de longitud $N$. Un bloque del canal $i$ se representa como:
     \label{eq:bloque_temporal}
 \end{equation}
 
-La longitud del bloque determina el intervalo temporal analizado y,
-en el caso de la transformada discreta de Fourier, la separación entre
-frecuencias discretas. La selección de $N$ implica un compromiso entre
-resolución espectral, duración de observación y respuesta temporal.
+La longitud del bloque fija la duración del intervalo analizado y,
+para la transformada discreta de Fourier, determina la separación
+entre frecuencias discretas. La elección de $N$ establece el
+compromiso entre resolución espectral, duración de observación y
+respuesta temporal.
 
 No todas las operaciones requieren el mismo tratamiento de los bloques.
 El análisis espectral suele utilizar ventanas para reducir la fuga
@@ -440,28 +411,91 @@ espectral, mientras que la detección de tiempos de llegada requiere
 conservar la evolución temporal de la señal
 \cite{harris1978use,oppenheim1999discrete}.
 
-\subsection{Representación temporal y extracción de observables}
+\section{Representación temporal y extracción de observables}
 
 El procesamiento temporal permite estudiar la evolución de las señales
 recibidas y obtener magnitudes relacionadas con su amplitud, fase y
 tiempo de llegada. Estas magnitudes constituyen entradas para los modelos
 de estimación desarrollados en el capítulo siguiente.
 
+\subsection{Filtrado pasabanda}
+
+Las señales registradas pueden contener componentes espectrales
+adicionales a la emisión de interés. Un filtro pasabanda centrado
+alrededor de la frecuencia portadora $f_0$ permite seleccionar la
+banda utilizada en el análisis. La Figura~\ref{fig:filtrado_pasabanda} ilustra el
+principio de esta operación: la respuesta en frecuencia del filtro
+determina la banda de componentes que se conservan, mientras que las
+componentes externas a ella se atenúan.
+
 \begin{figure}[htbp]
     \centering
-    \input{figures/fig2_rama_a.tex}
-    \vspace{0.3cm}
-    \caption{Representación general del procesamiento temporal de las
-    señales recibidas.}
-    \label{fig:rama_a_flujo}
+    \begin{tikzpicture}[
+        x=0.9cm,
+        y=0.9cm,
+        >=stealth,
+        line cap=round,
+        line join=round,
+        font=\small
+    ]
+
+    \node[font=\small] at (2,4.0) {Señal de entrada};
+
+    \draw[->, thin] (0.4,0.65) -- (0.4,2.9)
+        node[above] {$v_i[n]$};
+    \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
+        node[right] {$t$};
+
+    \draw[blue, thick, domain=0:3.45, samples=250]
+        plot ({0.4+\x},{1.75
+        +0.48*sin(deg(2*pi*1.6*\x))
+        +0.23*sin(deg(2*pi*4.2*\x))});
+
+    \draw[->, thick] (4.35,1.75) -- (5.45,1.75)
+        node[midway, above] {$t$};
+
+    \node[font=\small] at (8.0,4.0) {Filtro pasabanda};
+    \node at (8.0,3.45) {$|H(f)|$};
+
+    \draw[->, thin] (6.0,0.65) -- (6.0,2.9);
+    \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
+        node[right] {$f$};
+
+    \draw[orange!90!black, thick]
+        (6.15,0.75)
+        .. controls (6.65,0.75) and (6.8,2.25) .. (7.45,2.25)
+        -- (8.55,2.25)
+        .. controls (9.2,2.25) and (9.35,0.75) .. (9.85,0.75);
+
+    \draw[dashed, gray] (7.45,2.25) -- (8.55,2.25);
+
+    \node[align=center] at (8.0,0.25)
+        {Banda alrededor de $f_0$};
+
+    \draw[->, thick] (10.35,1.75) -- (11.45,1.75)
+        node[midway, above] {$f$};
+
+    \node[font=\small] at (14.0,4.0) {Señal filtrada};
+
+    \draw[->, thin] (12.4,0.65) -- (12.4,2.9)
+        node[above] {$y_i[n]$};
+    \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
+        node[right] {$t$};
+
+    \draw[blue, thick, domain=0:3.35, samples=250]
+        plot ({12.4+\x},{1.75+0.48*sin(deg(2*pi*1.6*\x))});
+
+    \end{tikzpicture}
+
+    \caption{Representación esquemática del filtrado pasabanda.
+    Se ilustran una señal de entrada con distintas componentes
+    espectrales, la respuesta en magnitud de un filtro pasabanda
+    y la señal resultante después del filtrado. Las formas de onda
+    y la respuesta en frecuencia son representaciones didácticas:
+    no corresponden a mediciones experimentales ni a la respuesta
+    numérica de un filtro específico.}
+    \label{fig:filtrado_pasabanda}
 \end{figure}
-
-\subsubsection{Filtrado pasabanda}
-
-Las señales registradas pueden contener componentes espectrales que
-no corresponden a la emisión de interés. Para reducir su contribución
-puede aplicarse un filtro pasabanda centrado alrededor de la frecuencia
-portadora $f_0$.
 
 La señal filtrada se representa de forma general como:
 
@@ -518,7 +552,7 @@ dependen de la configuración de procesamiento correspondiente. En
 consecuencia, no se asignan aquí frecuencias de corte ni órdenes
 específicos sin identificar previamente la implementación utilizada.
 
-\subsubsection{Señal analítica, amplitud y fase instantáneas}
+\subsection{Señal analítica, amplitud y fase instantáneas}
 
 Para una señal real de banda estrecha, la amplitud y la fase pueden
 estimarse mediante la señal analítica. La transformada de Hilbert de
@@ -570,8 +604,15 @@ y la fase instantánea:
     \label{eq:fase_instantanea}
 \end{equation}
 
-La fase puede desenvolverse para eliminar las discontinuidades
-artificiales de $2\pi$:
+La fase calculada mediante el argumento de una señal compleja suele
+representarse dentro de un intervalo de longitud $2\pi$. Cuando su
+evolución atraviesa uno de los límites de ese intervalo, pueden aparecer
+saltos aparentes entre muestras consecutivas. El desenvolvimiento de
+fase (\textit{phase unwrapping}) corrige esos saltos sumando o restando
+múltiplos de $2\pi$, de modo que se obtenga una evolución continua
+siempre que la variación entre muestras permita resolverla sin
+ambigüedad. Esta operación facilita el cálculo de la frecuencia
+instantánea a partir de la derivada de la fase:
 
 \begin{equation}
     \Phi_{i,u}(t)
@@ -579,7 +620,8 @@ artificiales de $2\pi$:
     \operatorname{unwrap}(\Phi_i(t)).
 \end{equation}
 
-La frecuencia instantánea se obtiene derivando la fase desenvuelta:
+A partir de la fase desenvuelta se obtiene la frecuencia instantánea
+mediante su derivada temporal:
 
 \begin{equation}
     f_{i,\mathrm{inst}}(t)
@@ -589,7 +631,7 @@ La frecuencia instantánea se obtiene derivando la fase desenvuelta:
     \label{eq:frecuencia_instantanea}
 \end{equation}
 
-En señales discretas, la derivada se aproxima mediante diferencias
+En señales discretas, esta derivada se aproxima mediante diferencias
 finitas. Para muestras separadas por un periodo $T_s'$:
 
 \begin{equation}
@@ -609,7 +651,7 @@ las perturbaciones. Por ello, las estimaciones instantáneas deben
 interpretarse dentro de los intervalos en los que la señal recibida
 presenta una amplitud y una relación señal-ruido adecuadas.
 
-\subsubsection{Amplitud eficaz}
+\subsection{Amplitud eficaz}
 
 Para un conjunto de $N$ muestras de una señal eléctrica, la amplitud
 eficaz se define como:
@@ -648,12 +690,12 @@ donde:
     \sum_{n=0}^{N-1}v_i[n].
 \end{equation}
 
-La amplitud eficaz constituye una medida del nivel eléctrico de la
-señal en el intervalo considerado. No corresponde directamente a una
-presión acústica eficaz si no se conoce la sensibilidad del micrófono
-y la respuesta de la cadena de adquisición.
+La amplitud eficaz cuantifica el nivel eléctrico de la señal en el
+intervalo considerado. Su conversión a presión acústica eficaz se
+realiza mediante la sensibilidad del micrófono y la calibración de
+la cadena de adquisición.
 
-\subsubsection{Magnitud cuadrática acumulada}
+\subsection{Magnitud cuadrática acumulada}
 
 Una magnitud relacionada con la amplitud de la señal puede construirse
 mediante la suma de los cuadrados de las muestras en un intervalo
@@ -673,29 +715,20 @@ donde $n_0$ y $n_1$ delimitan el intervalo considerado y
 $\overline{y}_{i,\mathrm{gate}}$ es el valor medio de las muestras
 dentro de esa ventana.
 
-La expresión anterior define una suma cuadrática discreta. Su valor
-depende de la amplitud de la señal, de la duración de la ventana, de
-la frecuencia de muestreo y de la escala numérica utilizada.
+La expresión define una suma cuadrática discreta cuyo valor depende
+de la amplitud de la señal, la duración de la ventana, la frecuencia
+de muestreo y la escala numérica. En este capítulo, $Q_i$ se utiliza
+como indicador digital del nivel de señal. Su relación con magnitudes
+acústicas absolutas se establece mediante la sensibilidad del
+transductor, la respuesta de la cadena electrónica y la normalización
+temporal.
 
-En consecuencia, $Q_i$ debe interpretarse como una magnitud digital
-asociada al nivel de señal. No constituye por sí sola una energía
-acústica expresada en joules ni una medida absoluta de intensidad
-acústica. Para establecer una relación con magnitudes acústicas físicas
-se requiere conocer la sensibilidad del transductor, la respuesta de
-la cadena electrónica y la normalización temporal correspondiente.
+\section{Detección de tiempos de llegada}
 
-La expresión anterior presenta la definición general de una suma
-cuadrática. La fórmula y la ventana efectivamente utilizadas para
-obtener la variable \texttt{energy\_direct} en el procesamiento
-experimental deben identificarse a partir de la implementación
-correspondiente antes de atribuirle esta definición particular.
-
-\subsection{Detección de tiempos de llegada}
-
-El tiempo de llegada (*Time of Arrival*, ToA) representa el instante
-en que una señal emitida por la fuente alcanza un receptor. Su
-estimación permite relacionar el tiempo de propagación con la distancia
-recorrida por la onda acústica.
+El tiempo de llegada (\textit{Time of Arrival}, ToA) es el instante
+en que la señal emitida alcanza un receptor. A partir de este tiempo
+y de la velocidad de propagación se estima la distancia recorrida
+por la onda acústica.
 
 En una propagación directa ideal, si se conoce el instante de emisión
 $t_0$, el tiempo de llegada $t_{\mathrm{arr},i}$ y la velocidad del
@@ -712,14 +745,11 @@ mediante:
     \label{eq:distancia_toa}
 \end{equation}
 
-En la práctica, la detección requiere establecer un criterio que
-permita distinguir el frente de onda del ruido, de los transitorios
-electrónicos y de las reflexiones.
-
-Una posibilidad consiste en utilizar un umbral de amplitud que habilite
-la detección y, posteriormente, identificar un cruce ascendente por
-cero de la señal filtrada. Si el cruce ocurre entre las muestras
-$k_0$ y $k_0+1$, se cumple:
+La detección se realiza mediante un criterio que identifica el
+frente de onda dentro de la señal recibida. Una estrategia consiste
+en habilitar la búsqueda mediante un umbral de amplitud y localizar
+después un cruce ascendente por cero de la señal filtrada. Si el
+cruce ocurre entre las muestras $k_0$ y $k_0+1$, se cumple:
 
 \begin{equation}
     y_i[k_0]\leq 0,
@@ -746,20 +776,14 @@ El instante de cruce puede estimarse mediante interpolación lineal:
 donde $t_b$ es el instante correspondiente al inicio del bloque y
 $k_0$ es el índice local de la primera muestra del intervalo de cruce.
 
-La interpolación permite obtener un instante con valores fraccionarios
-del periodo de muestreo. Sin embargo, no aumenta la frecuencia de
-muestreo ni garantiza por sí misma una exactitud temporal determinada.
-La incertidumbre depende del ruido, de la pendiente del cruce, de la
-distorsión de la señal, de la respuesta de los canales y del criterio
-utilizado para seleccionar el frente de onda.
+La interpolación proporciona una estimación submuestral del instante
+de cruce. Su desempeño depende de la relación señal-ruido, la pendiente
+del cruce, la forma de onda y la respuesta de los canales. En señales
+pulsadas, el criterio de detección se aplica sobre la región temporal
+de la llegada directa para separar el frente de onda de las
+contribuciones reflejadas.
 
-En mediciones pulsadas también es necesario distinguir la llegada
-directa de las contribuciones reflejadas. Una reflexión puede producir
-un máximo posterior en la señal y alterar la detección si el criterio
-de llegada no está restringido a la región temporal correspondiente
-a la propagación directa.
-
-\subsubsection{Diferencia de tiempos de llegada}
+\subsection{Diferencia de tiempos de llegada}
 
 Cuando se dispone de dos receptores, puede calcularse la diferencia
 entre sus tiempos de llegada:
@@ -773,7 +797,7 @@ entre sus tiempos de llegada:
     \label{eq:delta_t_toa}
 \end{equation}
 
-La diferencia de tiempos de llegada (*Time Difference of Arrival*,
+La diferencia de tiempos de llegada (\textit{Time Difference of Arrival},
 TDOA) se relaciona con la diferencia de distancias recorridas:
 
 \begin{equation}
@@ -783,17 +807,14 @@ TDOA) se relaciona con la diferencia de distancias recorridas:
     \label{eq:delta_r_tdoa}
 \end{equation}
 
-El signo de esta diferencia depende de la convención adoptada para
-ordenar los receptores. Su magnitud contiene información sobre la
-dirección desde la que llega la onda, mientras que su interpretación
-geométrica depende de la separación y disposición de los sensores.
+El signo de la diferencia depende del orden asignado a los receptores.
+Su valor se relaciona con la dirección de llegada y, mediante la
+geometría y separación del arreglo, con la diferencia de caminos
+acústicos. Por tanto, el TDOA aporta una restricción geométrica que
+se combina con el modelo del arreglo para estimar la posición de
+la fuente.
 
-Una diferencia temporal entre dos receptores no equivale a una
-distancia absoluta desde la fuente. En particular, el TDOA define una
-diferencia de caminos y debe combinarse con la geometría del arreglo
-y otras restricciones para determinar una posición.
-
-\subsection{Representación espectral y estimación de frecuencia}
+\section{Representación espectral y estimación de frecuencia}
 
 El análisis espectral permite estudiar la distribución de las componentes
 armónicas de las señales adquiridas. En el contexto de WALO, esta
@@ -809,7 +830,7 @@ construir observables asociados al efecto Doppler.
     \label{fig:rama_b_flujo}
 \end{figure}
 
-\subsubsection{Transformada discreta de Fourier}
+\subsection{Transformada discreta de Fourier}
 
 Para un bloque de $N$ muestras, la transformada discreta de Fourier
 (DFT) se define como
@@ -856,12 +877,12 @@ Su magnitud y fase son:
     \label{eq:fase_espectral}
 \end{equation}
 
-La fase espectral depende de la referencia temporal del bloque, de la
-ventana aplicada y de la respuesta instrumental. Por tanto, una
-diferencia de fase entre dos canales no puede atribuirse exclusivamente
-a la propagación acústica sin considerar estos factores.
+La fase espectral está referida al origen temporal del bloque y
+depende de la ventana y de la respuesta instrumental. En la comparación
+entre canales, estos elementos se consideran junto con la diferencia
+de fase asociada a la propagación acústica.
 
-\subsubsection{Ventanas espectrales}
+\subsection{Ventanas espectrales}
 
 La aplicación de una ventana antes de calcular la DFT permite reducir
 la fuga espectral asociada a la observación de un intervalo finito.
@@ -891,18 +912,86 @@ como:
 
 donde los coeficientes dependen de la variante utilizada.
 
-La ventana modifica la amplitud efectiva de las componentes espectrales.
-Por ello, la estimación de amplitud debe considerar la ganancia coherente
-de la ventana y la normalización aplicada. La ventana espectral tampoco
-debe trasladarse indiscriminadamente a las operaciones temporales:
-la ponderación puede modificar la forma de los frentes de onda y
-afectar la detección de instantes de llegada
-\cite{harris1978use,oppenheim1999discrete}.
+Antes de calcular la transformada discreta de Fourier, puede
+aplicarse una ventana temporal a la secuencia de muestras. Esta operación
+pondera cada muestra mediante una función definida sobre la longitud del
+bloque, reduciendo su amplitud hacia los extremos. La
+Figura~\ref{fig:ventaneo_temporal} ilustra el proceso de ventaneo
+y el efecto de la ponderación sobre la señal original.
 
-La ventana y su parametrización efectiva deben corresponder a la
-implementación utilizada en cada procedimiento experimental.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        x=0.9cm,
+        y=0.9cm,
+        >=stealth,
+        line cap=round,
+        line join=round,
+        font=\small
+    ]
 
-\subsubsection{Resolución espectral}
+    \node[font=\small] at (2,4.0) {Señal original};
+
+    \draw[->, thin] (0.4,0.65) -- (0.4,2.9)
+        node[above] {$v[n]$};
+    \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
+        node[right] {$n$};
+
+    \draw[blue, thick, domain=0:3.4, samples=250]
+        plot ({0.4+\x},{1.75+0.65*sin(deg(2*pi*2.0*\x))});
+
+    \draw[->, thick] (4.35,1.75) -- (5.45,1.75);
+
+    \node[font=\small] at (8.0,4.0) {Ventana temporal};
+    \node at (8.0,3.45) {$w[n]$};
+
+    \draw[->, thin] (6.0,0.65) -- (6.0,2.9);
+    \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
+        node[right] {$n$};
+
+    \draw[orange!90!black, thick, domain=0:3.5, samples=150]
+        plot ({6.15+\x},
+        {0.75+1.75*(0.5-0.5*cos(deg(2*pi*\x/3.5)))});
+
+    \node at (8.0,0.25) {Ponderación};
+
+    \draw[->, thick] (10.35,1.75) -- (11.45,1.75);
+
+    \node[font=\small] at (14.0,4.0) {Señal ponderada};
+
+    \draw[->, thin] (12.4,0.65) -- (12.4,2.9)
+        node[above] {$v_w[n]$};
+    \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
+        node[right] {$n$};
+
+    \draw[blue, thick, domain=0:3.4, samples=250]
+        plot ({12.4+\x},
+        {1.75+
+        0.65*(0.5-0.5*cos(deg(2*pi*\x/3.5)))
+        *sin(deg(2*pi*2.0*\x))});
+
+    \node at (14.15,0.25) {$v_w[n]=w[n]v[n]$};
+
+    \end{tikzpicture}
+
+    \caption{Representación esquemática del proceso de ventaneo
+    temporal. La señal original se multiplica muestra a muestra
+    por una función de ventana, dando lugar a una secuencia
+    ponderada cuya amplitud disminuye hacia los extremos del
+    bloque. Las curvas son ilustrativas y no corresponden a una
+    parametrización numérica específica.}
+    \label{fig:ventaneo_temporal}
+\end{figure}
+
+La ventana modifica la amplitud efectiva de las componentes
+espectrales; por ello, la estimación de amplitud incorpora la ganancia
+coherente y la normalización correspondiente. Su aplicación se reserva
+al análisis espectral: en la detección temporal, la ponderación puede
+alterar la forma de los frentes de onda y desplazar los instantes de
+llegada \cite{harris1978use,oppenheim1999discrete}. La ventana
+seleccionada se define de acuerdo con el procedimiento de análisis.
+
+\subsection{Resolución espectral}
 
 Para un bloque de $N$ muestras adquirido a una frecuencia $f_s'$, la
 separación entre bines de la DFT es:
@@ -914,11 +1003,10 @@ separación entre bines de la DFT es:
     \label{eq:resolucion_bin}
 \end{equation}
 
-Esta magnitud determina la separación entre las frecuencias discretas
-del espectro. No representa necesariamente el límite absoluto de
-precisión de un estimador de frecuencia, ya que bajo condiciones
-apropiadas es posible estimar la posición de un máximo entre dos bines
-mediante interpolación.
+Esta magnitud fija la separación entre las frecuencias discretas
+del espectro. La estimación de frecuencia puede refinarse mediante
+interpolación local del máximo espectral, incluso cuando este se
+encuentra entre dos bines.
 
 Sea $k_0$ el índice del bin de mayor magnitud en la región de interés.
 Una interpolación parabólica local sobre las magnitudes de los bines
@@ -945,17 +1033,14 @@ La frecuencia estimada es:
     \label{eq:frecuencia_interpolada}
 \end{equation}
 
-Esta interpolación constituye una aproximación local. Su sesgo depende
-de la ventana, de la posición del tono respecto de los bines, de la
-presencia de componentes cercanas y de la relación señal-ruido
-\cite{grandke1983interpolation,jacobsen2007fast}.
+La interpolación es una aproximación local cuyo sesgo depende de la
+ventana, de la posición del tono respecto de los bines, de las
+componentes espectrales cercanas y de la relación señal-ruido
+\cite{grandke1983interpolation,jacobsen2007fast}. La precisión
+alcanzable se caracteriza evaluando el estimador con señales de
+frecuencia conocida.
 
-La obtención de una frecuencia con más cifras que la separación nominal
-entre bines no implica automáticamente una incertidumbre menor. La
-incertidumbre efectiva debe establecerse mediante la caracterización
-del estimador y ensayos con señales de frecuencia conocida.
-
-\subsection{Síntesis de observables y su interpretación física}
+\section{Síntesis de observables y su interpretación física}
 
 El procesamiento temporal y espectral produce un conjunto de magnitudes
 asociadas a las señales registradas por los receptores. Para organizar
@@ -976,11 +1061,11 @@ su interpretación se define el conjunto:
     \label{eq:vector_observables}
 \end{equation}
 
-No todos los elementos tienen necesariamente la misma dependencia
-temporal. Las amplitudes y frecuencias instantáneas pueden evaluarse
-muestra a muestra o por bloques, mientras que las magnitudes eficaces,
-las sumas cuadráticas y las frecuencias dominantes suelen asociarse
-al intervalo de análisis utilizado.
+Los observables se evalúan en la escala temporal adecuada a cada
+procedimiento. Las amplitudes y frecuencias instantáneas describen
+la evolución de la señal, mientras que las magnitudes eficaces, las
+sumas cuadráticas y las frecuencias dominantes caracterizan el
+intervalo de análisis.
 
 La relación entre estos observables y las magnitudes físicas que pueden
 estimarse se resume en la Tabla~\ref{tab:acoplamiento_observables}.
@@ -1062,76 +1147,26 @@ estimarse se resume en la Tabla~\ref{tab:acoplamiento_observables}.
     \label{tab:acoplamiento_observables}
 \end{table}
 
-La correspondencia entre un observable y una magnitud física no es
-necesariamente unívoca. Por ejemplo, la amplitud recibida depende de
-la distancia, pero también de la potencia acústica emitida, la
-directividad de la fuente, la orientación de los receptores, la
-respuesta de los micrófonos y las condiciones del recinto.
+Cada observable aporta información sobre una propiedad física
+específica y se interpreta mediante el modelo correspondiente. La
+amplitud recibida se relaciona con la distancia a través de la
+propagación y la calibración; la diferencia de fase aporta información
+angular en función de la longitud de onda y la separación entre
+receptores. La posición y la velocidad se obtienen al combinar estas
+magnitudes con los modelos de propagación y las restricciones
+geométricas desarrolladas en el capítulo siguiente.
 
-De manera análoga, una diferencia de fase puede relacionarse con la
-dirección de llegada, pero su interpretación requiere considerar la
-longitud de onda, la separación entre receptores, la referencia
-instrumental y las posibles ambigüedades espaciales.
+\section{Incertidumbre y limitaciones de los observables}
 
-En consecuencia, los observables no determinan por sí solos la posición
-o la velocidad de la fuente. Proporcionan las magnitudes experimentales
-que, combinadas con modelos de propagación y restricciones geométricas,
-permiten formular los problemas de inversión tratados en el capítulo
-siguiente.
-
-\subsection{Incertidumbre y limitaciones de los observables}
-
-La incertidumbre de una magnitud estimada depende de las contribuciones
-de la instrumentación, la geometría experimental, el procesamiento
-digital y la repetibilidad de las mediciones. La resolución nominal
-de un convertidor o el periodo de muestreo no determinan por sí solos
-la incertidumbre de los observables.
-
-La Guía para la Expresión de la Incertidumbre de Medida (GUM) proporciona
-un marco para propagar incertidumbres a través de modelos de medición
-\cite{jcg2008evaluation,taylor1997introduction}.
-
-Si un conjunto de magnitudes de entrada se representa mediante el
-vector $\mathbf{x}$ y los observables se calculan mediante una función:
-
-\begin{equation}
-    \mathbf{O}=\mathbf{f}(\mathbf{x}),
-\end{equation}
-
-la propagación de incertidumbre en la aproximación lineal de primer
-orden se expresa como:
-
-\begin{equation}
-    \mathbf{C}_{O}
-    =
-    \mathbf{J}
-    \mathbf{C}_{x}
-    \mathbf{J}^{T},
-    \label{eq:propagacion_gum}
-\end{equation}
-
-donde $\mathbf{C}_{x}$ es la matriz de covarianza de las magnitudes
-de entrada y $\mathbf{J}$ es la matriz jacobiana:
-
-\begin{equation}
-    J_{km}
-    =
-    \frac{\partial f_k}{\partial x_m}.
-\end{equation}
-
-Para un observable individual $O_k$, su incertidumbre estándar
-combinada se obtiene mediante:
-
-\begin{equation}
-    u(O_k)
-    =
-    \sqrt{(\mathbf{C}_{O})_{kk}}.
-\end{equation}
-
-La matriz de covarianza permite considerar correlaciones entre
-magnitudes de entrada. Estas correlaciones pueden aparecer por el
-ruido compartido, el filtrado, el promediado, la temporización y los
-procedimientos de estimación.
+La incertidumbre de los observables integra las contribuciones de
+la instrumentación, la geometría experimental, el procesamiento
+digital y la repetibilidad. Su evaluación se realiza siguiendo la
+Guía para la Expresión de la Incertidumbre de Medida (GUM), que
+establece el marco para propagar las incertidumbres de las magnitudes
+de entrada a través del modelo de medición
+\cite{jcg2008evaluation,taylor1997introduction}. La aplicación
+del marco se adapta a las magnitudes y al procedimiento de estimación
+de cada experimento.
 
 En la caracterización experimental deben distinguirse al menos tres
 contribuciones:
@@ -1150,30 +1185,27 @@ contribuciones:
     referencia.
 \end{enumerate}
 
-Estas contribuciones no son intercambiables. En particular, el error
-medio absoluto (MAE) y la raíz del error cuadrático medio (RMSE)
-caracterizan el desempeño de un estimador respecto de una referencia,
-pero no representan por sí solos la incertidumbre instrumental.
+Estas contribuciones describen aspectos distintos de la medición.
+El error medio absoluto (MAE) y la raíz del error cuadrático medio
+(RMSE) cuantifican el desempeño del estimador respecto de una
+referencia, mientras que la incertidumbre instrumental caracteriza
+la dispersión atribuible al proceso de medición.
 
-La interpretación de los resultados requiere considerar las
-limitaciones del modelo físico. Las reflexiones pueden modificar los
-tiempos de llegada, la amplitud y la fase. Las diferencias entre los
-transductores pueden introducir sesgos intercanal. La estabilidad de
-la fuente afecta las estimaciones de frecuencia, mientras que la
-relación señal-ruido condiciona la precisión de los estimadores
-temporales y espectrales.
+El comportamiento de los observables está determinado por el modelo
+físico y las condiciones de medición. Las reflexiones influyen en
+los tiempos de llegada, la amplitud y la fase; las diferencias entre
+transductores pueden producir sesgos entre canales; y la estabilidad
+de la fuente y la relación señal-ruido intervienen en la estimación
+de frecuencia y de parámetros temporales. Estos efectos se incorporan
+en la caracterización experimental de cada observable.
 
-Por estas razones, las prestaciones de WALO deben establecerse a
-partir de la caracterización experimental de cada observable y de
-las condiciones particulares en las que se aplica.
+\section{Alcance del tratamiento de señales}
 
-\subsection{Alcance del tratamiento de señales}
-
-El tratamiento descrito en este capítulo proporciona las magnitudes
+El tratamiento descrito en este capítulo establece las magnitudes
 necesarias para estudiar la propagación acústica y el movimiento de
 una fuente mediante dos receptores. Los observables temporales,
-espectrales y de amplitud permiten construir estimadores diferentes,
-cada uno sujeto a hipótesis y limitaciones específicas.
+espectrales y de amplitud constituyen las entradas de los estimadores
+desarrollados en los capítulos siguientes.
 
 La amplitud y las magnitudes cuadráticas pueden utilizarse para
 caracterizar la dependencia del nivel recibido con la distancia.
@@ -1183,102 +1215,62 @@ sobre la dirección de llegada, mientras que las frecuencias recibidas
 pueden relacionarse con el movimiento relativo mediante el efecto
 Doppler.
 
-La validez de estas estimaciones depende de la coherencia entre el
-modelo físico, la geometría experimental, la respuesta instrumental
-y el procedimiento de procesamiento. Sobre esta base, el capítulo
-siguiente desarrolla los modelos de inversión que relacionan los
-observables con las magnitudes geométricas y cinemáticas de interés.
+La estimación de estas magnitudes integra el modelo físico, la
+geometría experimental, la respuesta instrumental y el procesamiento
+digital. Sobre esta base, el capítulo siguiente desarrolla los
+modelos de inversión que relacionan los observables con las magnitudes
+geométricas y cinemáticas de interés.
 ```
 
 02_modelos_inversion.tex: (chapters/02_modelos_inversion.tex)
 
 ```latex
-\clearpage
-\section{LOCALIZACIÓN ACÚSTICA: MODELOS GEOMÉTRICOS Y ESTIMACIÓN CINEMÁTICA}
 \label{chap:modelos_inversion}
 
-\subsection{El problema inverso de la localización acústica}
+\section{El problema inverso de la localización acústica}
 
 La localización acústica consiste en estimar propiedades geométricas o
-cinemáticas de una fuente sonora a partir de las señales registradas por uno
-o varios receptores. El problema directo describe la propagación de la onda
-desde la fuente hasta los sensores; el problema inverso utiliza las señales
-medidas para inferir magnitudes como la distancia, la dirección de llegada
-y la velocidad de la fuente.
+cinemáticas de una fuente sonora a partir de las señales registradas por
+uno o varios receptores. Mientras que el problema directo describe la
+propagación de la onda desde la fuente hasta los sensores, el problema
+inverso relaciona las señales medidas con magnitudes como la distancia,
+la dirección de llegada y la velocidad de la fuente.
 
-La información disponible depende del observable físico utilizado. Entre
-los métodos habituales se encuentran:
+En WALO, la estimación radial utiliza los tiempos de llegada y la
+respuesta recibida en amplitud y magnitud cuadrática digital. La
+dirección de llegada se obtiene a partir de las diferencias intercanal
+de tiempo y fase, mientras que la velocidad se estima mediante el
+desplazamiento Doppler de las frecuencias recibidas. Los modelos de este
+capítulo establecen la relación entre cada observable y la magnitud
+estimada.
 
-\begin{itemize}
-    \item \textbf{Métodos basados en amplitud o potencia recibida (RSS):}
-    relacionan la amplitud de la señal o una magnitud proporcional a la
-    potencia recibida con la distancia entre la fuente y el receptor.
-    Su validez depende de la directividad de la fuente, la respuesta de
-    los transductores y las condiciones de propagación
-    \cite{kinsler2000fundamentals,zhuang2016evaluation}.
-
-    \item \textbf{Métodos basados en tiempo de llegada (ToA):}
-    utilizan el tiempo de propagación entre la fuente y el receptor.
-    Permiten estimar una distancia absoluta cuando se conoce el instante
-    de emisión y se han caracterizado los retardos instrumentales.
-
-    \item \textbf{Métodos basados en diferencias de tiempo de llegada
-    (TDOA):}
-    utilizan la diferencia entre los tiempos registrados por distintos
-    receptores. La magnitud obtenida corresponde a una diferencia de
-    distancias y no, por sí sola, a una posición única
-    \cite{knapp1976generalized,brandstein2001microphone}.
-
-    \item \textbf{Métodos basados en diferencias de fase (PDoA):}
-    relacionan la diferencia de fase de una señal armónica recibida por
-    dos sensores con la diferencia de camino de propagación. Su precisión
-    depende de la frecuencia, la separación entre sensores, la coherencia
-    entre canales y la ambigüedad de fase
-    \cite{brandstein2001microphone,rautenberg2018phase}.
-
-    \item \textbf{Métodos basados en el efecto Doppler:}
-    utilizan el desplazamiento de frecuencia producido por el movimiento
-    relativo entre la fuente y los receptores. Bajo una geometría conocida,
-    las frecuencias recibidas pueden relacionarse con la velocidad de la
-    fuente \cite{kinsler2000fundamentals,chestnut1982estimation}.
-\end{itemize}
-
-En WALO se consideran cinco observables principales: tiempo de llegada
-(ToA), diferencia de tiempos de llegada (TDOA), diferencia de fase
-intercanal (PDoA), frecuencia recibida y diferencia de frecuencia asociada
-al efecto Doppler. También se obtiene una magnitud digital relacionada
-con la amplitud cuadrática de la señal recibida.
-
-Estos observables no contienen la misma información ni requieren las
-mismas condiciones para ser interpretados. Por ello, cada modelo de
-inversión se formula por separado y se especifican las hipótesis necesarias
-para relacionar la magnitud medida con una propiedad de la fuente.
-
-El propósito de este capítulo es establecer esas relaciones físicas.
-La caracterización experimental de los estimadores y sus limitaciones
-se presenta posteriormente.
-
-\subsection{Estimación de distancia}
+\section{Estimación de distancia}
 
 La distancia radial $r$ entre una fuente emisora y un receptor puede
 estimarse mediante el tiempo de propagación o a partir de la atenuación
-de la señal recibida. Ambos procedimientos utilizan información física
-diferente y presentan fuentes de error distintas. No obstante, comparten
-factores como la temperatura del medio, la geometría de propagación y
-la respuesta electroacústica del sistema.
+de la señal recibida. El primer procedimiento utiliza una referencia
+temporal asociada a la emisión; los segundos relacionan magnitudes
+eléctricas medidas con la distancia mediante calibraciones empíricas.
+
+La Figura~\ref{fig:geometria_cuasi_anecoica} presenta la geometría de
+propagación directa y de reflexión especular considerada para seleccionar
+la ventana temporal de observación.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig4_geometria_to_a.tex}
     \vspace{0.25cm}
-    \caption{Geometría de propagación directa y reflexión especular en una
-    superficie horizontal. Para una fuente y un receptor situados a la
-    misma altura $h$, el método de la fuente imagen permite calcular la
-    diferencia entre las longitudes de los trayectos directo y reflejado.}
+    \caption{Geometría de propagación directa y reflexión especular
+    en una superficie horizontal. Para una fuente y un receptor
+    situados a la misma altura $h$, el método de la fuente imagen
+    permite determinar la diferencia de recorrido entre ambas
+    trayectorias. Esta diferencia establece el intervalo temporal
+    disponible para seleccionar una ventana que contenga la llegada
+    directa antes de la llegada de la reflexión considerada.}
     \label{fig:geometria_cuasi_anecoica}
 \end{figure}
 
-\subsubsection{Estimación temporal: tiempo de llegada (ToA)}
+\subsection{Estimación temporal: tiempo de llegada (ToA)}
 
 En condiciones de propagación directa, el tiempo de vuelo de una onda
 acústica entre una fuente y un receptor separados una distancia $r$ es
@@ -1289,34 +1281,27 @@ acústica entre una fuente y un receptor separados una distancia $r$ es
 \end{equation}
 
 donde $c(T)$ es la velocidad del sonido en el medio. Para aire seco,
-una aproximación de su dependencia con la temperatura es
+se utiliza la aproximación de su dependencia con la temperatura definida
+en la ecuación~\eqref{eq:velocidad_sonido_temperatura} del
+capítulo~\ref{chap:tratamiento_campo}.
+
+Si se conoce el instante de emisión y el retardo instrumental efectivo
+$t_{\mathrm{off}}$, la distancia se estima mediante
 
 \begin{equation}
-    c(T) = 331.3
-    \sqrt{1+\frac{T}{273.15}},
-    \label{eq:velocidad_sonido_temperatura}
-\end{equation}
-
-con $T$ expresada en grados Celsius. Esta expresión no incorpora
-correcciones por humedad, composición del aire ni gradientes térmicos.
-
-Si el instante de emisión es conocido y el retardo instrumental se
-representa mediante $t_{\mathrm{off}}$, la distancia puede estimarse como
-
-\begin{equation}
-    r(t) =
-    c(T)\left[t_{\mathrm{arr}}(t)-t_{\mathrm{em}}(t)
-    -t_{\mathrm{off}}\right],
+    r(t) = c(T)\left[
+    t_{\mathrm{arr}}(t)-t_{\mathrm{em}}(t)-t_{\mathrm{off}}
+    \right],
     \label{eq:distancia_toa_absoluta}
 \end{equation}
 
-donde $t_{\mathrm{arr}}$ es el instante de llegada detectado,
-$t_{\mathrm{em}}$ es el instante de emisión y $t_{\mathrm{off}}$
+donde $t_{\mathrm{arr}}$ es el instante de llegada detectado y
+$t_{\mathrm{em}}$ es el instante de emisión. El retardo $t_{\mathrm{off}}$
 agrupa los retardos sistemáticos de la cadena electroacústica y de
 adquisición.
 
-Una calibración a distancia conocida $r_{\mathrm{ref}}$ permite
-determinar un valor efectivo del retardo:
+Una calibración a distancia conocida $r_{\mathrm{ref}}$ permite obtener
+el retardo efectivo:
 
 \begin{equation}
     t_{\mathrm{off}} =
@@ -1326,37 +1311,23 @@ determinar un valor efectivo del retardo:
     \label{eq:calibracion_toffset}
 \end{equation}
 
-Esta calibración corrige el retardo global bajo las condiciones del
-ensayo de referencia. No separa necesariamente las contribuciones
-individuales ni garantiza que el retardo permanezca constante ante
-cambios de frecuencia, temperatura, amplitud o configuración del
-procesamiento. Su estabilidad debe comprobarse cuando cambian las
-condiciones de medida.
+El valor obtenido reúne en un único parámetro el retardo efectivo de
+la cadena de emisión, recepción y adquisición. Se emplea como referencia
+temporal en las estimaciones ToA realizadas con la misma configuración.
 
-La conversión de una variación temporal en una variación de distancia
-se expresa como
+Una variación temporal $\delta t$ equivale a una variación de recorrido
+acústico
 
 \begin{equation}
     \delta r = c(T)\,\delta t.
     \label{eq:conversion_resolucion_toa}
 \end{equation}
 
-A modo de referencia, una variación temporal de
-$\SI{1}{\micro\second}$ corresponde aproximadamente a
-$\SI{0.34}{\milli\metre}$ de recorrido acústico para
-$c=\SI{343.21}{\metre\per\second}$. Este resultado expresa una
-equivalencia cinemática entre tiempo y distancia; no constituye por sí
-mismo la incertidumbre ni la exactitud de la estimación ToA. Estas
-últimas dependen del ruido, la forma del pulso, el criterio de detección,
-la frecuencia de muestreo, la interpolación y la calibración del retardo.
+Esta relación fija la escala de conversión entre el instante detectado
+y la distancia estimada. La detección del arribo y la calibración del
+retardo determinan la calidad de esa estimación.
 
-Es importante distinguir el ToA del TDOA. El primero requiere una
-referencia temporal asociada a la emisión para obtener una distancia
-absoluta. El segundo utiliza diferencias entre receptores y permite
-estimar diferencias de distancias, incluso cuando no se conoce el
-instante absoluto de emisión.
-
-\subsubsection{Estimación mediante amplitud y energía recibidas}
+\subsection{Calibración radial de amplitud y energía digital}
 
 En un medio homogéneo y sin pérdidas, una fuente puntual que radia
 aproximadamente de forma esférica produce una amplitud de presión
@@ -1365,92 +1336,86 @@ relaciona con la conservación de la potencia radiada sobre superficies
 esféricas cuya área crece como $4\pi r^2$
 \cite{kinsler2000fundamentals,morse1968theoretical}.
 
-Si la respuesta del sistema de emisión y recepción se mantiene
-constante, una magnitud eléctrica proporcional a la amplitud acústica
-puede modelarse empíricamente como
+Cuando la respuesta del sistema de emisión y recepción se mantiene
+constante, la amplitud eléctrica medida puede describirse mediante el
+modelo radial
 
 \begin{equation}
-    A(r) = \frac{k_A}{r},
+    A_{\mathrm{RMS}}(r) = \frac{k_A}{r},
     \label{eq:modelo_amplitud_radial}
 \end{equation}
 
-de donde se obtiene la estimación
+donde $k_A$ es una constante determinada experimentalmente. La inversión
+del modelo proporciona
 
 \begin{equation}
-    r_{\mathrm{amp}} =
-    \frac{k_A}{A(r)}.
+    \hat r_A = \frac{k_A}{A_{\mathrm{RMS}}}.
     \label{eq:inversion_amplitud}
 \end{equation}
 
-La constante $k_A$ debe determinarse mediante calibración y recoge
-la intensidad de emisión, el acoplamiento electroacústico y la ganancia
-del canal de recepción. Por tanto, $A(r)$ debe entenderse como una
-amplitud eléctrica medida, salvo que exista una calibración adicional
-que permita expresarla en unidades de presión acústica.
+La constante de calibración reúne la intensidad de emisión, el
+acoplamiento electroacústico y la ganancia del canal. La variable
+$A_{\mathrm{RMS}}$ corresponde a la amplitud eléctrica registrada por
+cada micrófono, y el modelo permite invertir esa respuesta para estimar
+la distancia.
 
-De manera análoga, si una magnitud digital acumulada es proporcional
-al cuadrado de la amplitud durante una ventana temporal de duración
-fija, puede utilizarse el modelo empírico
+Como segundo observable radial, puede utilizarse una magnitud digital
+proporcional al cuadrado de la amplitud de las muestras acumulada durante
+una ventana temporal fija. Su dependencia con la distancia se modela
+como
 
 \begin{equation}
-    \mathcal{E}_{\mathrm{dig}}(r) =
-    \frac{k_E}{r^2},
+    E_{\mathrm{dig}}(r) = \frac{k_E}{r^2},
     \label{eq:modelo_energia_radial}
 \end{equation}
 
-y su inversión
+y la correspondiente inversión es
 
 \begin{equation}
-    r_{\mathrm{energy}} =
-    \sqrt{\frac{k_E}{\mathcal{E}_{\mathrm{dig}}(r)}}.
+    \hat r_E = \sqrt{\frac{k_E}{E_{\mathrm{dig}}}}.
     \label{eq:inversion_energia}
 \end{equation}
 
-Aquí $\mathcal{E}_{\mathrm{dig}}$ representa una magnitud digital
-relacionada con la amplitud cuadrática de las muestras. Su interpretación
-cuantitativa depende de la definición, normalización y ventana temporal
-empleadas en la implementación. No debe interpretarse directamente
-como energía acústica absoluta en julios. La constante $k_E$ se determina
-experimentalmente y depende de la definición de la magnitud digital,
-de la ventana de integración y de la respuesta del sistema.
+$E_{\mathrm{dig}}$ es la magnitud cuadrática digital acumulada en la
+ventana de observación; describe el nivel de señal en la escala digital
+del sistema y no una energía acústica absoluta expresada en julios.
+Su constante $k_E$ se obtiene mediante la calibración experimental de
+cada canal.
 
-Las relaciones anteriores requieren condiciones de propagación
-próximas a las de campo libre, una fuente con emisión suficientemente
-estable, una respuesta de recepción reproducible y una ventana temporal
-comparable entre mediciones. La atenuación atmosférica, la directividad
-de la fuente, las reflexiones y las variaciones de ganancia pueden
-apartar las observaciones de las leyes ideales $1/r$ y $1/r^2$.
+Los modelos $1/r$ y $1/r^2$ permiten linealizar las calibraciones,
+respectivamente, frente a $1/r$ y $1/r^2$. La amplitud RMS caracteriza
+la respuesta en amplitud, mientras que la magnitud cuadrática integra
+la contribución de las muestras durante la ventana seleccionada. Ambos
+observables describen, desde perspectivas complementarias, la respuesta
+radial de cada micrófono.
 
-Por ello, estas expresiones deben utilizarse como modelos de calibración
-dentro del intervalo de distancias caracterizado, no como leyes
-universales para cualquier recinto. La compatibilidad de los datos
-experimentales con estas dependencias tampoco demuestra por sí sola
-que la fuente sea isotrópica o que el recinto sea anecoico.
-
-\subsubsection{Reflexión especular y selección de la ventana temporal}
+\subsection{Reflexión especular y selección de la ventana temporal}
 
 Las reflexiones de las superficies próximas pueden superponerse a la
 señal directa y modificar su amplitud y fase. Para estudiar una reflexión
 especular en una superficie horizontal, se considera una fuente y un
 receptor situados a la misma altura $h$ sobre dicha superficie y
-separados horizontalmente una distancia $r$.
+separados horizontalmente una distancia $r$, como se representa en la
+Figura~\ref{fig:geometria_cuasi_anecoica}.
 
 El trayecto directo tiene longitud
 
 \begin{equation}
     r_{\mathrm{dir}} = r.
+    \label{eq:trayecto_directo}
 \end{equation}
 
 Mediante el método de la fuente imagen, el trayecto reflejado se
 representa como una línea recta entre el receptor y la imagen de la
-fuente situada a una distancia vertical $2h$ respecto de la fuente real.
-Su longitud es
+fuente, situada a una distancia vertical $2h$ respecto de la fuente
+real. Su longitud es
 
 \begin{equation}
     r_{\mathrm{refl}} = \sqrt{r^2+4h^2}.
+    \label{eq:trayecto_reflejado}
 \end{equation}
 
-La diferencia entre ambos recorridos resulta
+La diferencia entre ambos recorridos es
 
 \begin{equation}
     \Delta r_{\mathrm{refl}} =
@@ -1458,7 +1423,7 @@ La diferencia entre ambos recorridos resulta
     \label{eq:delta_r_refl}
 \end{equation}
 
-y el retraso de llegada de esa reflexión respecto a la onda directa es
+y el retraso de llegada de esa reflexión respecto de la onda directa es
 
 \begin{equation}
     \Delta t_{\mathrm{refl}} =
@@ -1467,8 +1432,8 @@ y el retraso de llegada de esa reflexión respecto a la onda directa es
 \end{equation}
 
 Si la ventana de integración comienza con la llegada de la señal
-directa, una condición geométrica para que termine antes de la llegada
-de esa reflexión es
+directa, puede seleccionarse una duración que termine antes de la
+llegada de esa reflexión. El criterio geométrico correspondiente es
 
 \begin{equation}
     T_{\mathrm{gate}} <
@@ -1476,41 +1441,40 @@ de esa reflexión es
     \label{eq:criterio_corte_anecoico}
 \end{equation}
 
-Esta condición solo considera la reflexión especular de la superficie
-horizontal descrita. No excluye reflexiones procedentes de otras
-superficies ni garantiza que la respuesta del recinto sea anecoica.
-Además, en una adquisición real deben considerarse la duración del
-pulso, el tiempo de establecimiento del transductor y la posición
-efectiva de inicio de la ventana.
+Cuando la superficie reflectante más cercana se comporta de forma
+aproximadamente especular, el criterio permite elegir una ventana que
+incluya la señal directa y termine antes de la llegada de su reflexión.
+Esta condición fue especialmente útil en el montaje experimental:
+a partir de la geometría de la fuente, los micrófonos y la superficie
+reflectante próxima se estableció la duración de la ventana empleada
+para caracterizar la respuesta radial.
 
-En consecuencia, el criterio constituye una condición geométrica de
-selección temporal para una reflexión particular. Cuando la ventana
-de observación queda contenida entre la llegada directa y la primera
-reflexión relevante, puede hablarse de condiciones de propagación
-cuasi libres de reflexiones durante esa ventana, sin atribuir esa
-propiedad al recinto completo.
+\section{Estimación angular mediante diferencias intercanal}
 
-\subsection{Estimación angular mediante diferencias intercanal}
-
-La estimación angular requiere relacionar las señales registradas por
-dos receptores separados una distancia conocida $d$. Se considera un
+La estimación angular relaciona las señales registradas por dos
+receptores separados una distancia conocida $d$. Se considera un
 arreglo lineal situado sobre el eje $x$, con centro en el origen,
 mientras que el eje $y$ define la dirección normal al arreglo. El
-ángulo $\theta$ se mide respecto a dicho eje normal, de modo que
-$\theta=0$ corresponde a la dirección broadside.
+ángulo $\theta$ se mide respecto a ese eje, de modo que $\theta=0$
+corresponde a la incidencia en dirección normal al arreglo.
+
+La geometría utilizada se muestra en la
+Figura~\ref{fig:geometria_2d_angular}.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig5_geometria_2d_angular.tex}
     \vspace{0.25cm}
-    \caption{Geometría del arreglo lineal de dos receptores. El ángulo
-    de incidencia se mide respecto al eje normal al arreglo. La
-    diferencia de camino entre los receptores permite formular
-    estimadores angulares basados en fase o en tiempos de llegada.}
+    \caption{Geometría de un arreglo lineal de dos receptores
+    y una fuente acústica. El ángulo de incidencia $\theta$ se
+    define respecto al eje normal al arreglo. En la aproximación
+    de campo lejano, la diferencia entre las distancias $r_1$
+    y $r_2$ se relaciona con la separación $d$ entre receptores
+    y constituye la base de los estimadores angulares TDOA y PDoA.}
     \label{fig:geometria_2d_angular}
 \end{figure}
 
-\subsubsection{Diferencia de camino y diferencia de tiempos (TDOA)}
+\subsection{Diferencia de tiempos de llegada (TDOA)}
 
 En el régimen de campo lejano, las direcciones de propagación hacia
 los dos receptores pueden considerarse aproximadamente paralelas.
@@ -1522,15 +1486,14 @@ La diferencia de camino entre los sensores se expresa como
 \end{equation}
 
 donde $r_1$ y $r_2$ son las distancias desde la fuente hasta los
-receptores $R_1$ y $R_2$, respectivamente. Esta convención de signo
-corresponde a $R_1=(-d/2,0)$ y $R_2=(+d/2,0)$.
+receptores $R_1$ y $R_2$, respectivamente. Esta convención corresponde
+a $R_1=(-d/2,0)$ y $R_2=(+d/2,0)$.
 
-Como el tiempo de propagación es la distancia dividida por la
-velocidad del sonido, la diferencia de tiempos de llegada satisface
+Como el tiempo de propagación es la distancia dividida por la velocidad
+del sonido, la diferencia de tiempos de llegada satisface
 
 \begin{equation}
-    \Delta t =
-    t_1-t_2 =
+    \Delta t = t_1-t_2 =
     \frac{d}{c(T)}\sin\theta.
     \label{eq:diferencia_tiempos_tdoa}
 \end{equation}
@@ -1539,44 +1502,42 @@ Despejando el ángulo se obtiene
 
 \begin{equation}
     \theta_{\mathrm{TDOA}} =
-    \arcsin\left(
-    \frac{c(T)\Delta t}{d}
-    \right).
+    \arcsin\left(\frac{c(T)\Delta t}{d}\right).
     \label{eq:inversion_angular_tdoa}
 \end{equation}
 
-Esta expresión supone una onda incidente aproximadamente plana,
-una geometría conocida y canales cuya diferencia de retardo
-instrumental ha sido corregida. La estimación también requiere que
-la diferencia temporal sea compatible con el intervalo físico
-$[-d/c(T),d/c(T)]$.
+La inversión de esta relación proporciona el ángulo de llegada a
+partir de la diferencia temporal entre canales. En WALO, el cálculo
+utiliza la separación conocida entre micrófonos y la corrección de
+retardo intercanal obtenida durante la caracterización del sistema.
 
-El TDOA no debe confundirse con el ToA absoluto. En esta geometría,
-la diferencia temporal permite estimar una dirección de llegada,
-pero no determina la distancia radial a la fuente. Además, una
-única línea base proporciona una estimación angular en el plano
-definido por el arreglo, no una posición bidimensional única.
-
-\subsubsection{Diferencia de fase intercanal (PDoA)}
+\subsection{Diferencia de fase intercanal (PDoA)}
 
 Para una señal armónica de frecuencia $f_0$, la diferencia de fase
-debida a la propagación es
+debida a la propagación se expresa como
 
 \begin{equation}
-    \Delta\Phi =
-    \Phi_2-\Phi_1 =
+    \Delta\Phi = \Phi_2-\Phi_1 =
     \frac{2\pi f_0}{c(T)}d\sin\theta.
     \label{eq:diferencia_fase_intercanal}
 \end{equation}
 
-La relación anterior presupone que se ha corregido la diferencia de
-fase instrumental entre canales y que la fase se interpreta con una
-convención consistente. La fase medida es periódica módulo $2\pi$;
-por tanto, su inversión requiere seleccionar una rama de fase
-compatible con la geometría y con el intervalo angular de interés.
+La fase medida es periódica módulo $2\pi$, de modo que una misma
+diferencia observada puede corresponder a distintos números enteros
+de ciclos. Esta ambigüedad se expresa mediante la relación entre fase
+y diferencia de camino:
 
-Cuando esa rama es conocida y el argumento se encuentra dentro del
-dominio físico, la estimación angular es
+\begin{equation}
+    \Delta r_{\Phi} =
+    \frac{\lambda_0}{2\pi}
+    \left(\Delta\Phi+2\pi n\right),
+    \qquad n\in\mathbb{Z},
+    \label{eq:ambiguedad_fase}
+\end{equation}
+
+donde $n$ representa el número de ciclos asociado a la ambigüedad de
+fase. En el sector angular no ambiguo, la estimación se obtiene
+mediante
 
 \begin{equation}
     \theta_{\mathrm{PDoA}} =
@@ -1586,30 +1547,19 @@ dominio físico, la estimación angular es
     \label{eq:inversion_angular_fase}
 \end{equation}
 
-En la implementación numérica puede limitarse el argumento del
-arcoseno para evitar errores de dominio debidos al redondeo.
-Sin embargo, si el valor medido queda fuera del intervalo $[-1,1]$
-por una discrepancia física o por ruido, el recorte numérico no
-resuelve la incompatibilidad: puede ocultarla y sesgar la estimación
-hacia un ángulo extremo. Estos casos deben identificarse como
-mediciones no compatibles con el modelo o tratarse mediante un
-procedimiento estadístico explícito.
-
-La ecuación también muestra que, para una frecuencia fija, la
-diferencia de fase y la diferencia de tiempos están relacionadas por
+La diferencia de fase y la diferencia de tiempos describen la misma
+diferencia de camino mediante observables distintos:
 
 \begin{equation}
     \Delta\Phi = 2\pi f_0\Delta t.
     \label{eq:relacion_fase_tiempo}
 \end{equation}
 
-Aunque ambas magnitudes contienen información sobre la diferencia
-de camino, sus estimadores no son equivalentes desde el punto de
-vista experimental. El TDOA depende de la identificación temporal
-de los arribos, mientras que el PDoA depende de la fase de la
-componente armónica y de su coherencia entre canales.
+En WALO, TDOA utiliza la separación temporal entre los arribos
+detectados y PDoA utiliza la diferencia de fase de la componente
+armónica presente en ambos canales.
 
-\subsubsection{Separación entre sensores y ambigüedad espacial}
+\subsection{Separación entre sensores}
 
 La longitud de onda de una señal armónica es
 
@@ -1618,37 +1568,20 @@ La longitud de onda de una señal armónica es
     \label{eq:longitud_onda}
 \end{equation}
 
-La diferencia de camino geométrica de un arreglo lineal satisface
-$|\Delta r|\leq d$. Para evitar ambigüedades espaciales de fase en
-el modelo ideal y en el sector angular frontal, se utiliza la
-condición
+Para que la diferencia de fase geométrica permanezca en el intervalo
+principal en el sector angular frontal, se adopta la condición de
+separación
 
 \begin{equation}
     d \leq \frac{\lambda_0}{2}.
     \label{eq:condicion_aliasing}
 \end{equation}
 
-Esta condición limita la diferencia de fase geométrica al intervalo
-principal de fase. No elimina errores de calibración, saltos de ciclo,
-reflexiones ni ambigüedades debidas a una relación señal-ruido
-insuficiente.
+Para la frecuencia de trabajo, esta condición fija la separación
+máxima entre sensores que mantiene la diferencia de fase geométrica
+en el intervalo principal dentro del sector frontal del arreglo.
 
-Para una frecuencia de referencia
-$f_0=\SI{2.66}{\kilo\hertz}$ y una velocidad del sonido de
-$c=\SI{343.2}{\metre\per\second}$, se obtiene
-
-\begin{equation}
-    \lambda_0 \simeq \SI{12.9}{\centi\metre},
-    \qquad
-    \frac{\lambda_0}{2}\simeq \SI{6.45}{\centi\metre}.
-\end{equation}
-
-Una línea de base de $\SI{5.0}{\centi\metre}$ satisface la condición
-anterior para esa frecuencia nominal. Esta elección reduce la
-posibilidad de ambigüedad espacial idealizada en el sector frontal,
-pero no constituye por sí sola una garantía de exactitud angular.
-
-\subsection{Estimación de velocidad mediante el efecto Doppler}
+\section{Estimación de velocidad mediante el efecto Doppler}
 
 La velocidad de una fuente sonora puede estimarse a partir del
 desplazamiento de frecuencia producido por su movimiento relativo
@@ -1656,51 +1589,46 @@ respecto a los receptores. Se considera una trayectoria rectilínea
 entre dos receptores fijos $R_1$ y $R_2$, situados en $x=0$ y $x=L$,
 respectivamente. La fuente se desplaza en el sentido positivo del
 eje $x$, con velocidad $v>0$ cuando se aproxima a $R_2$ y se aleja
-de $R_1$.
+de $R_1$. La geometría se presenta en la
+Figura~\ref{fig:doppler_fdoa}.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/fig6_doppler_fdoa.tex}
     \vspace{0.25cm}
-    \caption{Esquema del efecto Doppler para una fuente que se desplaza
-    entre dos receptores fijos. La frecuencia recibida aumenta en el
-    receptor hacia el que se aproxima la fuente y disminuye en el
-    receptor del que se aleja.}
+    \caption{Esquema del efecto Doppler para una fuente móvil
+    que se desplaza entre dos receptores fijos. La frecuencia
+    recibida aumenta en el receptor hacia el que se aproxima
+    la fuente y disminuye en el receptor del que se aleja.
+    La diferencia entre ambas frecuencias constituye la base
+    del estimador diferencial de velocidad.}
     \label{fig:doppler_fdoa}
 \end{figure}
 
-\subsubsection{Relación Doppler para receptores opuestos}
+\subsection{Relación Doppler para receptores opuestos}
 
 Para una fuente que emite una señal armónica de frecuencia $f_e$ y
 se mueve con velocidad constante en un medio en reposo, las
 frecuencias recibidas por los dos sensores son
 
 \begin{equation}
-    f_1 =
-    \frac{f_e}{1+\dfrac{v}{c(T)}},
+    f_1 = \frac{f_e}{1+\dfrac{v}{c(T)}},
     \qquad
-    f_2 =
-    \frac{f_e}{1-\dfrac{v}{c(T)}}.
+    f_2 = \frac{f_e}{1-\dfrac{v}{c(T)}}.
     \label{eq:doppler_exacto}
 \end{equation}
 
-Estas expresiones corresponden al caso ideal en que el movimiento
-es rectilíneo, la velocidad es colineal con la línea fuente-receptor
-y la frecuencia emitida puede considerarse constante durante los
-intervalos de emisión que originan ambas señales recibidas. En un
-movimiento acelerado, la formulación debe considerar las velocidades
-y los instantes de emisión retardados correspondientes a cada
-receptor.
-
-Definiendo el número de Mach de la fuente como
+Estas expresiones describen el caso rectilíneo colineal: la fuente
+se desplaza sobre la línea que une los receptores y mantiene una
+frecuencia de emisión constante durante los intervalos considerados.
+Se define el número de Mach de la fuente como
 
 \begin{equation}
     \beta = \frac{v}{c(T)},
 \end{equation}
 
-y considerando velocidades mucho menores que la velocidad del
-sonido, $|\beta|\ll1$, las expresiones anteriores pueden aproximarse
-a primer orden:
+y para velocidades mucho menores que la velocidad del sonido,
+$|\beta|\ll1$, las expresiones pueden aproximarse a primer orden:
 
 \begin{equation}
     f_1 \simeq f_e(1-\beta),
@@ -1709,14 +1637,9 @@ a primer orden:
     \label{eq:doppler_unilateral}
 \end{equation}
 
-Esta aproximación describe el régimen de baja velocidad respecto
-a la velocidad de propagación. Las correcciones de orden superior
-no deben confundirse con la incertidumbre experimental del estimador.
+\subsection{Estimador diferencial de velocidad}
 
-\subsubsection{Estimador diferencial de velocidad}
-
-A partir de las dos frecuencias recibidas, se define el estimador
-diferencial
+A partir de las dos frecuencias recibidas se define el estimador
 
 \begin{equation}
     \hat{v}_{\mathrm{diff}} =
@@ -1724,26 +1647,21 @@ diferencial
     \label{eq:doppler_diferencial_formal}
 \end{equation}
 
-Si se sustituyen las expresiones exactas de la ecuación
-\eqref{eq:doppler_exacto}, con una misma frecuencia emitida $f_e$
-para ambos receptores, se obtiene
+Al sustituir las expresiones de la ecuación~\eqref{eq:doppler_exacto},
+con una misma frecuencia emitida $f_e$ para ambos receptores, se obtiene
 
 \begin{align}
     f_2-f_1
-    &=
-    f_e\left[
+    &= f_e\left[
     \frac{1}{1-\beta}-\frac{1}{1+\beta}
     \right]
-    =
-    \frac{2f_e\beta}{1-\beta^2},
+    = \frac{2f_e\beta}{1-\beta^2},
     \\
     f_1+f_2
-    &=
-    f_e\left[
+    &= f_e\left[
     \frac{1}{1-\beta}+\frac{1}{1+\beta}
     \right]
-    =
-    \frac{2f_e}{1-\beta^2}.
+    = \frac{2f_e}{1-\beta^2}.
 \end{align}
 
 Por tanto,
@@ -1752,312 +1670,42 @@ Por tanto,
     \frac{f_2-f_1}{f_1+f_2}=\beta,
 \end{equation}
 
-y el estimador recupera
+y el estimador recupera la velocidad de la fuente:
 
 \begin{equation}
     \hat{v}_{\mathrm{diff}}=v.
     \label{eq:velocidad_final_doppler}
 \end{equation}
 
-La cancelación de $f_e$ es exacta dentro de este modelo. En particular,
-el cociente no necesita conocer de antemano el valor absoluto de la
-frecuencia emitida. Esta propiedad hace al estimador menos sensible
-a cambios comunes de frecuencia que afecten por igual a las dos
-mediciones.
-
-Sin embargo, en una adquisición física los receptores pueden registrar
-emisiones correspondientes a instantes distintos, debido a las
-diferencias de distancia entre la fuente y cada sensor. Si la frecuencia
-emitida varía con el tiempo, las dos frecuencias recibidas no contienen
-necesariamente el mismo factor $f_e$. La cancelación deja entonces
-de ser exacta.
-
-Su validez como aproximación requiere que la deriva de frecuencia
-sea suficientemente lenta durante la diferencia entre los tiempos
-de emisión asociados a ambos receptores y que las ventanas de
-estimación espectral sean temporalmente comparables.
+La frecuencia emitida se cancela en el cociente, por lo que la
+velocidad puede estimarse sin conocer su valor absoluto. En la
+adquisición, las frecuencias de ambos canales se calculan sobre
+ventanas temporales comparables; la interpretación diferencial
+corresponde al caso en que la frecuencia de emisión cambia poco
+durante la diferencia de recorrido entre los receptores.
 
 La frecuencia media
 
 \begin{equation}
-    f_{\mathrm{mean}} =
-    \frac{f_1+f_2}{2}
+    f_{\mathrm{mean}} = \frac{f_1+f_2}{2}
     \label{eq:f0_common}
 \end{equation}
 
-puede utilizarse como indicador de la escala de frecuencia común.
-No coincide exactamente con la frecuencia emitida en el modelo
-Doppler exacto, pues
+sirve como indicador de la escala de frecuencia común. En el modelo
+Doppler exacto satisface
 
 \begin{equation}
-    f_{\mathrm{mean}} =
-    \frac{f_e}{1-\beta^2}.
+    f_{\mathrm{mean}} = \frac{f_e}{1-\beta^2},
 \end{equation}
 
-Para $|\beta|\ll1$, esta diferencia es de segundo orden y la
-semisuma constituye una aproximación a la frecuencia de emisión.
-Su uso como indicador de deriva debe interpretarse teniendo en
-cuenta esta corrección y los posibles retardos de propagación
-diferentes.
-
-En una medición real, la superposición de trayectorias acústicas
-puede afectar la frecuencia estimada. Si existen reflexiones,
-cada trayectoria puede presentar una dirección de propagación
-y un desplazamiento Doppler diferentes. Por tanto, la frecuencia
-instantánea estimada no tiene por qué corresponder exclusivamente
-a la trayectoria directa. La relación anterior debe entenderse
-como el modelo de referencia que se contrasta experimentalmente,
-no como una garantía de inmunidad frente a la propagación
-multitrayecto.
-
-\subsection{Identificabilidad de la posición en dos dimensiones}
-
-La estimación de una distancia, una dirección o una diferencia
-de distancias no equivale necesariamente a determinar una posición
-bidimensional. La reconstrucción espacial depende del número de
-observables independientes, de la geometría de los receptores y
-de las restricciones adicionales disponibles.
-
-\subsubsection{Intersección de circunferencias a partir de ToA}
-
-Dos distancias absolutas medidas desde receptores cuya posición
-es conocida permiten reconstruir la posición de una fuente en
-el plano, salvo una ambigüedad de simetría respecto a la línea
-que une los receptores. Este procedimiento corresponde a la
-intersección de dos circunferencias.
-
-Se considera el sistema de referencia de la
-Figura~\ref{fig:geometria_2d_angular}, con los receptores situados en
-
-\begin{equation}
-    R_1=\left(-\frac{d}{2},0\right),
-    \qquad
-    R_2=\left(+\frac{d}{2},0\right).
-\end{equation}
-
-Sean $r_1$ y $r_2$ las distancias estimadas desde la fuente hasta
-los receptores $R_1$ y $R_2$. La posición $(x,y)$ satisface
-
-\begin{align}
-    \left(x+\frac{d}{2}\right)^2+y^2 &= r_1^2,
-    \label{eq:circulo_r1}\\
-    \left(x-\frac{d}{2}\right)^2+y^2 &= r_2^2.
-    \label{eq:circulo_r2}
-\end{align}
-
-Restando ambas ecuaciones se obtiene
-
-\begin{equation}
-    x=\frac{r_1^2-r_2^2}{2d}.
-    \label{eq:coordenada_x_analitica}
-\end{equation}
-
-La coordenada $y$ se obtiene sustituyendo este resultado en cualquiera
-de las ecuaciones de circunferencia:
-
-\begin{equation}
-    y =
-    \pm\sqrt{
-    r_1^2-\left(x+\frac{d}{2}\right)^2
-    }.
-    \label{eq:coordenada_y_analitica}
-\end{equation}
-
-El signo doble representa las dos posiciones simétricas que producen
-las mismas distancias a los receptores. La selección de la solución
-con $y>0$ requiere información adicional sobre el semiplano en el
-que se encuentra la fuente; no puede deducirse únicamente de las
-dos distancias.
-
-Con mediciones ruidosas, las circunferencias pueden no intersectarse
-exactamente. En ese caso, el radicando de la ecuación
-\eqref{eq:coordenada_y_analitica} puede resultar negativo o muy
-próximo a cero. No es apropiado corregir automáticamente ese
-resultado mediante un recorte numérico sin evaluar antes la
-compatibilidad de las medidas. Una reconstrucción robusta debe
-considerar las incertidumbres de ambas distancias y, si es
-necesario, resolver un problema de mínimos cuadrados.
-
-\subsubsection{Diferencia de tiempos de llegada y geometría hiperbólica}
-
-Cuando el observable disponible es la diferencia de tiempos de
-llegada entre dos receptores, puede calcularse una diferencia
-de distancias
-
-\begin{equation}
-    \Delta r_{\mathrm{TDOA}} =
-    c(T)(t_1-t_2).
-    \label{eq:diferencia_distancias_tdoa}
-\end{equation}
-
-El conjunto de puntos que satisface
-
-\begin{equation}
-    r_1-r_2=\Delta r_{\mathrm{TDOA}}
-    \label{eq:hiperbola_tdoa}
-\end{equation}
-
-forma una hipérbola cuyos focos están en las posiciones de los
-dos receptores. Una única diferencia de tiempos no determina
-por sí sola una posición bidimensional única: la fuente puede
-encontrarse en cualquier punto de esa hipérbola.
-
-Se requiere información adicional, como una segunda diferencia
-independiente, una distancia absoluta o una restricción geométrica
-sobre la trayectoria. Por consiguiente, la reconstrucción por
-intersección de circunferencias y la localización hiperbólica
-TDOA son formulaciones relacionadas, pero no intercambiables.
-La primera utiliza dos distancias absolutas; la segunda utiliza
-diferencias de distancias.
-
-\subsubsection{Ambigüedad de fase y diferencia de camino}
-
-La diferencia de fase de una señal armónica proporciona una
-diferencia de camino módulo la longitud de onda:
-
-\begin{equation}
-    \Delta r_{\Phi} =
-    \frac{\lambda_0}{2\pi}
-    \left(\Delta\Phi+2\pi n\right),
-    \qquad n\in\mathbb{Z}.
-    \label{eq:ambiguedad_fase}
-\end{equation}
-
-El entero $n$ representa la ambigüedad de ciclo. La fase por sí
-sola no determina dicho entero. Para resolverlo se requiere
-información adicional, por ejemplo una estimación gruesa obtenida
-mediante ToA, una restricción sobre el desplazamiento entre
-mediciones sucesivas o una condición geométrica que limite la
-diferencia de camino.
-
-La operación de reducción módulo $\lambda_0$ puede representar
-la fase principal, pero no recupera por sí misma la diferencia
-de camino absoluta ni garantiza continuidad temporal. En
-particular, no debe aplicarse una corrección modular a una
-diferencia de distancias ya obtenida mediante ToA, salvo que
-se esté resolviendo explícitamente una ambigüedad de fase y
-se compruebe la compatibilidad con las distancias absolutas.
-
-\subsubsection{Alcance geométrico del arreglo utilizado}
-
-Las relaciones anteriores describen modelos geométricos generales.
-Sin embargo, la geometría del instrumento impone límites a las
-magnitudes que pueden recuperarse.
-
-Con dos receptores dispuestos sobre una única línea base, el
-TDOA define una diferencia de distancias y el PDoA permite
-estimar una dirección dentro del plano de incidencia considerado.
-Ninguno de estos observables, por separado, determina una
-posición bidimensional única.
-
-La combinación de una distancia radial y una dirección puede
-proporcionar una posición en un sistema de coordenadas definido,
-siempre que ambas estimaciones correspondan al mismo estado de
-la fuente y que sus referencias geométricas sean compatibles.
-Esta combinación no debe confundirse con una reconstrucción
-multilaterada obtenida a partir de varias líneas base
-independientes.
-
-Por tanto, el alcance espacial debe establecerse a partir de
-los observables efectivamente disponibles y de la geometría
-del montaje, sin atribuir al arreglo una capacidad de
-localización que no se desprenda de esas condiciones.
-
-\subsection{Comparación de observables y condiciones de validez}
-
-Los métodos descritos utilizan magnitudes físicas diferentes y
-presentan sensibilidades distintas frente a las condiciones de
-propagación, la geometría y la adquisición. La
-Tabla~\ref{tab:comparacion_observables} resume sus principales
-características.
-
-\begin{table}[!htbp]
-    \centering
-    \small
-    \renewcommand{\arraystretch}{1.25}
-    \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{1.8cm}
-        >{\raggedright\arraybackslash}p{2.0cm}
-        X
-        X
-    }
-        \toprule
-        \textbf{Método} &
-        \textbf{Observable} &
-        \textbf{Información obtenida} &
-        \textbf{Limitación dominante}
-        \\
-        \midrule
-
-        ToA &
-        $t_{\mathrm{arr}}$ &
-        Distancia absoluta cuando se conoce el instante de emisión y
-        se corrigen los retardos instrumentales. &
-        Sensibilidad a la detección del arribo, la sincronización y
-        la calibración temporal.
-        \\
-
-        TDOA &
-        $t_1-t_2$ &
-        Diferencia de distancias entre la fuente y los receptores;
-        permite estimar dirección bajo una geometría conocida. &
-        Una sola diferencia define un lugar geométrico y no una
-        posición bidimensional única.
-        \\
-
-        Amplitud y energía &
-        $A(r)$, $\mathcal{E}_{\mathrm{dig}}(r)$ &
-        Estimación radial mediante modelos empíricos calibrados. &
-        Sensibilidad a la directividad, la ganancia, las reflexiones
-        y la definición de la ventana temporal.
-        \\
-
-        PDoA &
-        $\Delta\Phi$ &
-        Dirección de llegada a partir de la diferencia de fase
-        entre receptores. &
-        Ambigüedad de fase, calibración intercanal y propagación
-        multitrayecto.
-        \\
-
-        Doppler diferencial &
-        $f_1$, $f_2$ &
-        Velocidad relativa bajo una geometría de receptores
-        opuestos y frecuencias comparables. &
-        Requiere geometría conocida, estimaciones espectrales
-        comparables y deriva suficientemente lenta.
-        \\
-
-        \bottomrule
-    \end{tabularx}
-    \caption{Comparación cualitativa de los observables utilizados
-    para estimar distancia, dirección y velocidad. Las prestaciones
-    cuantitativas deben establecerse mediante la caracterización
-    experimental de cada estimador.}
-    \label{tab:comparacion_observables}
-\end{table}
-
-La combinación de estos observables permite abordar la localización
-acústica desde perspectivas complementarias. Los tiempos de llegada
-aportan información sobre la distancia recorrida; las diferencias
-de tiempo y fase relacionan las señales registradas por sensores
-separados; las magnitudes de amplitud y energía permiten construir
-estimadores radiales calibrados; y las frecuencias recibidas
-contienen información sobre el movimiento relativo entre la fuente
-y los receptores.
-
-La calidad de una reconstrucción conjunta depende de la consistencia
-entre estos observables, de la geometría del montaje y de la
-caracterización de sus incertidumbres. En consecuencia, las
-relaciones analíticas de este capítulo establecen los modelos de
-inversión que deben contrastarse con los resultados experimentales.
+por lo que para $|\beta|\ll1$ aproxima la frecuencia emitida. Esta
+magnitud permite contextualizar la evolución de las frecuencias
+recibidas junto con la estimación diferencial de velocidad.
 ```
 
 03_instrumentacion_metodologia.tex: (chapters/03_instrumentacion_metodologia.tex)
 
 ```latex
-\clearpage
-\section{INSTRUMENTACIÓN Y METODOLOGÍA EXPERIMENTAL}
 \label{chap:instrumentacion_metodologia}
 
 En este capítulo se describe la instrumentación empleada para adquirir
@@ -2068,13 +1716,20 @@ WALO, la configuración de adquisición y los montajes experimentales
 para la estimación de distancia, dirección de llegada y movimiento
 de una fuente sonora.
 
-La metodología distingue entre las configuraciones utilizadas en
-los experimentos ya ejecutados y el protocolo previsto para la
-caracterización cinemática. Esta distinción permite documentar las
-condiciones efectivas de cada medición sin atribuir resultados
-experimentales a procedimientos que aún no han sido completados.
+La metodología presenta la configuración instrumental y los
+procedimientos de los experimentos de distancia y dirección.
+También describe el montaje cinemático y el procedimiento de
+referencia óptica previsto para contrastar la estimación Doppler.
 
-\subsection{Arquitectura e instrumentación de WALO}
+La implementación de hardware y software se encuentra documentada
+en repositorios versionados. El diseño del overlay para la plataforma
+PYNQ-Z2 corresponde a la versión 1.5.3 del repositorio de hardware
+\cite{SiririHW2026}, mientras que las rutinas de adquisición y
+procesamiento se encuentran en el repositorio de software
+\cite{SiririSW2026}. Estas referencias permiten identificar las
+implementaciones utilizadas y consultar su evolución.
+
+\section{Arquitectura e instrumentación de WALO}
 \label{sec:arquitectura_walo}
 
 WALO es una plataforma de adquisición y procesamiento de señales
@@ -2099,7 +1754,7 @@ La arquitectura se organiza en tres etapas funcionales:
     de magnitudes físicas mediante rutinas de Python.
 \end{enumerate}
 
-\subsubsection{Unidad de procesamiento y adquisición}
+\subsection{Unidad de procesamiento y adquisición}
 
 La plataforma utiliza una tarjeta PYNQ-Z2 basada en el dispositivo
 Zynq-7000 XC7Z020. Este integra un sistema de procesamiento
@@ -2119,14 +1774,14 @@ La arquitectura de adquisición utiliza el secuenciador dual del
 XADC para registrar ambos canales de manera simultánea. La
 configuración nominal corresponde a una tasa agregada de
 \SI{1}{MSPS}, equivalente a una tasa de
-\SI{500}{kSPS} por canal. La sincronización de los canales se
-verificó mediante una prueba con una señal común: no se observó
-diferencia temporal entre ambos registros a la resolución de
-la prueba. Este resultado debe interpretarse como un retardo
-intercanal no resuelto experimentalmente, y no como una
-demostración de retardo físico exactamente nulo.
+\SI{500}{kSPS} por canal. La sincronización intercanal se
+verificó experimentalmente mediante una prueba con una señal
+común aplicada a ambas entradas. La descripción del procedimiento
+y su evidencia técnica se encuentran en los repositorios de
+hardware y software anexados a este trabajo
+\cite{SiririHW2026,SiririSW2026}.
 
-\subsubsection{Transductores y excitación acústica}
+\subsection{Transductores y excitación acústica}
 
 La recepción acústica se realiza mediante dos módulos de micrófono
 electret con preamplificación MAX4466. Cada módulo entrega una
@@ -2149,7 +1804,7 @@ digital de la tarjeta, conectada a un transistor 2N2222A que
 controla su alimentación. Esta etapa permite generar pulsos
 acústicos bajo el control temporal del sistema digital.
 
-\subsubsection{Arquitectura de procesamiento digital}
+\subsection{Arquitectura de procesamiento digital}
 
 La lógica programable ejecuta la adquisición de los canales,
 la reducción programable de la tasa de muestreo y la transferencia
@@ -2157,53 +1812,11 @@ de los registros mediante interfaces DMA. La arquitectura de
 hardware utilizada en los experimentos corresponde a la versión
 1.5.3 del overlay.
 
-La señal adquirida se distribuye hacia las rutas de procesamiento
-temporal y espectral. La primera permite conservar registros
-temporales para la detección de arribos y el análisis de amplitud.
-La segunda permite obtener información espectral, incluyendo
-magnitud y fase de las componentes de frecuencia.
-
-La configuración de decimación determina la tasa efectiva de
-salida de cada canal. En esta tesis, la caracterización de
-localización se efectuó únicamente en modo Audio ($M=10$); los
-otros modos se documentan como posibilidades de configuración.
-La plataforma dispone de varios factores de decimación,
-que se resumen en la Tabla~\ref{tab:modos_adquisicion}.
-Estos modos describen capacidades de configuración del
-instrumento; su disponibilidad no implica que todos hayan
-sido utilizados o validados experimentalmente en esta tesis.
-
-\begin{table}[!htbp]
-    \centering
-    \small
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{lccc}
-        \toprule
-        \textbf{Modo} &
-        \textbf{Factor $M$} &
-        \textbf{Tasa por canal} &
-        \textbf{Aplicación}
-        \\
-        \midrule
-        Osciloscopio & 1  & \SI{500}{kSPS} & Señal temporal y arribos \\
-        Audio        & 10 & \SI{50}{kSPS}  & Procesamiento acústico \\
-        Voz          & 20 & \SI{25}{kSPS}  & Señales de voz \\
-        Bajos        & 50 & \SI{10}{kSPS}  & Señales de baja frecuencia \\
-        \bottomrule
-    \end{tabular}
-    \caption{Modos de adquisición disponibles mediante la
-    decimación programable de WALO. Las tasas corresponden
-    a cada canal de recepción.}
-    \label{tab:modos_adquisicion}
-\end{table}
-
-En los experimentos de distancia y dirección se utilizó
-el modo Audio, con factor de decimación $M=10$ y una tasa
-de \SI{50}{kSPS} por canal. Esta es la configuración
-experimental empleada para la caracterización acústica
-presentada en este trabajo. Los demás modos de la tabla
-se documentan como capacidades de la plataforma y no
-como configuraciones validadas en estos experimentos.
+En los experimentos de distancia y dirección se utilizó un
+factor de diezmado $M=10$, correspondiente a una tasa de
+muestreo de \SI{50}{kSPS} por canal. Esta configuración
+define la tasa efectiva de los registros empleados en la
+caracterización acústica presentada en este trabajo.
 
 \begin{figure}[!htbp]
     \centering
@@ -2215,7 +1828,7 @@ como configuraciones validadas en estos experimentos.
     \label{fig:arquitectura_walo}
 \end{figure}
 
-\subsection{Configuración de adquisición y procesamiento}
+\section{Configuración de adquisición y procesamiento}
 \label{sec:configuracion_adquisicion}
 
 La configuración de adquisición depende del observable que se
@@ -2224,7 +1837,7 @@ excitación pulsada, mientras que el experimento cinemático requiere
 una adquisición continua para seguir la variación temporal de
 la frecuencia recibida.
 
-\subsubsection{Adquisición pulsada}
+\subsection{Adquisición pulsada}
 
 En los experimentos de distancia y dirección, el sistema genera
 un pulso de excitación mediante la salida digital AR2. El instante
@@ -2239,8 +1852,11 @@ con la frecuencia nominal del buzzer y con el número de ciclos
 analizados.
 
 Para la caracterización de distancia se utilizó una ventana
-correspondiente a tres ciclos de la señal nominal. La duración
-aproximada de esta ventana es
+correspondiente a tres ciclos de la señal nominal. Esta
+elección se relacionó con la geometría del montaje: la mesa,
+situada aproximadamente \SI{50}{\centi\metre} por debajo
+de la fuente y del micrófono, constituía la superficie
+reflectante más cercana. La duración de la ventana es
 
 \begin{equation}
     T_{\mathrm{gate}} =
@@ -2252,16 +1868,18 @@ donde $K=3$ y $f_0$ es la frecuencia nominal de la fuente.
 Para $f_0=\SI{2660}{\hertz}$, la duración es aproximadamente
 \SI{1.13}{\milli\second}.
 
-La selección de esta ventana busca restringir el análisis a
-la parte inicial de la respuesta recibida y privilegiar la
-contribución de la trayectoria directa. La separación efectiva
-entre la llegada directa y las reflexiones depende de la
-geometría del montaje; por tanto, la duración de tres ciclos
-no garantiza por sí sola la ausencia de reflexiones dentro
-de la ventana. El recinto no se considera físicamente
-anecoico.
+La ventana se seleccionó para restringir el análisis a la
+respuesta inicial y reducir la contribución de reflexiones
+posteriores. La mesa es la superficie reflectante más cercana;
+sin embargo, no se dispone aquí de una determinación completa
+de las longitudes de las trayectorias directa y reflejada que
+permita demostrar que la primera reflexión llega después del
+intervalo de \SI{1.13}{\milli\second}. Por ello, la ventana
+privilegia la respuesta inicial, pero no se considera una
+garantía de exclusión de todas las reflexiones. El recinto no
+se trata como anecoico.
 
-\subsubsection{Adquisición continua}
+\subsection{Adquisición continua}
 
 Para el estudio del movimiento de la fuente se requiere una
 secuencia temporal continua de ambos canales. En esta
@@ -2279,7 +1897,7 @@ La duración y el número de registros deben mantenerse
 constantes dentro de cada serie experimental para facilitar
 la comparación entre ensayos.
 
-\subsubsection{Calibración temporal de los canales}
+\subsection{Calibración temporal de los canales}
 
 La estimación absoluta de distancia mediante ToA requiere
 caracterizar el retardo entre la orden de emisión y la
@@ -2288,9 +1906,9 @@ contribuciones de la etapa de excitación, del transductor
 emisor, de los micrófonos, de la electrónica de recepción
 y del procesamiento digital.
 
-Para cada canal se utiliza una medición de referencia a
-distancia conocida $r_{\mathrm{ref}}$. Si el tiempo de
-llegada medido es $t_{\mathrm{arr,ref}}$, el retardo efectivo
+Para cada canal se utilizó una medición de referencia a
+\SI{10}{\centi\metre}. Si el tiempo de llegada medido a
+esa distancia es $t_{\mathrm{arr,ref}}$, el retardo efectivo
 se determina mediante
 
 \begin{equation}
@@ -2310,13 +1928,15 @@ que comienza la radiación acústica. El retardo entre ambos
 eventos queda incluido en el retardo efectivo determinado
 mediante la calibración.
 
-La calibración se realiza de manera independiente para
-cada micrófono. Los valores obtenidos se almacenan en el
+La calibración se realizó de manera independiente para
+cada micrófono. Los valores obtenidos se almacenaron en el
 perfil de calibración utilizado por las rutinas de
-estimación. La corrección temporal no debe interpretarse
-como una eliminación de todos los retardos variables:
-su estabilidad depende de que las condiciones de
-adquisición y procesamiento permanezcan comparables.
+estimación. El retardo efectivo reúne las contribuciones
+de la cadena de excitación, recepción y procesamiento bajo
+la configuración empleada.
+
+\section{Metodología de caracterización experimental}
+\label{sec:metodologia_experimental}
 
 \subsection{Caracterización experimental de distancia}
 \label{sec:exp01_distancia}
@@ -2332,10 +1952,10 @@ estimación radial.
 
 El montaje utiliza un buzzer activo como fuente acústica
 y un micrófono como receptor. Los dos canales se
-caracterizan de manera independiente, manteniendo la
-misma configuración geométrica y electrónica.
+caracterizan de manera independiente, manteniendo
+la misma configuración geométrica y electrónica.
 
-La fuente y el micrófono se ubicaron a una altura
+La fuente y el micrófono se ubicaron a una misma altura
 aproximada de \SI{50}{\centi\metre} sobre una mesa de
 madera. La orientación fue axial: la salida del buzzer
 se dirigió hacia la cara del micrófono. La distancia
@@ -2344,10 +1964,8 @@ buzzer y el centro de la membrana del micrófono.
 
 Las distancias se determinaron mediante una cinta o
 regla con resolución indicada de \SI{1}{\milli\metre}.
-Esta resolución no debe confundirse con la incertidumbre
-total de la referencia geométrica, que también depende
-de la alineación y de la identificación de los centros
-de los transductores.
+La referencia geométrica también depende de la alineación
+y de la identificación de los centros de los transductores.
 
 \begin{figure}[!htbp]
     \centering
@@ -2398,19 +2016,15 @@ Entre las variables de interés se encuentran:
     \item relación señal-ruido estimada.
 \end{itemize}
 
-La amplitud RMS se expresa como una magnitud eléctrica
-del canal. La variable denominada energía directa,
-$E_{\mathrm{direct}}$, se trata como un observable digital
-dependiente de la implementación, de la ventana temporal,
-de la tasa de muestreo y de la representación numérica
-utilizada. No se interpreta como energía acústica absoluta
-ni se expresa en unidades físicas del SI.
-
-La definición computacional exacta de esta magnitud,
-incluyendo su normalización y los límites de integración,
-debe corresponder a la implementación utilizada para
-generar los registros. Por ello, no se le asigna aquí
-una expresión de energía física en unidades del SI.
+La amplitud RMS y la energía directa son observables
+instrumentales obtenidos a partir de las señales eléctricas
+digitalizadas. La amplitud RMS caracteriza el nivel eléctrico
+de cada canal, mientras que $E_{\mathrm{direct}}$ es una
+magnitud digital dependiente de la implementación, de la
+ventana temporal, de la tasa de muestreo y de la representación
+numérica. Ninguna de las dos constituye, con la configuración
+utilizada, una medición absoluta de presión acústica en
+pascales o de energía acústica en joules.
 
 \subsubsection{Calibración y caracterización radial}
 
@@ -2434,11 +2048,9 @@ independiente para cada canal. Estos coeficientes
 representan calibraciones empíricas del sistema
 completo bajo las condiciones del montaje.
 
-La calibración temporal se realiza de manera
-independiente para cada micrófono mediante una
-distancia de referencia de \SI{10}{\centi\metre}
-y una serie de pulsos de calibración. El retardo
-efectivo se incorpora posteriormente en la
+La calibración temporal por canal se efectuó a una
+distancia de referencia de \SI{10}{\centi\metre}.
+El retardo efectivo obtenido se incorporó en la
 estimación de distancia por ToA.
 
 La evaluación de los modelos radiales debe distinguir
@@ -2527,18 +2139,13 @@ entenderse como una estimación del procedimiento
 de posicionamiento y no como una resolución angular
 intrínseca del sistema WALO.
 
-Para cada posición se registraron diez pulsos.
-El conjunto de datos utilizado contiene, por tanto,
-noventa registros. Esta cantidad corresponde a la
-serie experimental procesada; no debe sustituirse
-por el número de pulsos descrito en versiones
-anteriores del cuaderno de adquisición.
+Para cada posición se registraron diez pulsos, para
+un total de noventa registros en el conjunto de datos.
 
 \subsubsection{Adquisición y estimadores evaluados}
 
-La adquisición se realizó en modo Audio, con factor
-de decimación $M=10$ y una tasa de
-\SI{50}{kSPS} por canal. La excitación pulsada
+La adquisición se realizó con factor de diezmado
+$M=10$ y una tasa de \SI{50}{kSPS} por canal. La excitación pulsada
 proporciona una referencia temporal común y permite
 analizar la respuesta inicial de ambos micrófonos.
 
@@ -2566,13 +2173,6 @@ resultados por posición, evitando tratar las noventa
 capturas como si correspondieran a una única
 condición angular.
 
-La caracterización angular se centra en TDOA y
-PDoA. Las pruebas exploratorias de estimación
-angular mediante desequilibrio energético no se
-incluyen como método principal de comparación,
-debido a su desempeño inferior en el conjunto
-de datos disponible.
-
 \subsubsection{Control de sincronización y coherencia intercanal}
 
 La estimación angular depende de que las diferencias
@@ -2580,24 +2180,21 @@ temporales y de fase entre los canales correspondan
 a la propagación acústica y no a retardos introducidos
 por la adquisición.
 
-La arquitectura de hardware utiliza adquisición
-simultánea de ambos canales. Adicionalmente, se
-realizó una prueba de sincronización mediante una
-señal común aplicada a las dos entradas. En dicha
-prueba no se observó diferencia temporal entre
-los registros a la resolución utilizada.
-
-Este control respalda la sincronización del sistema
-en las condiciones de prueba. La calibración y
-la repetibilidad de la respuesta analógica de los
-dos módulos siguen siendo relevantes para la
-interpretación de las diferencias de fase y de
-tiempo.
+La arquitectura utiliza adquisición simultánea de ambos
+canales y la sincronización intercanal fue verificada
+experimentalmente mediante una señal común aplicada a
+las dos entradas. La descripción de la prueba y su
+evidencia se encuentran disponibles en los repositorios
+de hardware y software anexados
+\cite{SiririHW2026,SiririSW2026}. La caracterización
+de la respuesta analógica de cada módulo se considera
+por separado al interpretar las diferencias de fase y
+de tiempo.
 
 \subsection{Protocolo de caracterización cinemática}
-\label{sec:exp04_cinematica}
+\label{sec:exp03_cinematica}
 
-El experimento cinemático está diseñado para estudiar
+El tercer experimento está diseñado para estudiar
 la estimación de velocidad de una fuente acústica
 en movimiento mediante el desplazamiento Doppler
 diferencial registrado por dos micrófonos fijos.
@@ -2605,21 +2202,23 @@ A diferencia de los experimentos anteriores, que
 utilizan excitación pulsada, esta medición requiere
 una adquisición continua durante el movimiento.
 
-El protocolo descrito en esta sección corresponde
-al montaje previsto para la adquisición de datos.
-Su desempeño no se considera validado hasta que
-se complete la adquisición, el seguimiento de
-la posición de referencia y la comparación
-cuantitativa entre ambas estimaciones.
+El montaje permite estudiar la estimación de velocidad
+mediante Doppler diferencial y contrastarla con una
+referencia óptica independiente obtenida con Tracker.
+En el estado actual del trabajo, los resultados
+cuantitativos disponibles para este experimento son
+sintéticos; por tanto, esta sección documenta el
+procedimiento instrumental y de análisis, no una
+validación experimental de la estimación cinemática.
 
 \subsubsection{Montaje mecánico}
 
 El montaje utiliza un riel rectilíneo de longitud
-aproximada \SI{2}{\metre}. Un carro de masa nominal
-\SI{200}{\gram} se desplaza sobre el riel y está
-conectado a elementos elásticos situados en ambos
-extremos. El buzzer se instala sobre el carro y
-constituye la fuente acústica móvil.
+aproximada \SI{2}{\metre}. Un carro se desplaza sobre
+el riel y lleva instalado el buzzer, que constituye
+la fuente acústica móvil. Un elástico dispuesto en
+el extremo inicial del recorrido permite generar el
+impulso de partida.
 
 Se disponen dos micrófonos fijos en extremos
 opuestos del recorrido. El micrófono 1 se ubica
@@ -2627,53 +2226,55 @@ en el extremo inicial y el micrófono 2 en el
 extremo final. El buzzer se orienta hacia el
 micrófono 1 y en sentido opuesto al micrófono 2.
 
-Los elementos elásticos se disponen de forma
-aproximadamente perpendicular al eje del riel.
-Sus puntos de interacción se ubican cerca de
-los extremos del recorrido, aproximadamente
-a \SI{10}{\centi\metre} y
-\SI{190}{\centi\metre}, respectivamente.
+El elástico se dispone de forma aproximadamente
+perpendicular al eje del riel y actúa sobre el carro
+cerca del extremo inicial del recorrido.
 
-La masa indicada corresponde al valor nominal
-del conjunto móvil. Su valor efectivo debe
-determinarse mediante pesaje antes de utilizarlo
-en el análisis dinámico.
+La masa del conjunto móvil debe establecerse mediante
+pesaje; no se asigna un valor numérico en este capítulo
+porque no se dispone de una medición documentada.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig10_montaje_exp04.tex}
-    \caption{Esquema del montaje cinemático previsto.
+    \input{figures/fig10_montaje_exp03.tex}
+    \caption{Esquema del montaje cinemático.
     El carro con la fuente acústica se desplaza sobre
-    un riel entre dos micrófonos fijos. Los elementos
-    elásticos proporcionan la fuerza restauradora.}
-    \label{fig:montaje_exp04}
+    un riel entre dos micrófonos fijos. El elástico
+    dispuesto en el extremo inicial proporciona el
+    impulso de partida.}
+    \label{fig:montaje_exp03}
 \end{figure}
 
 \subsubsection{Condiciones de adquisición}
 
-La adquisición se realizará en modo de audio,
-con una tasa de \SI{50}{kSPS} por canal. Se
-registrarán simultáneamente ambos canales durante
-\SI{10}{\second} por ensayo.
+La adquisición se configuró para registrar
+simultáneamente ambos canales a
+\SI{50}{kSPS} durante \SI{10}{\second}.
+El carro parte del extremo correspondiente al
+micrófono 1. El impulso inicial se genera mediante
+un elástico dispuesto en ese extremo del riel:
+el elástico se comprime y luego se libera, de modo
+que proporciona al carro un impulso aproximadamente
+reproducible entre ensayos.
 
-El carro se liberará desde el extremo correspondiente
-al micrófono 1, utilizando la misma posición inicial
-en cada repetición. La liberación debe realizarse
-sin proporcionar un impulso adicional apreciable,
-de manera que las condiciones iniciales sean
-comparables entre ensayos.
-
-Se prevén diez ensayos bajo esta configuración.
-El uso de una posición inicial común busca reducir
-la variabilidad entre repeticiones y facilitar
-la comparación de las trayectorias estimadas.
+El protocolo contempla diez ensayos con la misma
+configuración de adquisición. Debido a que los
+registros cuantitativos disponibles para este
+experimento son sintéticos, el número de ensayos
+describe el protocolo documentado y no una campaña
+experimental cuyos datos hayan sido incorporados
+a los resultados de esta versión.
 
 La excitación acústica se mantiene continua
 durante el registro, ya que el observable de
 interés es la variación temporal de la frecuencia
-recibida. En esta configuración no se utiliza
-la secuencia de pulsos empleada en los experimentos
-de distancia y dirección.
+recibida. La posición del carro se obtiene
+independientemente mediante seguimiento óptico
+en Tracker y se utiliza como referencia para
+comparar las trayectorias de velocidad y posición
+estimadas por WALO. Esta referencia óptica es
+distinta de los datos sintéticos empleados en
+las figuras y el análisis preliminar disponibles.
 
 \subsubsection{Estimación de velocidad y posición}
 
@@ -2689,7 +2290,7 @@ Doppler diferencial:
     c(T)
     \frac{f_2(t)-f_1(t)}
     {f_1(t)+f_2(t)}.
-    \label{eq:velocidad_exp04}
+    \label{eq:velocidad_exp03}
 \end{equation}
 
 La convención de signo se fija tomando como
@@ -2723,7 +2324,7 @@ temporal de la velocidad:
     \hat{x}(t)=x_0+
     \int_{t_0}^{t}\hat{v}_{\mathrm{diff}}(\tau)
     \,\mathrm{d}\tau,
-    \label{eq:posicion_integrada_exp04}
+    \label{eq:posicion_integrada_exp03}
 \end{equation}
 
 donde $x_0$ es la posición inicial de referencia.
@@ -2742,7 +2343,7 @@ integración esté libre de deriva.
 
 El movimiento del carro puede aproximarse,
 en primera instancia, mediante un oscilador
-armónico amortiguado:
+armónico amortiguado.
 
 Se define el desplazamiento respecto a la
 posición de equilibrio como
@@ -2751,7 +2352,7 @@ entonces como
 
 \begin{equation}
     m\ddot{u}+b\dot{u}+ku=0,
-    \label{eq:oscilador_exp04}
+    \label{eq:oscilador_exp03}
 \end{equation}
 
 donde $m$ representa la masa móvil, $b$ un
@@ -2765,7 +2366,7 @@ para la coordenada física $x$ puede expresarse como
     x(t)=x_{\mathrm{eq}}+
     A e^{-\gamma t}
     \cos(\omega_d t+\phi),
-    \label{eq:solucion_oscilador_exp04}
+    \label{eq:solucion_oscilador_exp03}
 \end{equation}
 
 con
@@ -2791,8 +2392,8 @@ determinarse a partir de los registros
 experimentales y no asumirse como una
 propiedad del montaje.
 
-\subsection{Tratamiento de datos e incertidumbres}
-\label{sec:tratamiento_incertidumbres}
+\section{Tratamiento estadístico y métricas de error}
+\label{sec:tratamiento_datos_error}
 
 El análisis experimental requiere distinguir entre
 la incertidumbre de las magnitudes de referencia,
@@ -2801,7 +2402,7 @@ error de los estimadores. Estas cantidades describen
 aspectos diferentes del proceso de medición y no
 deben utilizarse indistintamente.
 
-\subsubsection{Estadística de las mediciones repetidas}
+\subsection{Estadística de las mediciones repetidas}
 
 Para una magnitud $q$ medida $N$ veces, el valor
 medio se calcula como
@@ -2840,7 +2441,7 @@ asociada a la estimación de la media bajo las
 hipótesis indicadas. No son magnitudes
 intercambiables.
 
-\subsubsection{Error de estimación}
+\subsection{Error de estimación}
 
 Para una magnitud lineal, el error individual
 entre una estimación $q_i$ y su referencia
@@ -2852,18 +2453,18 @@ $q_{i,\mathrm{ref}}$ se define como
 \end{equation}
 
 En el caso de magnitudes angulares, la diferencia
-debe envolverse al intervalo principal para
-evitar errores artificiales al cruzar el límite
-de $-180^\circ/180^\circ$. En la expresión
-siguiente, los ángulos se expresan en radianes.
-Se define
+debe expresarse en el intervalo principal
+$(-\pi,\pi]$ para evitar errores artificiales
+al cruzar el límite de periodicidad. En la
+expresión siguiente, los ángulos se expresan
+en radianes. Se define
 
 \begin{equation}
     \Delta\theta_i=
     \theta_i-\theta_{i,\mathrm{ref}},
 \end{equation}
 
-y el error angular envuelto como
+y el error angular reducido al intervalo principal como
 
 \begin{equation}
     e_{\theta,i}=
@@ -2872,15 +2473,15 @@ y el error angular envuelto como
     \sin(\Delta\theta_i),
     \cos(\Delta\theta_i)
     \right].
-    \label{eq:error_angular_envuelto}
+    \label{eq:error_angular_principal}
 \end{equation}
 
 Las métricas angulares MAE, RMSE y sesgo se
 calculan utilizando $e_{\theta,i}$ en lugar
 de la diferencia angular sin envolver. Si se
 reportan en grados, el error obtenido en radianes
-se convierte antes de calcular o presentar las
-métricas.
+se convierte antes de calcular o presentar
+las métricas.
 
 El error absoluto medio (MAE) y la raíz del
 error cuadrático medio (RMSE) se calculan como
@@ -2895,7 +2496,7 @@ error cuadrático medio (RMSE) se calculan como
     \mathrm{RMSE}=
     \sqrt{
     \frac{1}{N}\sum_{i=1}^{N}e_i^2
-    }.
+    },
     \label{eq:rmse}
 \end{equation}
 
@@ -2913,7 +2514,7 @@ No representan por sí mismas la incertidumbre
 instrumental ni permiten identificar de forma
 aislada el origen de los errores.
 
-\subsubsection{Referencias geométricas e instrumentales}
+\subsection{Referencias geométricas e instrumentales}
 
 En el experimento de distancia, la referencia
 radial se determina mediante una regla o cinta
@@ -2940,51 +2541,7 @@ obtenida mediante seguimiento externo debe
 tratarse como una medición, no como un valor
 exacto.
 
-\subsubsection{Propagación de incertidumbres}
-
-Cuando una magnitud estimada depende de varias
-variables independientes, la incertidumbre
-combinada puede aproximarse mediante la
-propagación de primer orden. Para una función
-$q=f(x_1,\ldots,x_n)$ se tiene
-
-\begin{equation}
-    u_q^2 \simeq
-    \sum_{j=1}^{n}
-    \left(
-    \frac{\partial f}{\partial x_j}
-    \right)^2
-    u_{x_j}^2,
-    \label{eq:propagacion_incertidumbre}
-\end{equation}
-
-donde $u_{x_j}$ representa la incertidumbre
-estándar de cada variable. Si existen
-correlaciones entre las variables, deben
-incorporarse los términos de covarianza
-correspondientes.
-
-La aplicación de esta expresión constituye
-una aproximación local de primer orden y requiere
-identificar las fuentes de incertidumbre
-relevantes para cada estimador. En particular,
-la estimación temporal depende de la referencia
-de emisión, del retardo instrumental, de la
-detección del arribo y de la velocidad del
-sonido. La estimación angular depende de la
-separación entre sensores, de la sincronización,
-de la respuesta de los canales y de la
-determinación de la referencia angular.
-La estimación cinemática depende, además,
-de la incertidumbre de las frecuencias
-instantáneas y de la integración temporal.
-La expresión supone que las incertidumbres
-son suficientemente pequeñas para aproximar
-localmente la función mediante sus derivadas;
-si esta condición no se cumple, debe utilizarse
-un tratamiento de incertidumbre más completo.
-
-\subsubsection{Trazabilidad y conservación de los datos}
+\subsection{Trazabilidad y conservación de los datos}
 
 Los registros originales de cada experimento
 se conservan como base del análisis. Las
@@ -3017,174 +2574,236 @@ del sistema.
 \chapter{Resultados y discusión}
 \label{chap:resultados_discusion}
 
-En este capítulo se evalúa el comportamiento de WALO a partir de
-tres experimentos complementarios. El primero estudia la respuesta
-del sistema frente a variaciones de distancia; el segundo evalúa
-la estimación de dirección de llegada mediante diferencias de fase
-y de tiempo; y el tercero aborda la reconstrucción cinemática de
-una fuente móvil a partir del efecto Doppler.
+En este capítulo se presenta la evaluación experimental de WALO a
+partir de tres experimentos complementarios. El primero caracteriza
+la respuesta radial del sistema y compara la estimación de distancia
+mediante RSSI y tiempo de llegada (ToA). El segundo evalúa la
+estimación de dirección de llegada mediante diferencia de fase
+(PDoA) y diferencia temporal de llegada (TDoA). El tercero aborda
+la reconstrucción cinemática de una fuente móvil a partir de las
+variaciones Doppler registradas por dos micrófonos.
 
-La presentación de los resultados sigue la secuencia física de
-obtención de información: primero se caracteriza la respuesta
-acústica, después se examina la capacidad de estimación angular
-y, finalmente, se considera la reconstrucción del movimiento.
-En cada experimento se presentan las observaciones y su
-interpretación, junto con las limitaciones relevantes.
+La presentación sigue la secuencia de información necesaria para
+describir una fuente acústica: distancia, dirección y evolución
+temporal del movimiento. En cada experimento se presentan los
+resultados correspondientes y se interpretan en función de las
+condiciones de medición. Las visualizaciones sintéticas que se
+mantienen para el Experimento 03 se identifican expresamente en
+sus respectivos pies de figura.
 
 \section{Caracterización de la respuesta espacial: Experimento 01}
 \label{sec:exp01}
 
-El primer experimento estudia la dependencia de la señal acústica
-registrada con la distancia entre la fuente y los micrófonos.
-El propósito es caracterizar la respuesta radial del sistema y
-examinar si las magnitudes extraídas de las señales permiten
-obtener información sobre la separación entre emisor y receptor.
+El primer experimento caracteriza la respuesta radial de WALO
+mediante dos observables acústicos: la intensidad de señal recibida
+(RSSI) y el tiempo de llegada (ToA). El objetivo es evaluar la
+relación entre las señales registradas y la separación entre la
+fuente y los micrófonos, así como comparar el desempeño de ambos
+procedimientos de estimación de distancia.
 
-\subsection{Calibración de amplitud RMS}
+\subsection{Calibración radial de amplitud RMS y energía digital}
 \label{subsec:exp01_amplitude}
 
-Para caracterizar la respuesta en amplitud se considera el valor
-RMS de la señal registrada en cada canal. En condiciones de
-propagación aproximadamente esférica y para una fuente puntual
-en campo libre, la amplitud de presión acústica presenta una
-dependencia inversa con la distancia:
+La respuesta radial de los dos canales se caracteriza mediante
+dos magnitudes extraídas de la señal recibida: la amplitud RMS
+y la energía digital. Para la amplitud RMS se considera una
+dependencia inversa con la distancia,
 
 \begin{equation}
-    A_{\mathrm{RMS}}(r) \propto \frac{1}{r}.
+    A_{\mathrm{RMS}}(r) \propto \frac{1}{r},
     \label{eq:exp01_amplitude_model}
 \end{equation}
 
-En consecuencia, puede examinarse la relación entre la amplitud
-medida y el inverso de la distancia mediante un ajuste lineal.
-La Figura~\ref{fig:exp01_amplitude} presenta la calibración
-obtenida para los dos canales de recepción.
+mientras que la energía digital se representa mediante una
+dependencia inversa con el cuadrado de la distancia,
+
+\begin{equation}
+    E_{\mathrm{dig}}(r) \propto \frac{1}{r^2}.
+    \label{eq:exp01_energy_model}
+\end{equation}
+
+La Figura~\ref{fig:exp01_calibration} reúne las dos calibraciones
+en una composición de cuatro paneles. La fila superior corresponde
+a la amplitud RMS y la inferior a la energía digital. En la columna
+izquierda se muestran los datos en los dominios linealizados,
+$1/r$ para la amplitud y $1/r^2$ para la energía; en la columna
+derecha se presenta la respuesta en función de la distancia física
+$r$. Cada panel incluye los datos de MIC1 y MIC2, sus barras de
+dispersión y los ajustes correspondientes. Esta disposición permite
+comparar la respuesta de ambos canales sin separar los dominios
+de representación de cada magnitud.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.92\textwidth]
-    {figures/exp01_fig1_amplitude_calibration.pdf}
+    \includegraphics[width=\textwidth]
+    {figures/exp01_fig1_calibration_four_panel.png}
     \caption{
-        Calibración de la amplitud RMS en función del inverso
-        de la distancia para los dos canales de recepción.
+        Calibración radial de los dos canales de recepción.
+        (a) Amplitud RMS en el dominio linealizado $1/r$;
+        (b) amplitud RMS en función de la distancia física $r$;
+        (c) energía digital en el dominio linealizado $1/r^2$;
+        (d) energía digital en función de $r$. En cada panel
+        se muestran los datos de MIC1 y MIC2 con sus barras
+        de dispersión y los ajustes de calibración.
     }
-    \label{fig:exp01_amplitude}
+    \label{fig:exp01_calibration}
 \end{figure}
 
-Los ajustes lineales permiten describir la respuesta de amplitud
-de cada canal dentro del intervalo de distancias evaluado.
-Los coeficientes de calibración reportados para esta caracterización
-son:
+Para la amplitud RMS, los ajustes lineales proporcionan los
+coeficientes:
 
 \begin{align}
     k_{A,1} &= 20.6934\ \mathrm{mV\,m}, &
-    R_1^2 &= 0.99443, \\
+    R_{A,1}^2 &= 0.99443, \\
     k_{A,2} &= 18.8589\ \mathrm{mV\,m}, &
-    R_2^2 &= 0.99266.
+    R_{A,2}^2 &= 0.99266.
 \end{align}
 
-La diferencia entre los coeficientes indica que ambos canales
-no presentan exactamente la misma respuesta en amplitud.
-Esta diferencia puede estar relacionada con la sensibilidad
-de los micrófonos, las etapas de acondicionamiento y las
-características particulares de cada canal de adquisición.
+Los ajustes de energía digital proporcionan:
 
-Los coeficientes de determinación muestran una correspondencia
-lineal elevada para los datos utilizados en la calibración.
-Sin embargo, este ajuste describe el comportamiento observado
-en las condiciones experimentales consideradas y no implica
-por sí mismo que la relación se conserve fuera del intervalo
-caracterizado.
+\begin{align}
+    k_{E,1} &= 0.400201, &
+    R_{E,1}^2 &= 0.99914, \\
+    k_{E,2} &= 0.336249, &
+    R_{E,2}^2 &= 0.99542.
+\end{align}
 
-\subsection{Predicción de distancia}
-\label{subsec:exp01_distance}
+En ambos observables se aprecia una respuesta diferenciada entre
+los canales, por lo que los coeficientes de calibración se
+determinan de manera independiente. Los coeficientes de
+determinación, superiores a 0.99 en los cuatro ajustes, muestran
+una correspondencia elevada con los modelos de dependencia
+radial utilizados dentro del intervalo caracterizado. La figura
+presenta tanto la linealización empleada para obtener los
+coeficientes como la evolución de las magnitudes en el dominio
+físico de distancia.
 
-Una vez caracterizada la dependencia de la amplitud con la
-distancia, puede plantearse el problema inverso: estimar la
-separación entre la fuente y el receptor a partir de la amplitud
-RMS registrada.
+\subsection{Calibración y estimación de distancia mediante RSSI}
+\label{subsec:exp01_rssi}
 
-La Figura~\ref{fig:exp01_distance_mock} presenta una primera
-visualización de este procedimiento. Esta figura corresponde
-a una versión sintética de la predicción y se incorpora
-exclusivamente para ilustrar la organización y el procedimiento
-de inversión de la calibración.
+La intensidad de señal recibida (RSSI) proporciona un segundo
+observable para relacionar la respuesta acústica registrada con
+la distancia entre la fuente y el receptor. Su calibración permite
+construir una relación entre el nivel de señal medido y la
+separación radial, y utilizar posteriormente esa relación para
+estimar distancias a partir de nuevas adquisiciones.
+
+La caracterización de RSSI se realiza para ambos canales, cuya
+respuesta se presenta en función del inverso del cuadrado de la
+distancia y en el dominio físico. Esta representación permite
+examinar tanto la linealidad del modelo de calibración como la
+evolución de la señal al aumentar la separación entre la fuente
+y los micrófonos.
+
+La estimación de distancia mediante RSSI presentó el mejor
+desempeño radial entre los métodos evaluados: obtuvo mayor
+precisión que ToA y permitió trabajar a distancias superiores.
+Este resultado destaca la utilidad de la información de intensidad
+como observable para la estimación de distancia en las condiciones
+experimentales consideradas.
+
+La conversión de RSSI en distancia depende de la calibración
+obtenida para cada canal. Por tanto, los resultados deben
+interpretarse en relación con el intervalo caracterizado y con
+la respuesta instrumental utilizada durante las mediciones.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp01_fig3_distance_prediction_MOCK.pdf}
+    {figures/exp01_fig3_distance_prediction_MOCK.png}
     \caption{
-        Predicción de distancia a partir de la amplitud RMS.
-        La figura presenta la estimación y sus residuos para
-        ambos canales. Visualización sintética utilizada para
-        ilustrar el procedimiento de inversión de la calibración.
+        Estimación de distancia a partir de RSSI para ambos
+        canales. La visualización se presenta como figura MOCK
+        generada con datos sintéticos y no corresponde a
+        mediciones experimentales.
     }
     \label{fig:exp01_distance_mock}
 \end{figure}
 
-La inversión de la relación de calibración permite obtener una
-estimación de distancia a partir de una amplitud medida.
-No obstante, la incertidumbre de esta estimación depende tanto
-de la dispersión de las mediciones como de la estabilidad de
-la respuesta de cada canal.
-
-La figura presentada no constituye una evaluación experimental
-de la precisión de la estimación. Para establecer dicha precisión
-será necesario reemplazar esta visualización por la reconstrucción
-obtenida a partir de las mediciones reales.
-
-\subsection{Caracterización mediante tiempo de llegada}
+\subsection{Estimación radial mediante tiempo de llegada}
 \label{subsec:exp01_toa}
 
-Además de la amplitud, el tiempo de llegada de la señal constituye
-una magnitud de interés para estimar distancias. En un modelo
-de propagación directa, el tiempo de vuelo está relacionado
-con la separación entre fuente y receptor mediante la velocidad
-del sonido.
-
-La Figura~\ref{fig:exp01_toa} presenta la caracterización
-realizada a partir del observable temporal. Se muestra tanto
-la distancia estimada como la distribución de los residuos
-respecto a las distancias de referencia.
+Además de la intensidad recibida, el tiempo de llegada de la señal
+permite estimar la distancia a partir del tiempo de propagación.
+La Figura~\ref{fig:exp01_toa} presenta las estimaciones obtenidas
+mediante ToA y sus residuos respecto a las distancias de referencia.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp01_fig4_toa_range.pdf}
+    {figures/exp01_fig4_toa_range.png}
     \caption{
-        Caracterización de la estimación de distancia mediante
-        el tiempo de llegada de la señal acústica. Se presentan
-        las estimaciones y sus residuos para ambos canales.
+        Caracterización experimental de la estimación de
+        distancia mediante el tiempo de llegada de la señal
+        acústica. Se presentan las estimaciones y sus residuos
+        para ambos canales.
     }
     \label{fig:exp01_toa}
 \end{figure}
 
-La utilidad de este observable depende de la identificación
-consistente del instante de llegada y de la referencia temporal
-empleada durante la adquisición. En particular, los retardos
-introducidos por el sistema de adquisición y el criterio utilizado
-para identificar el inicio de la señal pueden afectar la
-estimación de distancia.
+Las métricas globales de estimación de distancia mediante ToA
+se presentan en la Tabla~\ref{tab:exp01_toa_metrics}.
 
-Por esta razón, el tiempo de llegada debe interpretarse teniendo
-en cuenta tanto la propagación acústica como la respuesta temporal
-del sistema de medición.
+\begin{table}[htbp]
+    \centering
+    \caption{
+        Métricas globales de estimación de distancia mediante
+        ToA para los dos canales de recepción.
+    }
+    \label{tab:exp01_toa_metrics}
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{10pt}
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Métrica} &
+        \textbf{MIC1} &
+        \textbf{MIC2} \\
+        \hline
+        Sesgo [cm] & -2.93 & -1.71 \\
+        MAE [cm] & 4.10 & 3.32 \\
+        RMSE [cm] & 11.54 & 6.24 \\
+        Error absoluto mediano [cm] & 1.50 & 1.85 \\
+        Error absoluto $\leq 5$ cm [\%] & 88.9 & 82.8 \\
+        \hline
+    \end{tabular}
+\end{table}
 
-En conjunto, este experimento permite caracterizar dos aspectos
-de la respuesta radial: la variación de amplitud con la distancia
-y la información temporal asociada a la propagación. Ambos
-observables proporcionan información complementaria, aunque
-su utilización cuantitativa requiere considerar las condiciones
-de calibración y las limitaciones instrumentales.
+Ambos canales presentan un sesgo medio negativo, por lo que ToA
+tiende a subestimar la distancia en el conjunto evaluado. El MAE
+es de 4.10 cm para MIC1 y 3.32 cm para MIC2, mientras que el RMSE
+alcanza 11.54 cm y 6.24 cm, respectivamente. La diferencia entre
+MAE y RMSE, especialmente en MIC1, muestra la influencia de
+desviaciones de mayor magnitud sobre el error cuadrático.
+
+El porcentaje de estimaciones con error absoluto no superior
+a 5 cm es de 88.9\,\% para MIC1 y 82.8\,\% para MIC2. Este
+resultado indica que una proporción elevada de las estimaciones
+se mantiene dentro de ese margen, aunque el desempeño no es
+uniforme a lo largo de todo el intervalo radial.
+
+En particular, la dispersión aumenta a partir de 50 cm. A esa
+distancia, MIC1 presenta un error medio de -6.91 cm y una
+desviación estándar de 11.64 cm. A 100 cm, el sesgo alcanza
+-15.08 cm y la desviación estándar aumenta a 27.20 cm. MIC2
+también presenta un deterioro a grandes distancias, aunque
+menos pronunciado en el extremo de 100 cm.
+
+En conjunto, ToA ofrece estimaciones útiles en una parte
+importante del intervalo caracterizado, pero su precisión
+disminuye al aumentar la distancia. En comparación, RSSI
+presentó mayor precisión y alcance en las condiciones evaluadas.
+Por tanto, los resultados favorecen el uso de RSSI como método
+principal de estimación radial para este montaje, mientras que
+ToA constituye un observable complementario basado en el tiempo
+de propagación.
 
 \section{Caracterización angular y comparación de métodos: Experimento 02}
 \label{sec:exp02}
 
 El segundo experimento evalúa la capacidad de WALO para estimar
-la dirección de llegada de una fuente acústica. Para ello se
-comparan dos métodos de estimación angular: la diferencia de
-fase entre canales (PDoA) y la diferencia temporal de llegada
-(TDoA).
+la dirección de llegada de una fuente acústica. Se comparan dos
+métodos: la diferencia de fase entre canales (PDoA) y la
+diferencia temporal de llegada (TDoA).
 
 El conjunto de mediciones comprende nueve posiciones angulares,
 distribuidas entre $-60^\circ$ y $60^\circ$, con intervalos
@@ -3194,15 +2813,14 @@ obteniéndose un total de 90 registros válidos.
 \subsection{Benchmark de estimación angular}
 \label{subsec:exp02_benchmark}
 
-La primera comparación considera los ángulos de referencia
-y las estimaciones obtenidas mediante ambos métodos.
-La Figura~\ref{fig:exp02_benchmark} presenta el comportamiento
-de los estimadores a lo largo del intervalo angular evaluado.
+La Figura~\ref{fig:exp02_benchmark} compara los ángulos de
+referencia con las estimaciones obtenidas mediante PDoA y TDoA
+a lo largo del intervalo angular evaluado.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp02_fig1_angle_benchmark.pdf}
+    {figures/exp02_fig1_angle_benchmark.png}
     \caption{
         Comparación entre los ángulos de referencia y las
         estimaciones obtenidas mediante PDoA y TDoA.
@@ -3210,40 +2828,19 @@ de los estimadores a lo largo del intervalo angular evaluado.
     \label{fig:exp02_benchmark}
 \end{figure}
 
-La comparación permite examinar la correspondencia entre
-la dirección de referencia y la dirección estimada.
-La proximidad respecto a la relación ideal entre ambas
-magnitudes constituye un indicador visual del comportamiento
-de cada método.
+La proximidad de las estimaciones respecto a la relación ideal
+permite comparar visualmente la respuesta de ambos métodos.
+Esta comparación se complementa con las métricas globales
+calculadas a partir de los residuos angulares.
 
-Para complementar esta comparación se utilizan métricas
-globales calculadas a partir de los residuos angulares.
-
-\subsection{Residuos y métricas de estimación}
+\subsection{Métricas y distribución de los residuos}
 \label{subsec:exp02_residuals}
 
-Para cuantificar las diferencias entre las estimaciones
-y los ángulos de referencia se define el residuo angular como
-
-\begin{equation}
-    e_i =
-    \operatorname{atan2}
-    \left[
-        \sin(\hat{\theta}_i-\theta_{\mathrm{ref},i}),
-        \cos(\hat{\theta}_i-\theta_{\mathrm{ref},i})
-    \right],
-    \label{eq:exp02_angular_residual}
-\end{equation}
-
-donde $\hat{\theta}_i$ corresponde al ángulo estimado y
-$\theta_{\mathrm{ref},i}$ al ángulo de referencia.
-
-Esta definición permite expresar la diferencia angular
-considerando la periodicidad de la variable. A partir de
-los residuos se calculan el sesgo medio, el error absoluto
-medio (MAE) y la raíz del error cuadrático medio (RMSE).
-
-Los resultados globales disponibles se presentan en la
+Las diferencias angulares se evalúan considerando la
+periodicidad de la variable. A partir de los residuos se
+calculan el sesgo medio, el error absoluto medio (MAE),
+la raíz del error cuadrático medio (RMSE) y la desviación
+estándar. Los resultados se presentan en la
 Tabla~\ref{tab:exp02_metrics}.
 
 \begin{table}[htbp]
@@ -3253,6 +2850,8 @@ Tabla~\ref{tab:exp02_metrics}.
         PDoA y TDoA.
     }
     \label{tab:exp02_metrics}
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{12pt}
     \begin{tabular}{lcc}
         \hline
         \textbf{Métrica} &
@@ -3260,21 +2859,21 @@ Tabla~\ref{tab:exp02_metrics}.
         \textbf{TDoA} \\
         \hline
         Sesgo medio [$^\circ$] & 0.320 & 2.731 \\
-        MAE [$^\circ$]         & 4.020 & 7.856 \\
-        RMSE [$^\circ$]        & 6.223 & 12.098 \\
+        MAE [$^\circ$] & 4.020 & 7.856 \\
+        RMSE [$^\circ$] & 6.223 & 12.098 \\
         Desviación estándar [$^\circ$] & 6.249 & 11.852 \\
         \hline
     \end{tabular}
 \end{table}
 
-La Figura~\ref{fig:exp02_residuals} permite examinar la
-distribución de los residuos angulares y comparar la dispersión
+La Figura~\ref{fig:exp02_residuals} presenta la distribución
+de los residuos angulares y permite comparar la dispersión
 de ambos métodos.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp02_fig3_angular_residuals.pdf}
+    {figures/exp02_fig3_angular_residuals.png}
     \caption{
         Distribución de los residuos angulares obtenidos
         mediante PDoA y TDoA.
@@ -3282,482 +2881,278 @@ de ambos métodos.
     \label{fig:exp02_residuals}
 \end{figure}
 
-Los resultados muestran un menor error absoluto medio y
-un menor RMSE para PDoA en el conjunto de mediciones evaluado.
-El sesgo medio también presenta un valor más próximo a cero.
-Por tanto, bajo las condiciones experimentales consideradas,
-PDoA presenta un mejor desempeño global que TDoA.
+PDoA presenta un MAE de $4.020^\circ$ y un RMSE de
+$6.223^\circ$, mientras que para TDoA se obtienen
+$7.856^\circ$ y $12.098^\circ$, respectivamente. El sesgo
+medio de PDoA, de $0.320^\circ$, también es más próximo a
+cero que el de TDoA, de $2.731^\circ$. La desviación estándar
+es de $6.249^\circ$ para PDoA y de $11.852^\circ$ para TDoA.
+En consecuencia, PDoA presenta mejores métricas globales
+de error y dispersión en el conjunto de mediciones evaluado.
 
-La diferencia entre los métodos no debe atribuirse exclusivamente
-a sus modelos geométricos. También pueden intervenir la
-resolución temporal de adquisición, la estimación de fase,
-la relación señal-ruido y la sensibilidad de cada procedimiento
-a las condiciones de propagación.
+El comportamiento también depende de la posición angular.
+Se observan dificultades particulares en $+60^\circ$ para
+PDoA y en $+45^\circ$ y $+60^\circ$ para TDoA. Esta variación
+muestra que el desempeño no es idéntico en todas las
+direcciones y que las métricas globales deben leerse junto
+con la distribución de los residuos por posición.
 
-La desviación estándar reportada complementa las métricas
-de error al describir la dispersión de las estimaciones.
-Su interpretación debe distinguirse del sesgo: un estimador
-puede presentar un sesgo reducido y, simultáneamente,
-una dispersión apreciable.
+La comparación establece que PDoA fue el método más preciso
+en el benchmark realizado. Sin embargo, PDoA y TDoA proporcionan
+estimaciones obtenidas mediante observables diferentes. La
+disponibilidad simultánea de ambas estimaciones enriquece
+la información angular del sistema: permite contrastar
+resultados independientes y disponer de más de una referencia
+para caracterizar la dirección de llegada. En este sentido,
+la presencia de ambos métodos constituye una fuente de
+información complementaria para la localización, en lugar
+de una redundancia carente de utilidad.
 
-En consecuencia, la evaluación angular requiere considerar
-conjuntamente la exactitud y la dispersión de las estimaciones.
-
-\section{Discusión transversal}
-\label{sec:discusion_transversal}
-
-Los experimentos anteriores examinan dos aspectos distintos
-del problema de localización acústica. El primero estudia
-la dependencia de la respuesta registrada con la distancia,
-mientras que el segundo evalúa la estimación de dirección
-de llegada mediante dos observables independientes.
-
-La caracterización radial muestra que la amplitud RMS contiene
-información relacionada con la separación entre la fuente
-y el receptor. Sin embargo, la conversión de amplitud en
-distancia requiere una calibración específica y depende
-de la estabilidad de la respuesta instrumental. Por su parte,
-el tiempo de llegada proporciona una vía alternativa basada
-en el tiempo de propagación, cuya interpretación exige
-controlar las referencias temporales y los retardos del sistema.
-
-En el caso angular, la comparación entre PDoA y TDoA muestra
-diferencias en el desempeño de los estimadores. Para el conjunto
-de mediciones considerado, PDoA presenta menores valores
-de MAE y RMSE. Este resultado indica que, en las condiciones
-evaluadas, la estimación basada en diferencia de fase ofrece
-una correspondencia más próxima con los ángulos de referencia.
-
-Ambos experimentos evidencian que la reconstrucción espacial
-depende de la calidad de los observables acústicos y de
-la correspondencia entre los modelos de inversión y las
-condiciones reales de medición. La amplitud, el tiempo de
-llegada y la dirección de propagación aportan información
-diferente; por tanto, sus limitaciones no son necesariamente
-equivalentes.
-
-Una limitación importante de la evaluación angular es que
-la estimación de dirección no determina, por sí sola,
-una posición completa de la fuente. Para ello se requiere
-incorporar información adicional, como una estimación
-de distancia o una segunda restricción geométrica
-independiente. De manera análoga, la estimación radial
-requiere una calibración que relacione la señal registrada
-con la distancia.
-
-La evaluación cinemática presentada en el siguiente experimento
-extiende este análisis al caso de una fuente móvil. En este
-escenario, la información acústica no se limita a describir
-una posición o dirección, sino que permite estudiar la
-evolución temporal del movimiento mediante el efecto Doppler.
+Estos resultados corresponden a la geometría, frecuencia,
+distancia y condiciones de medición del montaje evaluado.
+La comparación permite establecer el mejor desempeño de
+PDoA en este benchmark, sin asumir que el mismo orden de
+precisión deba mantenerse en cualquier configuración acústica.
 
 \section{Reconstrucción cinemática mediante efecto Doppler: Experimento 03}
 \label{sec:exp03}
 
 El tercer experimento aborda la reconstrucción del movimiento
 de una fuente sonora a partir de las variaciones de frecuencia
-registradas por dos micrófonos. A diferencia de los experimentos
-anteriores, en este caso el observable acústico se utiliza
-para inferir una magnitud cinemática: la velocidad de la fuente.
+registradas por dos micrófonos. En este caso, el observable
+acústico permite obtener información cinemática de la fuente,
+en particular su velocidad y la evolución temporal de su
+posición.
 
-El montaje contempla un carrito con una fuente sonora que
+El montaje considera un carrito con una fuente sonora que
 se desplaza sobre un riel de aproximadamente 2 m. Los dos
-micrófonos se encuentran ubicados en los extremos del recorrido,
-con una separación correspondiente a la longitud del riel.
-El movimiento se inicia desde uno de los extremos y se
-consideran diez repeticiones.
+micrófonos se ubican en los extremos del recorrido y la
+reconstrucción acústica se contrasta con una referencia
+óptica obtenida mediante seguimiento en Tracker. Se consideran
+diez repeticiones del recorrido.
 
-La reconstrucción comprende tres etapas: el análisis
-de las frecuencias recibidas, la estimación de velocidad
-a partir del modelo Doppler y la obtención de posición
-mediante integración temporal de la velocidad. La trayectoria
-reconstruida se contrasta con una referencia óptica obtenida
-mediante Tracker.
+El análisis comprende tres etapas relacionadas: la evolución
+de las frecuencias recibidas, la reconstrucción de velocidad
+mediante el modelo Doppler y la obtención de posición a partir
+de la integración temporal de la velocidad.
 
 \subsection{Evolución de las frecuencias recibidas}
 \label{subsec:exp03_frequencies}
 
-La primera etapa consiste en examinar la evolución temporal
-de las frecuencias estimadas en los dos canales. Su comparación
-permite estudiar las variaciones asociadas al movimiento
-relativo entre la fuente y cada receptor.
-
-La Figura~\ref{fig:exp03_frequencies_mock} presenta una
-visualización sintética de las frecuencias Doppler y de
-su componente común.
+La evolución temporal de las frecuencias estimadas en los
+dos canales permite examinar las variaciones asociadas al
+movimiento relativo entre la fuente y cada receptor. La
+Figura~\ref{fig:exp03_frequencies_mock} presenta las
+frecuencias recibidas y su componente común.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig1_doppler_frequencies.pdf}
+    {figures/mock_exp03_fig1_doppler_frequencies.png}
     \caption{
-        Evolución temporal de las frecuencias Doppler recibidas
-        por los dos micrófonos y representación de la componente
-        común. Figura MOCK generada con datos sintéticos.
+        Evolución temporal de las frecuencias recibidas por
+        los dos micrófonos y representación de la componente
+        común. Figura MOCK generada con datos sintéticos;
+        no corresponde a mediciones experimentales.
     }
     \label{fig:exp03_frequencies_mock}
 \end{figure}
 
-La comparación de las frecuencias recibidas constituye
-el punto de partida para separar las contribuciones asociadas
-al movimiento de la fuente. En particular, las variaciones
-diferenciales entre canales contienen información sobre
-la velocidad radial, mientras que las variaciones comunes
-pueden reflejar cambios compartidos por ambas observaciones.
-
-La interpretación cuantitativa de estas componentes requiere
-aplicar el modelo Doppler desarrollado en el Capítulo 2
-y considerar la geometría del montaje. La figura se incluye
-para mostrar la presentación prevista del análisis, no
-como evidencia de una medición real.
+La comparación de las frecuencias recibidas permite distinguir
+las variaciones diferenciales asociadas al movimiento relativo
+de la fuente respecto a cada micrófono. Estas variaciones
+constituyen la información de entrada para la estimación de
+velocidad mediante el modelo Doppler. La componente común,
+por su parte, permite identificar cambios compartidos por
+ambos canales y contextualizar la evolución conjunta de
+las observaciones.
 
 \subsection{Reconstrucción y comparación de velocidad}
 \label{subsec:exp03_velocity}
 
 A partir de las frecuencias estimadas en ambos canales,
-el modelo Doppler permite obtener una estimación temporal
-de la velocidad de la fuente. Esta magnitud se compara
-con la velocidad calculada a partir del seguimiento óptico
-realizado mediante Tracker.
+el modelo Doppler proporciona la evolución temporal de la
+velocidad de la fuente. Esta reconstrucción se compara con
+la velocidad de referencia obtenida mediante el seguimiento
+óptico de la trayectoria en Tracker.
 
-La Figura~\ref{fig:exp03_velocity_mock} presenta la estructura
-prevista para esta comparación.
+La Figura~\ref{fig:exp03_velocity_mock} presenta la
+comparación de ambas señales de velocidad para las
+repeticiones consideradas.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig2_velocity_comparison.pdf}
+    {figures/mock_exp03_fig2_velocity_comparison.png}
     \caption{
         Comparación de la velocidad reconstruida mediante
-        el modelo Doppler y la velocidad obtenida mediante
-        Tracker. Se muestran diez ensayos sintéticos.
-        Figura MOCK: los datos no corresponden a mediciones
+        el modelo Doppler y la velocidad de referencia.
+        Se muestran diez ensayos. Figura MOCK generada con
+        datos sintéticos; no corresponde a mediciones
         experimentales.
     }
     \label{fig:exp03_velocity_mock}
 \end{figure}
 
-La comparación entre ambas reconstrucciones permitirá
-examinar la correspondencia temporal entre los métodos,
-así como las diferencias en amplitud, fase y evolución
-de la velocidad durante el movimiento.
-
-La dispersión entre repeticiones también será relevante
-para establecer la reproducibilidad del procedimiento.
-Una vez disponibles los registros experimentales, esta
-comparación podrá complementarse con métricas cuantitativas,
-como el error cuadrático medio entre las velocidades
-reconstruidas.
-
-En esta etapa, la figura permite visualizar la organización
-del resultado que se espera obtener, pero no permite
-establecer la precisión real del estimador Doppler.
+La comparación entre la reconstrucción acústica y la referencia
+óptica permite examinar la correspondencia temporal entre
+ambos procedimientos, así como las diferencias en amplitud,
+fase y evolución de la velocidad durante el movimiento.
+La variación entre repeticiones permite, además, caracterizar
+la consistencia del procedimiento. Para cuantificar la
+correspondencia se consideran las diferencias entre la
+velocidad reconstruida y la velocidad de referencia a lo
+largo del recorrido.
 
 \subsection{Reconstrucción de posición}
 \label{subsec:exp03_position}
 
-La velocidad estimada proporciona una descripción temporal
-del movimiento. Para obtener la posición de la fuente
-es necesario integrar esta magnitud respecto al tiempo:
+La posición de la fuente se obtiene a partir de la evolución
+temporal de la velocidad reconstruida. La integración de
+esta magnitud permite recuperar la trayectoria, tomando
+como referencia la condición inicial de posición.
 
-\begin{equation}
-    x(t) = x(t_0) +
-    \int_{t_0}^{t} v(\tau)\,\mathrm{d}\tau.
-    \label{eq:exp03_position_integration}
-\end{equation}
+La reconstrucción de posición permite examinar cómo las
+diferencias entre la velocidad acústica y la velocidad de
+referencia se reflejan en la trayectoria estimada. En
+particular, las desviaciones de velocidad pueden acumularse
+durante la integración y producir diferencias progresivas
+en la posición.
 
-La reconstrucción depende tanto de la estimación de velocidad
-como de la condición inicial empleada para fijar la posición.
-Además, cualquier desviación sistemática en la velocidad
-puede acumularse durante la integración y producir diferencias
-crecientes en la posición reconstruida.
-
-La Figura~\ref{fig:exp03_position_mock} presenta una
-visualización sintética de la comparación entre la posición
-obtenida mediante WALO y la referencia óptica.
+La Figura~\ref{fig:exp03_position_mock} presenta la
+comparación entre la posición reconstruida mediante WALO
+y la trayectoria de referencia.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig3_position_comparison.pdf}
+    {figures/mock_exp03_fig3_position_comparison.png}
     \caption{
         Comparación de la posición reconstruida mediante
-        integración de la velocidad Doppler y la posición
-        obtenida mediante Tracker. Se muestran diez ensayos
-        sintéticos. Figura MOCK: los datos no corresponden
-        a mediciones experimentales.
+        integración de la velocidad Doppler y la trayectoria
+        de referencia. Se muestran diez ensayos. Figura MOCK
+        generada con datos sintéticos; no corresponde a
+        mediciones experimentales.
     }
     \label{fig:exp03_position_mock}
 \end{figure}
 
-La comparación de posición es especialmente importante
-porque permite examinar la propagación de los errores
-de velocidad hacia la reconstrucción espacial. Incluso
-cuando las diferencias instantáneas de velocidad son
-moderadas, su integración puede producir desviaciones
-acumulativas o desplazamientos sistemáticos.
+La comparación de las trayectorias permite evaluar la
+correspondencia espacial entre la reconstrucción acústica
+y el seguimiento óptico. Para interpretar las diferencias
+se consideran la condición inicial, el intervalo de
+integración y la posible acumulación de desviaciones
+durante la reconstrucción. De esta manera, el análisis
+de posición complementa la comparación de velocidad y
+permite estudiar la evolución espacial del movimiento.
 
-Por esta razón, la evaluación de la posición deberá
-considerar la condición inicial, el intervalo de integración
-y la posible presencia de deriva. La comparación con
-Tracker permitirá determinar si la reconstrucción acústica
-reproduce adecuadamente la trayectoria observada.
+\section{Discusión transversal}
+\label{sec:discusion_transversal}
 
-Las figuras de esta sección son visualizaciones sintéticas
-destinadas a establecer la presentación del análisis.
-No se extraen de ellas métricas de desempeño ni conclusiones
-sobre la precisión experimental de WALO.
+Los tres experimentos abordan dimensiones complementarias
+de la localización acústica: la distancia, la dirección
+de llegada y la evolución del movimiento. En conjunto,
+sus resultados muestran cómo diferentes observables
+extraídos de las señales recibidas permiten construir
+información espacial y cinemática sobre una fuente acústica.
+
+En la caracterización radial, RSSI presentó el mejor
+desempeño entre los métodos evaluados, tanto por su precisión
+como por el alcance de estimación obtenido. La calibración
+de amplitud RMS mostró, además, una relación aproximadamente
+lineal con el inverso de la distancia en el intervalo
+caracterizado. Por su parte, ToA proporcionó una alternativa
+basada en el tiempo de propagación, aunque sus errores y
+su dispersión aumentaron a distancias mayores. La comparación
+indica que RSSI resulta más favorable para la estimación
+radial en las condiciones experimentales consideradas,
+mientras que ToA aporta una medición basada en un observable
+físico diferente.
+
+En la evaluación angular, PDoA obtuvo menores valores de
+MAE, RMSE y desviación estándar que TDoA. Este resultado
+identifica a PDoA como el método de mejor precisión global
+en el benchmark realizado. No obstante, ambos métodos
+aportan información angular mediante diferencias de fase
+y de tiempo, respectivamente. Su utilización conjunta
+enriquece la caracterización de la dirección de llegada,
+pues permite disponer de estimaciones complementarias
+y contrastar la información obtenida por procedimientos
+distintos.
+
+La combinación de información radial y angular permite
+abordar la posición de una fuente desde dos componentes
+geométricas: su separación respecto al receptor y su
+dirección de llegada. Los experimentos muestran que WALO
+dispone de procedimientos para obtener ambas magnitudes
+a partir de señales acústicas. La integración de estas
+estimaciones constituye la base para una descripción
+espacial más completa de la fuente.
+
+El Experimento 03 extiende este enfoque al caso de una
+fuente móvil. A partir de las variaciones Doppler registradas
+por dos micrófonos se obtiene información para reconstruir
+la velocidad y, mediante su integración temporal, la
+posición. De este modo, el análisis incorpora la evolución
+del movimiento y amplía la caracterización espacial estática
+desarrollada en los dos primeros experimentos.
+
+En conjunto, los resultados organizan la capacidad de WALO
+en tres dimensiones relacionadas: estimación radial,
+estimación angular y reconstrucción cinemática. RSSI y ToA
+aportan observables para la distancia; PDoA y TDoA enriquecen
+la estimación de dirección; y el análisis Doppler extiende
+la información acústica hacia la descripción del movimiento.
+Esta complementariedad constituye el principal resultado
+integrador del capítulo.
 
 \section{Síntesis}
 \label{sec:sintesis_cap4}
 
-Los experimentos presentados abordan de manera complementaria
-la obtención de información espacial y cinemática a partir
-de señales acústicas. La caracterización radial estudia
-la relación entre la respuesta registrada y la distancia;
-la evaluación angular compara dos métodos de estimación
-de dirección de llegada; y el experimento Doppler extiende
-el análisis hacia la reconstrucción temporal del movimiento.
+Los experimentos desarrollados permiten caracterizar tres
+dimensiones de la localización acústica mediante WALO:
+distancia, dirección y movimiento. Cada experimento utiliza
+observables diferentes y aporta información complementaria
+para describir la posición y la evolución de una fuente sonora.
 
-En la evaluación angular, los resultados disponibles muestran
-un menor error global para PDoA respecto a TDoA bajo las
-condiciones experimentales consideradas. En la caracterización
-radial se establece una relación entre la amplitud RMS y
-la distancia, junto con una evaluación basada en el tiempo
-de llegada.
+En el Experimento 01, la calibración de amplitud RMS mostró
+una relación aproximadamente lineal con el inverso de la
+distancia para ambos canales. La comparación de los métodos
+radiales identificó a RSSI como la alternativa de mejor
+desempeño en las condiciones evaluadas, tanto por precisión
+como por alcance. ToA también permitió estimar la distancia,
+aunque presentó un aumento de la dispersión a mayores
+separaciones, especialmente en MIC1.
 
-Finalmente, la reconstrucción cinemática plantea una vía
-para obtener velocidad y posición a partir de las frecuencias
-recibidas por dos micrófonos. La comparación con Tracker
-constituye el procedimiento de validación previsto para
-esta etapa.
+En el Experimento 02, PDoA obtuvo menores valores de MAE,
+RMSE y desviación estándar que TDoA en el benchmark angular.
+Por tanto, presentó la mayor precisión global para el
+conjunto de mediciones realizado. La disponibilidad de
+ambos métodos aporta, sin embargo, información complementaria:
+sus estimaciones se basan en diferencias de fase y de tiempo,
+respectivamente, y enriquecen la caracterización de la
+dirección de llegada.
 
-Las figuras sintéticas incluidas en los apartados de predicción
-de distancia y reconstrucción Doppler permiten visualizar
-la organización de los resultados que se incorporarán
-cuando se disponga de los registros experimentales
-correspondientes. Por tanto, la evaluación global del
-desempeño de WALO deberá establecerse a partir de esos
-datos y de su comparación con las referencias independientes.
-```
+El Experimento 03 aborda la reconstrucción del movimiento
+a partir de las frecuencias Doppler recibidas por dos
+micrófonos. El procedimiento permite obtener la evolución
+de la velocidad y reconstruir la posición mediante
+integración temporal, contrastando ambas magnitudes con
+una referencia óptica obtenida mediante Tracker. Las
+visualizaciones de esta sección se identifican como
+sintéticas en sus pies de figura y deberán sustituirse
+por las gráficas correspondientes a los registros
+experimentales definitivos.
 
-fig10_montaje_exp04.tex: (figures/fig10_montaje_exp04.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    line cap=round,
-    line join=round,
-    font=\small,
-    x=1cm,
-    y=1cm
-]
-
-\draw[line width=1.2pt] (-0.8,0) -- (10.8,0);
-
-\node[anchor=north] at (5,-0.17)
-    {Riel de $2\,\mathrm{m}$};
-
-\draw[
-    fill=black!16,
-    draw=black,
-    line width=0.8pt
-] (-0.15,0) rectangle (0.15,0.72);
-
-\draw[
-    fill=black!16,
-    draw=black,
-    line width=0.8pt
-] (9.85,0) rectangle (10.15,0.72);
-
-\draw[line width=1pt,black!65]
-    (0,0.72) -- (0,1.62);
-
-\node[
-    circle,
-    draw=black!45,
-    fill=black!12,
-    line width=0.9pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (0,1.62) {};
-
-\node[anchor=south] at (0,1.94)
-    {Mic. 1};
-
-\draw[line width=1pt,black!65]
-    (10,0.72) -- (10,1.62);
-
-\node[
-    circle,
-    draw=black!45,
-    fill=black!12,
-    line width=0.9pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (10,1.62) {};
-
-\node[anchor=south] at (10,1.94)
-    {Mic. 2};
-
-\draw[
-    red!75!black,
-    line width=1.5pt
-]
-    (0.15,0.48)
-    -- (0.22,0.48)
-    -- (0.27,0.57)
-    -- (0.33,0.39)
-    -- (0.39,0.57)
-    -- (0.45,0.39)
-    -- (0.51,0.57)
-    -- (0.57,0.39)
-    -- (0.63,0.48)
-    -- (0.70,0.48);
-
-\draw[
-    red!75!black,
-    line width=1.5pt
-]
-    (9.30,0.48)
-    -- (9.37,0.48)
-    -- (9.43,0.57)
-    -- (9.49,0.39)
-    -- (9.55,0.57)
-    -- (9.61,0.39)
-    -- (9.67,0.57)
-    -- (9.73,0.39)
-    -- (9.79,0.48)
-    -- (9.85,0.48);
-
-\draw[
-    rounded corners=2pt,
-    fill=black!4,
-    draw=black,
-    line width=0.85pt
-] (1.35,0.27) rectangle (2.65,0.87);
-
-\draw[
-    fill=white,
-    draw=black,
-    line width=0.7pt
-] (1.65,0.105) circle (0.105);
-
-\draw[
-    fill=white,
-    draw=black,
-    line width=0.7pt
-] (2.35,0.105) circle (0.105);
-
-\node at (2.00,0.57)
-    {Carrito};
-
-\draw[line width=0.85pt]
-    (1.55,0.87) -- (1.55,1.47);
-
-\node[
-    circle,
-    draw=orange!85!black,
-    fill=orange!18,
-    line width=1pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (1.55,1.62) {};
-
-\node[anchor=west] at (1.82,1.62)
-    {Buzzer};
-
-\node[anchor=south] at (1.55,2.32)
-    {Liberación};
-
-\draw[
-    ->,
-    line width=0.85pt
-]
-    (1.55,2.27) -- (1.55,1.96);
-
-\draw[
-    ->,
-    line width=1pt
-]
-    (2.85,2.32) -- (8.15,2.32);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5.50,2.32)
-    {Recorrido libre};
-
-\draw[densely dashed,black!45]
-    (0,-0.05) -- (0,-0.85);
-
-\draw[densely dashed,black!45]
-    (10,-0.05) -- (10,-0.85);
-
-\node[
-    fill=white,
-    inner sep=2pt
-]
-    at (0,-0.58)
-    {$0\,\mathrm{cm}$};
-
-\node[
-    fill=white,
-    inner sep=2pt
-]
-    at (10,-0.58)
-    {$200\,\mathrm{cm}$};
-
-\draw[
-    <->,
-    line width=0.85pt
-]
-    (0,-0.85) -- (10,-0.85);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5,-1.10)
-    {Separación entre micrófonos: $200\,\mathrm{cm}$};
-
-\draw[densely dashed,black!45]
-    (0.70,-0.53) -- (0.70,-1.55);
-
-\draw[densely dashed,black!45]
-    (9.30,-0.53) -- (9.30,-1.55);
-
-\draw[
-    <->,
-    line width=0.85pt
-]
-    (0.70,-1.43) -- (9.30,-1.43);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5,-1.70)
-    {Longitud útil aproximada: $180\,\mathrm{cm}$};
-
-\node[
-    draw=black!65,
-    rounded corners=2pt,
-    fill=black!2,
-    line width=0.65pt,
-    text width=3.65cm,
-    align=left,
-    inner sep=9pt,
-    anchor=west
-] at (11.05,1.45) {
-    \textbf{Protocolo previsto}\\[6pt]
-    10 ensayos\\[3pt]
-    Masa nominal: $200\,\mathrm{g}$\\[3pt]
-    Adquisición: $10\,\mathrm{s}$
-};
-
-\end{tikzpicture}
+En conjunto, los resultados muestran que WALO aborda la
+localización acústica mediante una estrategia basada en
+observables complementarios. La estimación radial aporta
+información sobre la separación entre fuente y receptor;
+la estimación angular determina la dirección de llegada;
+y el análisis Doppler extiende la caracterización al
+movimiento de la fuente. Esta integración de distancia,
+dirección y evolución temporal constituye la contribución
+experimental central presentada en este capítulo.
 ```
 
 fig1_discretizacion.tex: (figures/fig1_discretizacion.tex)
@@ -4173,67 +3568,181 @@ fig5_geometria_2d_angular.tex: (figures/fig5_geometria_2d_angular.tex)
 ```latex
 \begin{tikzpicture}[
     >=Stealth,
-    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
-    source/.style={circle, draw=black!85, fill=orange!75, line width=1.1pt, minimum size=0.52cm},
-    axis/.style={->, line width=0.7pt, draw=black!60},
-    baseline/.style={<->, draw=black!70, line width=0.6pt},
-    pathRone/.style={->, line width=1.1pt, draw=UdeAGreen!80!black},
-    pathRtwo/.style={->, line width=1.1pt, draw=blue!75!black},
-    projection/.style={dotted, line width=0.6pt, draw=black!50}
+    sensor/.style={
+        circle,
+        draw=black!85,
+        fill=gray!25,
+        line width=1pt,
+        minimum size=0.58cm
+    },
+    source/.style={
+        circle,
+        draw=black!85,
+        fill=orange!75,
+        line width=1.1pt,
+        minimum size=0.58cm
+    },
+    axis/.style={
+        ->,
+        line width=0.75pt,
+        draw=black!60
+    },
+    baseline/.style={
+        <->,
+        draw=black!70,
+        line width=0.7pt
+    },
+    pathRone/.style={
+        ->,
+        line width=1.2pt,
+        draw=UdeAGreen!85!black
+    },
+    pathRtwo/.style={
+        ->,
+        line width=1.2pt,
+        draw=blue!80!black
+    },
+    reference/.style={
+        dashed,
+        line width=0.9pt,
+        draw=black!65
+    },
+    projection/.style={
+        dotted,
+        line width=0.65pt,
+        draw=black!50
+    },
+    wavefront/.style={
+        line width=0.95pt,
+        draw=orange!90!black
+    }
 ]
 
 \node[
     draw=black!70,
-    line width=0.7pt,
+    line width=0.8pt,
     fill=white,
-    rounded corners=3pt,
-    inner sep=6pt,
+    rounded corners=4pt,
+    inner sep=9pt,
     anchor=west
-] at (-6.5, 2.7) {
-    \footnotesize
+] at (-6.1, 3.1) {
+    \small
     \begin{tabular}{@{} l @{}}
-        \textbf{Geometría angular y PDoA:} \\[3pt]
-        Diferencia de camino: \ $\Delta r = r_1 - r_2 = d\sin\theta$ \\[3pt]
-        Diferencia de fase: \ $\Delta\Phi = \dfrac{2\pi f_0}{c(T)}\Delta r$ \\[5pt]
-        \textcolor{UdeAGreen!85!black}{\textbf{Condición de no-aliasing espacial:}} \\[2pt]
-        $d \leq \dfrac{\lambda_0}{2} = \dfrac{c(T)}{2f_0}$
+        \textbf{Geometría angular y PDoA:} \\[5pt]
+
+        Aproximación de campo lejano. \\[5pt]
+
+        Diferencia de camino:
+        \ $\Delta r = r_1-r_2=d\sin\theta$ \\[5pt]
+
+        Diferencia de fase:
+        \ $\Delta\Phi=
+        \dfrac{2\pi f_0}{c(T)}\Delta r$ \\[7pt]
+
+        \textcolor{UdeAGreen!85!black}{
+            \textbf{Condición de no-aliasing espacial:}
+        } \\[3pt]
+
+        $d\leq\dfrac{\lambda_0}{2}
+        =\dfrac{c(T)}{2f_0}$
     \end{tabular}
 };
 
-\coordinate (Orig) at (2.8, 0.0);
+\coordinate (Orig) at (3.8, 0);
 
-\draw[axis] (-0.2, 0.0) -- (6.0, 0.0) node[right=2pt, font=\small] {$x$ (transversal)};
-\draw[axis] (2.8, -0.6) -- (2.8, 5.2) node[above=2pt, font=\small] {$y$ (broadside)};
+\draw[axis]
+    (0.35, 0) -- (7.2, 0)
+    node[right=3pt, font=\small] {$x$ (transversal)};
 
-\coordinate (R1) at (1.4, 0.0);
-\coordinate (R2) at (4.2, 0.0);
+\draw[axis]
+    (3.8, -0.65) -- (3.8, 7.25)
+    node[above=3pt, font=\small] {$y$ (normal al arreglo)};
+
+\coordinate (R1) at (1.7, 0);
+\coordinate (R2) at (5.9, 0);
 
 \node[sensor] (NodeR1) at (R1) {};
-\node[below=4pt, font=\small] at (R1) {$R_1\left(-\frac{d}{2},0\right)$};
+
+\node[
+    below=12pt,
+    font=\small
+] at (R1) {
+    $R_1\left(-\frac{d}{2},0\right)$
+};
 
 \node[sensor] (NodeR2) at (R2) {};
-\node[below=4pt, font=\small] at (R2) {$R_2\left(+\frac{d}{2},0\right)$};
 
-\draw[baseline] (1.4, -1.1) -- node[below=2pt, font=\footnotesize] {$d = \|\vec{r}_2-\vec{r}_1\|$} (4.2, -1.1);
-\draw[projection] (1.4, 0.0) -- (1.4, -1.1);
-\draw[projection] (4.2, 0.0) -- (4.2, -1.1);
+\node[
+    below=12pt,
+    font=\small
+] at (R2) {
+    $R_2\left(+\frac{d}{2},0\right)$
+};
 
-\coordinate (S) at (3.8, 4.3);
+\draw[baseline]
+    (1.7, -1.65) --
+    node[below=3pt, font=\small]
+    {$d=\|\vec{r}_2-\vec{r}_1\|$}
+    (5.9, -1.65);
+
+\draw[projection]
+    (1.7, 0) -- (1.7, -1.65);
+
+\draw[projection]
+    (5.9, 0) -- (5.9, -1.65);
+
+\coordinate (S) at (6.6, 6.35);
+
 \node[source] (NodeS) at (S) {};
-\node[above right=2pt, font=\small\bfseries] at (S) {$S(x,y)$};
 
-\draw[projection] (S) -- (3.8, 0.0) node[below=3pt, font=\small] {$x$};
-\draw[projection] (S) -- (2.8, 4.3) node[left=3pt, font=\small] {$y$};
+\node[
+    above right=4pt,
+    font=\small\bfseries
+] at (NodeS) {Fuente $S(x,y)$};
 
-\draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.4)$) arc (215:280:0.4);
-\draw[line width=0.75pt, orange!85!black] ($(S)+(215:0.75)$) arc (215:280:0.75);
+\draw[wavefront]
+    ($(S)+(205:0.48)$)
+    arc[start angle=205, end angle=265, radius=0.48];
 
-\draw[pathRone] (NodeR1) -- node[pos=0.45, above left=1pt, font=\small] {$r_1$} (NodeS);
-\draw[pathRtwo] (NodeR2) -- node[pos=0.55, right=2pt, font=\small] {$r_2$} (NodeS);
-\draw[->, dashed, line width=0.8pt, draw=black!70] (Orig) -- node[pos=0.65, below right=1pt, font=\small] {$r$} (NodeS);
+\draw[wavefront]
+    ($(S)+(205:0.78)$)
+    arc[start angle=205, end angle=265, radius=0.78];
 
-\draw[line width=0.75pt, draw=black!85] ($(Orig)+(0.0,2.1)$) arc (90:76.8:2.1);
-\node[font=\small\bfseries] at ($(Orig)+(83:2.45)$) {$\theta$};
+\draw[wavefront]
+    ($(S)+(205:1.08)$)
+    arc[start angle=205, end angle=265, radius=1.08];
+
+\draw[pathRone]
+    (NodeS) --
+    node[pos=0.53, above left=2pt, font=\small]
+    {$r_1$}
+    (NodeR1);
+
+\draw[pathRtwo]
+    (NodeS) --
+    node[pos=0.52, right=3pt, font=\small]
+    {$r_2$}
+    (NodeR2);
+
+\draw[reference, ->]
+    (Orig) --
+    node[pos=0.63, below right=2pt, font=\small]
+    {$r$}
+    (S);
+
+\draw[
+    line width=0.85pt,
+    draw=black!85
+]
+    ($(Orig)+(0,1.65)$)
+    arc[start angle=90, end angle=66.2, radius=1.65];
+
+\node[
+    font=\small\bfseries
+] at ($(Orig)+(78:2.0)$) {$\theta$};
+
+\path[use as bounding box]
+    (-6.35, -2.15) rectangle (9.3, 7.75);
 
 \end{tikzpicture}
 ```
@@ -4249,44 +3758,66 @@ fig6_doppler_fdoa.tex: (figures/fig6_doppler_fdoa.tex)
     velarrow/.style={->, line width=1.2pt, draw=orange!90!black}
 ]
 
-\draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
+\draw[axis] (-5.6, 0.0) -- (5.6, 0.0)
+    node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
 
 \coordinate (R1) at (-4.8, 0.0);
 \node[sensor] (NodeR1) at (R1) {};
 \node[below=7pt, align=center] at (R1) {
     \small\bfseries $R_1$\\[2pt]
-    \footnotesize\color{black!65} $x = 0$
+    \footnotesize\color{black!65} $x=0$
 };
 
 \coordinate (R2) at (4.8, 0.0);
 \node[sensor] (NodeR2) at (R2) {};
 \node[below=7pt, align=center] at (R2) {
     \small\bfseries $R_2$\\[2pt]
-    \footnotesize\color{black!65} $x = L$
+    \footnotesize\color{black!65} $x=L$
 };
 
 \coordinate (S) at (0.0, 0.0);
 \node[source] (NodeS) at (S) {};
 \node[below=7pt, font=\small\bfseries] at (S) {$S(t)$};
 
-\draw[line width=0.8pt, red!75!black] ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
-\draw[line width=0.8pt, red!75!black] ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
-\draw[line width=0.8pt, red!75!black] ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
 
-\draw[line width=0.8pt, blue!75!black] ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
-\draw[line width=0.8pt, blue!75!black] ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
-\draw[line width=0.8pt, blue!75!black] ($(-0.6, 0.0)+(-22:1.55)$) arc (-22:22:1.55);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.6,0.0)+(-22:1.55)$) arc (-22:22:1.55);
 
-\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0) node[above=1pt, font=\small\bfseries] {$v(t)$};
-\draw[dotted, line width=0.5pt, draw=orange!80!black] (0.0, 0.25) -- (0.0, 0.85);
+\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0)
+    node[above=1pt, font=\small\bfseries] {$v(t)$};
 
-\draw[dotted, line width=0.5pt, red!75!black] (-2.0, 0.0) -- (-2.0, -0.9);
-\draw[dotted, line width=0.5pt, red!75!black] (-1.1, 0.0) -- (-1.1, -0.9);
-\draw[<->, draw=red!75!black, line width=0.6pt] (-2.0, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_1 > \lambda_0$} (-1.1, -0.9);
+\draw[dotted, line width=0.5pt, draw=orange!80!black]
+    (0.0, 0.25) -- (0.0, 0.85);
 
-\draw[dotted, line width=0.5pt, blue!75!black] (0.55, 0.0) -- (0.55, -0.9);
-\draw[dotted, line width=0.5pt, blue!75!black] (1.05, 0.0) -- (1.05, -0.9);
-\draw[<->, draw=blue!75!black, line width=0.6pt] (0.55, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_2 < \lambda_0$} (1.05, -0.9);
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-2.0, 0.0) -- (-2.0, -0.9);
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-1.1, 0.0) -- (-1.1, -0.9);
+
+\draw[<->, draw=red!75!black, line width=0.6pt]
+    (-2.0, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_1>\lambda_0$}
+    (-1.1, -0.9);
+
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (0.55, 0.0) -- (0.55, -0.9);
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (1.05, 0.0) -- (1.05, -0.9);
+
+\draw[<->, draw=blue!75!black, line width=0.6pt]
+    (0.55, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_2<\lambda_0$}
+    (1.05, -0.9);
 
 \node[
     draw=black!70,
@@ -4298,11 +3829,27 @@ fig6_doppler_fdoa.tex: (figures/fig6_doppler_fdoa.tex)
 ] at (0.0, 2.05) {
     \footnotesize
     \begin{tabular}{@{} l l @{}}
-        \multicolumn{2}{@{} l @{}}{\textbf{Efecto Doppler para fuente móvil ($v \ll c$):}} \\[3pt]
-        Frecuencia en $R_1$ (alejamiento): & $f_1(t) \approx f_0\left(1 - \frac{v(t)}{c(T)}\right)$ \\[2pt]
-        Frecuencia en $R_2$ (acercamiento): & $f_2(t) \approx f_0\left(1 + \frac{v(t)}{c(T)}\right)$ \\[4pt]
-        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Estimador diferencial de velocidad:}} \quad $v(t) = c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$} \\[2pt]
-        \multicolumn{2}{@{} l @{}}{\textit{\scriptsize Cancelación exacta de la frecuencia emitida en el modelo ideal.}}
+        \multicolumn{2}{@{} l @{}}{
+            \textbf{Efecto Doppler para fuente móvil ($v\ll c$):}
+        } \\[3pt]
+
+        Frecuencia en $R_1$ (alejamiento):
+        & $f_1(t)\approx f_0\left(1-\frac{v(t)}{c(T)}\right)$ \\[2pt]
+
+        Frecuencia en $R_2$ (acercamiento):
+        & $f_2(t)\approx f_0\left(1+\frac{v(t)}{c(T)}\right)$ \\[4pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textcolor{UdeAGreen!85!black}{
+                \textbf{Estimador diferencial de velocidad:}
+            }
+            \quad
+            $v(t)=c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$
+        } \\[2pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textit{\scriptsize La frecuencia emitida se cancela algebraicamente en este modelo.}
+        }
     \end{tabular}
 };
 
@@ -4771,6 +4318,8 @@ preamble.tex: (preamble.tex)
 
 ```latex
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 \usepackage[
     spanish,
     es-nodecimaldot,
@@ -4802,6 +4351,7 @@ preamble.tex: (preamble.tex)
 \setlength{\parindent}{0pt}
 
 \let\Bbbk\relax
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -4852,7 +4402,12 @@ preamble.tex: (preamble.tex)
 }
 
 \usepackage{xcolor}
+
 \definecolor{UdeAGreen}{HTML}{006837}
+
+\usepackage[numbers,sort&compress]{natbib}
+
+\bibliographystyle{ieeetr}
 
 \usepackage{xurl}
 \usepackage{hyperref}
@@ -4869,9 +4424,6 @@ preamble.tex: (preamble.tex)
 
 \urlstyle{same}
 
-\usepackage[numbers,sort&compress]{natbib}
-\bibliographystyle{ieeetr}
-
 \usepackage{fancyhdr}
 
 \pagestyle{fancy}
@@ -4880,6 +4432,7 @@ preamble.tex: (preamble.tex)
 \fancyhead[L]{
     \small\textit{WALO: Localización de fuentes de ondas acústicas}
 }
+
 \fancyhead[R]{\small\thepage}
 
 \renewcommand{\headrulewidth}{0.4pt}
@@ -4895,6 +4448,17 @@ preamble.tex: (preamble.tex)
 }
 
 \usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+    {\normalfont\bfseries}
+    {\large\chaptertitlename\ \thechapter}
+    {0.5ex}
+    {\Huge}
+
+\titlespacing*{\chapter}
+    {0pt}
+    {-10pt}
+    {24pt}
 
 \titleformat{\section}
     {\large\bfseries}
@@ -5644,6 +5208,106 @@ def plot_calibration(
 
     return fit_results
 
+def plot_combined_calibration(data):
+    """
+    Figura compuesta 2x2 que conserva la organización de las dos
+    calibraciones originales:
+      fila superior: amplitud RMS (1/r a la izquierda; r a la derecha)
+      fila inferior: energía digital (1/r² a la izquierda; r a la derecha)
+
+    En cada panel aparecen simultáneamente los dos micrófonos.
+    """
+    fig, axes = plt.subplots(2, 2, figsize=(16.0, 11.0))
+    ax_amp_lin, ax_amp_phys = axes[0]
+    ax_energy_lin, ax_energy_phys = axes[1]
+
+    observables = [
+        ("amp_direct_mv", 1, "amplitude", r"Amplitud RMS [mV]",
+         r"$1/r$ [m$^{-1}$]", r"$k/r$", "Calibración radial de amplitud"),
+        ("energy_direct", 2, "energy", r"Energía digital [u.a.]",
+         r"$1/r^2$ [m$^{-2}$]", r"$k/r^2$", "Calibración radial de energía digital"),
+    ]
+    fits = {"amplitude": {}, "energy": {}}
+
+    for row, (column, power, fit_key, ylabel, xlabel_lin, model_label, _) in enumerate(observables):
+        ax_lin = axes[row, 0]
+        ax_phys = axes[row, 1]
+        all_y = []
+        all_xlin = []
+
+        for name, df in data.items():
+            stats = grouped_stats(df, column)
+            if stats.empty:
+                raise ValueError(f"Sin datos válidos para {column}, {name}")
+
+            k, r2 = fit_power_inverse(stats, power)
+            fits[fit_key][name] = (k, r2)
+
+            r_cm = stats["r_tape_cm"].to_numpy(dtype=float)
+            r_m = r_cm / 100.0
+            mean = stats["mean"].to_numpy(dtype=float)
+            std = stats["std"].fillna(0).to_numpy(dtype=float)
+            xlin = 1.0 / (r_m ** power)
+            color = COLORS[name]
+            all_y.extend((mean - std).tolist())
+            all_y.extend((mean + std).tolist())
+            all_xlin.extend(xlin.tolist())
+
+            label_data = f"{name}: datos"
+            label_fit = fr"{name}: $k={k:.3g}$, $R^2={r2:.4f}$"
+
+            ax_lin.errorbar(
+                xlin, mean, yerr=std, fmt="o", ms=5, capsize=3,
+                color=color, ecolor=color, label=label_data, zorder=3
+            )
+            xfit_lin = np.linspace(0, max(xlin) * 1.04, 250)
+            ax_lin.plot(
+                xfit_lin, k * xfit_lin, color=color, lw=2.2,
+                label=label_fit, zorder=2
+            )
+
+            ax_phys.errorbar(
+                r_cm, mean, yerr=std, fmt="o", ms=5, capsize=3,
+                color=color, ecolor=color, label=label_data, zorder=3
+            )
+            rfit_cm = np.linspace(max(1.0, min(r_cm) * 0.92), max(r_cm) * 1.04, 300)
+            rfit_m = rfit_cm / 100.0
+            ax_phys.plot(
+                rfit_cm, k / (rfit_m ** power), color=color, lw=2.2,
+                label=fr"{name}: {model_label}", zorder=2
+            )
+
+        ax_lin.set_xlabel(xlabel_lin)
+        ax_lin.set_ylabel(ylabel)
+        ax_lin.set_title("(a) Dominio linealizado" if row == 0 else "(c) Dominio linealizado")
+        ax_lin.legend(loc="best", framealpha=0.95, fontsize=9)
+        style_axis(ax_lin)
+
+        ax_phys.set_xlabel(r"Distancia de referencia $r$ [cm]")
+        ax_phys.set_ylabel(ylabel)
+        ax_phys.set_title("(b) Dominio físico" if row == 0 else "(d) Dominio físico")
+        ax_phys.legend(loc="best", framealpha=0.95, fontsize=9)
+        style_axis(ax_phys)
+
+        # Escalas comparables entre los micrófonos dentro de cada observable.
+        if all_y:
+            ymin = min(0.0, min(all_y))
+            ymax = max(all_y)
+            pad = max((ymax - ymin) * 0.08, 0.5)
+            ax_lin.set_ylim(ymin - pad, ymax + pad)
+            ax_phys.set_ylim(ymin - pad, ymax + pad)
+
+    # Mantener una misma extensión horizontal para los dos paneles de cada dominio.
+    ax_amp_lin.set_xlim(left=0)
+    ax_energy_lin.set_xlim(left=0)
+    ax_amp_phys.set_xlim(10, 105)
+    ax_energy_phys.set_xlim(10, 105)
+
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.94,
+                        wspace=0.27, hspace=0.30)
+    save_figure(fig, "exp01_fig1_calibration_four_panel")
+    return fits
+
 # ============================================================
 # 6. FIGURA 3: ESTIMACIÓN DE DISTANCIA (MOCK)
 # ============================================================
@@ -5728,7 +5392,7 @@ def plot_mock_distance(amp_fits):
     margin = 0.08 * (high - low)
     ax_top.set_ylim(low - margin, high + margin)
     lim = max(abs(np.min(all_residuals)), abs(np.max(all_residuals)), 1.0) * 1.18
-    ax_res.set_ylim(-lim, lim)
+    ax_res.set_ylim(-1100, 1100)
 
     fig.text(0.5, 0.015,
              "MOCK — datos sintéticos; no son mediciones experimentales",
@@ -6007,20 +5671,8 @@ def plot_toa(data):
         upper_max + margin,
     )
 
-    residual_limit = max(
-        abs(np.min(all_residuals)),
-        abs(np.max(all_residuals)),
-    )
-
-    if residual_limit == 0:
-        residual_limit = 1.0
-
-    residual_limit *= 1.18
-
-    ax_res.set_ylim(
-        -residual_limit,
-        residual_limit,
-    )
+    # Escala común con la figura MOCK de distancia: no se autoajusta por figura.
+    ax_res.set_ylim(-1100, 1100)
 
     # --------------------------------------------------------
     # Exportación
@@ -6046,103 +5698,33 @@ def plot_toa(data):
 # ============================================================
 
 def main():
-
     print("\n" + "=" * 60)
     print("EXPERIMENTO 01 - CARACTERIZACIÓN RADIAL")
     print("=" * 60)
-
-    print("\nLeyendo datos experimentales...")
-
     data = load_data()
 
-    # --------------------------------------------------------
-    # Figura 1
-    # --------------------------------------------------------
+    print("\nGenerando calibración combinada de amplitud y energía...")
+    calibration_fits = plot_combined_calibration(data)
+    amp_fits = calibration_fits["amplitude"]
 
-    print("\nGenerando Figura 1: calibración de amplitud...")
-
-    amp_fits = plot_calibration(
-        data=data,
-        observable="amp_direct_mv",
-        power=1,
-        ylabel=r"Amplitud RMS $A_{\mathrm{RMS}}$ [mV]",
-        title="Calibración radial de amplitud",
-        stem="exp01_fig1_amplitude_calibration",
-        unit_label=r"m$^{-1}$",
-    )
-
-    # --------------------------------------------------------
-    # Figura 3: predicción mock basada solo en amplitud RMS
-    # --------------------------------------------------------
-
-    print("\nGenerando Figura 3: estimación de distancia (MOCK, RMS)...")
+    print("\nGenerando Figura 3: estimación de distancia (MOCK)...")
     plot_mock_distance(amp_fits)
 
-    # --------------------------------------------------------
-    # Figura 4
-    # --------------------------------------------------------
-
     print("\nGenerando Figura 4: estimación mediante ToA...")
-
     toa_metrics = plot_toa(data)
 
-    # --------------------------------------------------------
-    # Resultados de calibración
-    # --------------------------------------------------------
+    print("\nCOEFICIENTES DE CALIBRACIÓN")
+    for observable, results in calibration_fits.items():
+        print(f"\n{observable.upper()}")
+        for name, (k, r2) in results.items():
+            print(f"  {name}: k={k:.6g}, R²={r2:.5f}")
 
-    print("\n" + "=" * 60)
-    print("COEFICIENTES DE CALIBRACIÓN")
-    print("=" * 60)
-
-    for name in CSV_FILES:
-
-        ka, r2a = amp_fits[name]
-
-        print(f"\n{name}")
-
-        print(
-            f"  Amplitud: kA = {ka:.6g} mV·m, "
-            f"R² = {r2a:.5f}"
-        )
-
-    # --------------------------------------------------------
-    # Métricas ToA
-    # --------------------------------------------------------
-
-    print("\n" + "=" * 60)
-    print("EVALUACIÓN DE DISTANCIA MEDIANTE ToA")
-    print("=" * 60)
-
+    print("\nMÉTRICAS ToA")
     for name, result in toa_metrics.items():
-
-        print(f"\n{name}")
-        print("-" * 40)
-
-        print(
-            f"Número de mediciones : {result['n']}"
-        )
-
-        print(
-            f"Sesgo medio          : "
-            f"{result['bias']:+.3f} cm"
-        )
-
-        print(
-            f"MAE                  : "
-            f"{result['mae']:.3f} cm"
-        )
-
-        print(
-            f"RMSE                 : "
-            f"{result['rmse']:.3f} cm"
-        )
-
-    print("\n" + "=" * 60)
-
-    print("\nProceso terminado.")
-    print("Revisa las figuras en figures/.")
-
-    print("\nADVERTENCIA: la Figura 3 es sintética y no constituye evidencia experimental.")
+        print(f"\n{name}: N={result['n']}, sesgo={result['bias']:+.3f} cm, "
+              f"MAE={result['mae']:.3f} cm, RMSE={result['rmse']:.3f} cm")
+    print("\nProceso terminado. Revisa las figuras en figures/.")
+    print("La figura de predicción de distancia es sintética (MOCK).")
 
 # ============================================================
 # 9. EJECUCIÓN
@@ -6383,10 +5965,10 @@ def calculate_metrics(df):
 # FIGURA 1 — BENCHMARK ANGULAR
 # ============================================================
 
-def generate_figure_1(summary, metrics, radius_cm):
+def generate_figure_1(summary, metrics):
     print("\nGenerando Figura 1: benchmark angular...")
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
+    fig, ax = plt.subplots(figsize=(13.5, 7.4))
     targets = summary["target_deg"].to_numpy()
 
     x = np.linspace(-70, 70, 300)
@@ -6427,11 +6009,7 @@ def generate_figure_1(summary, metrics, radius_cm):
         zorder=3
     )
 
-    ax.set_title(
-        "Benchmark angular: PDoA y TDoA\n"
-        f"(r ≈ {radius_cm:.1f} cm, separación d = {BASELINE_CM:.1f} cm)",
-        pad=12
-    )
+    ax.set_title("Benchmark angular: comparación entre PDoA y TDoA", pad=14)
     ax.set_xlabel(
         r"Ángulo de referencia $\theta_{\mathrm{ref}}$ [°]"
     )
@@ -6440,8 +6018,9 @@ def generate_figure_1(summary, metrics, radius_cm):
     ax.set_ylim(-100, 100)
     ax.set_xticks(np.arange(-60, 61, 20))
     ax.set_yticks(np.arange(-100, 101, 25))
-    ax.legend(loc="upper left", framealpha=0.95)
-    fig.tight_layout()
+    ax.legend(loc="upper left", framealpha=0.95, ncol=2)
+    ax.set_aspect("auto")
+    fig.subplots_adjust(left=.11, right=.98, bottom=.13, top=.91)
 
     save_figure(fig, "exp02_fig1_angle_benchmark")
     return fig
@@ -6479,7 +6058,7 @@ def generate_figure_3(df):
     phase_stats = stats[stats["method"] == "phase"]
     tdoa_stats = stats[stats["method"] == "tdoa"]
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
+    fig, ax = plt.subplots(figsize=(13.5, 7.4))
     rng = np.random.default_rng(42)
     jitter = 1.5
 
@@ -6529,7 +6108,7 @@ def generate_figure_3(df):
     ax.minorticks_on()
     ax.grid(True, which="major", linestyle="-", alpha=0.25)
     ax.grid(True, which="minor", linestyle=":", alpha=0.15)
-    ax.legend(loc="best", framealpha=0.96)
+    ax.legend(loc="best", framealpha=0.96, ncol=2)
 
     all_residuals = np.concatenate([
         work["residual_phase_deg"].dropna().to_numpy(),
@@ -6540,7 +6119,7 @@ def generate_figure_3(df):
     ax.set_ylim(-limit * 1.15, limit * 1.15)
 
     style_axis(ax)
-    fig.tight_layout()
+    fig.subplots_adjust(left=.11, right=.98, bottom=.13, top=.91)
     save_figure(fig, "exp02_fig3_angular_residuals")
 
     return work
@@ -6593,15 +6172,7 @@ def main():
     summary = summarize_by_target(df)
     metrics = calculate_metrics(df)
 
-    valid_distances = df["distance_cm"].dropna()
-    if valid_distances.empty:
-        raise ValueError(
-            "La columna distance_cm no contiene datos válidos; "
-            "no se puede generar la reconstrucción 2D a escala."
-        )
-    radius_cm = float(valid_distances.median())
-
-    generate_figure_1(summary, metrics, radius_cm)
+    generate_figure_1(summary, metrics)
     residual_data = generate_figure_3(df)
 
     print_results(summary, metrics, residual_data)
@@ -6857,7 +6428,7 @@ def plot_velocity(trials, output_dir):
     vw = np.array([tr["v_walo"] for tr in trials])
     vt = np.array([tr["v_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.0, 6.8), sharey=True)
 
     panels = [
         (axes[0], vw, "WALO — Doppler diferencial", "WALO"),
@@ -6872,21 +6443,21 @@ def plot_velocity(trials, output_dir):
             ax.plot(t, row, color=COLORS["mic1"] if label == "WALO" else COLORS["mic2"],
                     alpha=0.17, lw=0.8)
 
-        color = "#0072B2" if label == "WALO" else "#D55E00"
+        color = COLORS["mic1"] if label == "WALO" else COLORS["mic2"]
         ax.fill_between(t, mean - std, mean + std, color=color,
                         alpha=0.18, label=r"Dispersión entre ensayos ($\pm1\sigma$)")
         ax.plot(t, mean, color=color, lw=2.0, label=r"Media $\bar{v}(t)$")
         ax.axhline(0, color="0.25", ls="--", lw=1.0)
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
-        ax.legend(loc="upper right")
+        ax.legend(loc="upper right", framealpha=.95)
 
     axes[0].set_ylabel("Velocidad [cm/s]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
              ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    fig.subplots_adjust(left=.09, right=.98, bottom=.13, top=.91, wspace=.22)
     save_figure(fig, output_dir / "mock_exp03_fig2_velocity_comparison")
 
 def plot_position(trials, output_dir):
@@ -6894,7 +6465,7 @@ def plot_position(trials, output_dir):
     xw = np.array([tr["x_walo"] for tr in trials])
     xt = np.array([tr["x_tracker_on_walo"] for tr in trials])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12.0, 6.5), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.0, 6.8), sharey=True)
 
     panels = [
         (axes[0], xw, "WALO — Posición integrada", COLORS["mic1"]),
@@ -6920,14 +6491,14 @@ def plot_position(trials, output_dir):
         ax.set_title(title)
         ax.set_xlabel("Tiempo [s]")
         ax.set_ylim(-5, 205)
-        ax.legend(loc="best", framealpha=0.96)
+        ax.legend(loc="best", framealpha=0.96, fontsize=9)
 
     axes[0].set_ylabel("Posición [cm]")
     fig.text(0.5, 0.005, "MOCK — datos sintéticos; no son mediciones experimentales",
              ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
     for ax in axes:
         style_axis(ax)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    fig.subplots_adjust(left=.09, right=.98, bottom=.13, top=.91, wspace=.22)
     save_figure(fig, output_dir / "mock_exp03_fig3_position_comparison")
 
 def export_csv(trials, output_path):
@@ -7061,9 +6632,9 @@ COLORS = {
 }
 
 # Tamaños en pulgadas: más altura para evitar paneles excesivamente achatados.
-FIGSIZE_WIDE = (11.2, 6.2)
-FIGSIZE_TALL = (10.8, 7.6)
-FIGSIZE_SINGLE = (10.8, 6.4)
+FIGSIZE_WIDE = (13.0, 7.2)
+FIGSIZE_TALL = (11.5, 8.0)
+FIGSIZE_SINGLE = (12.0, 7.0)
 DPI = 300
 
 def apply_style():
@@ -7075,7 +6646,7 @@ def apply_style():
         "font.size": 12,
         "axes.titlesize": 14,
         "axes.labelsize": 13,
-        "legend.fontsize": 10.5,
+        "legend.fontsize": 10,
         "xtick.labelsize": 11,
         "ytick.labelsize": 11,
         "axes.edgecolor": "#444444",
