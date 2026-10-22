@@ -1,3 +1,4 @@
+
 \begin{tikzpicture}[
     >=Stealth,
     sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
@@ -7,54 +8,76 @@
 ]
 
 % Eje unidimensional de movimiento
-\draw[axis] (-5.6, 0.0) -- (5.6, 0.0) node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
+\draw[axis] (-5.6, 0.0) -- (5.6, 0.0)
+    node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
 
-% Sensor R1 (Separación holgada del texto bajo el círculo)
+% Sensor R1
 \coordinate (R1) at (-4.8, 0.0);
 \node[sensor] (NodeR1) at (R1) {};
 \node[below=7pt, align=center] at (R1) {
     \small\bfseries $R_1$\\[2pt]
-    \footnotesize\color{black!65} $x = 0$
+    \footnotesize\color{black!65} $x=0$
 };
 
-% Sensor R2 (Separación holgada del texto bajo el círculo)
+% Sensor R2
 \coordinate (R2) at (4.8, 0.0);
 \node[sensor] (NodeR2) at (R2) {};
 \node[below=7pt, align=center] at (R2) {
     \small\bfseries $R_2$\\[2pt]
-    \footnotesize\color{black!65} $x = L$
+    \footnotesize\color{black!65} $x=L$
 };
 
-% Fuente acústica móvil S(t) centrada en el origen
+% Fuente acústica móvil S(t)
 \coordinate (S) at (0.0, 0.0);
 \node[source] (NodeS) at (S) {};
 \node[below=7pt, font=\small\bfseries] at (S) {$S(t)$};
 
 % ---------------- FRENTES DE ONDA DOPPLER ----------------
-% Hacia R1: longitudes de onda dilatadas (rojo)
-\draw[line width=0.8pt, red!75!black] ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
-\draw[line width=0.8pt, red!75!black] ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
-\draw[line width=0.8pt, red!75!black] ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
+% Hacia R1: longitudes de onda dilatadas
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
 
-% Hacia R2: longitudes de onda comprimidas con apertura controlada (azul)
-\draw[line width=0.8pt, blue!75!black] ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
-\draw[line width=0.8pt, blue!75!black] ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
-\draw[line width=0.8pt, blue!75!black] ($(-0.6, 0.0)+(-22:1.55)$) arc (-22:22:1.55);
+% Hacia R2: longitudes de onda comprimidas
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.6,0.0)+(-22:1.55)$) arc (-22:22:1.55);
 
-% ---------------- VECTOR VELOCIDAD TOTALMENTE DESPEJADO ----------------
-\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0) node[above=1pt, font=\small\bfseries] {$v(t)$};
-\draw[dotted, line width=0.5pt, draw=orange!80!black] (0.0, 0.25) -- (0.0, 0.85);
+% ---------------- VECTOR VELOCIDAD ----------------
+\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0)
+    node[above=1pt, font=\small\bfseries] {$v(t)$};
 
-% Cotas inferiores de longitud de onda
-\draw[dotted, line width=0.5pt, red!75!black] (-2.0, 0.0) -- (-2.0, -0.9);
-\draw[dotted, line width=0.5pt, red!75!black] (-1.1, 0.0) -- (-1.1, -0.9);
-\draw[<->, draw=red!75!black, line width=0.6pt] (-2.0, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_1 > \lambda_0$} (-1.1, -0.9);
+\draw[dotted, line width=0.5pt, draw=orange!80!black]
+    (0.0, 0.25) -- (0.0, 0.85);
 
-\draw[dotted, line width=0.5pt, blue!75!black] (0.55, 0.0) -- (0.55, -0.9);
-\draw[dotted, line width=0.5pt, blue!75!black] (1.05, 0.0) -- (1.05, -0.9);
-\draw[<->, draw=blue!75!black, line width=0.6pt] (0.55, -0.9) -- node[below=2pt, font=\footnotesize] {$\lambda_2 < \lambda_0$} (1.05, -0.9);
+% ---------------- COTAS DE LONGITUD DE ONDA ----------------
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-2.0, 0.0) -- (-2.0, -0.9);
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-1.1, 0.0) -- (-1.1, -0.9);
 
-% ---------------- RECUADRO DOPPLER ELEVADO ----------------
+\draw[<->, draw=red!75!black, line width=0.6pt]
+    (-2.0, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_1>\lambda_0$}
+    (-1.1, -0.9);
+
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (0.55, 0.0) -- (0.55, -0.9);
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (1.05, 0.0) -- (1.05, -0.9);
+
+\draw[<->, draw=blue!75!black, line width=0.6pt]
+    (0.55, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_2<\lambda_0$}
+    (1.05, -0.9);
+
+% ---------------- RECUADRO DOPPLER ----------------
 \node[
     draw=black!70,
     line width=0.7pt,
@@ -65,11 +88,27 @@
 ] at (0.0, 2.05) {
     \footnotesize
     \begin{tabular}{@{} l l @{}}
-        \multicolumn{2}{@{} l @{}}{\textbf{Efecto Doppler para fuente móvil ($v \ll c$):}} \\[3pt]
-        Frecuencia en $R_1$ (alejamiento): & $f_1(t) \approx f_0\left(1 - \frac{v(t)}{c(T)}\right)$ \\[2pt]
-        Frecuencia en $R_2$ (acercamiento): & $f_2(t) \approx f_0\left(1 + \frac{v(t)}{c(T)}\right)$ \\[4pt]
-        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Estimador diferencial de velocidad:}} \quad $v(t) = c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$} \\[2pt]
-        \multicolumn{2}{@{} l @{}}{\textit{\scriptsize Cancelación exacta de la frecuencia emitida en el modelo ideal.}}
+        \multicolumn{2}{@{} l @{}}{
+            \textbf{Efecto Doppler para fuente móvil ($v\ll c$):}
+        } \\[3pt]
+
+        Frecuencia en $R_1$ (alejamiento):
+        & $f_1(t)\approx f_0\left(1-\frac{v(t)}{c(T)}\right)$ \\[2pt]
+
+        Frecuencia en $R_2$ (acercamiento):
+        & $f_2(t)\approx f_0\left(1+\frac{v(t)}{c(T)}\right)$ \\[4pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textcolor{UdeAGreen!85!black}{
+                \textbf{Estimador diferencial de velocidad:}
+            }
+            \quad
+            $v(t)=c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$
+        } \\[2pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textit{\scriptsize La frecuencia emitida se cancela algebraicamente en este modelo.}
+        }
     \end{tabular}
 };
 
