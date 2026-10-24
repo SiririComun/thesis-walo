@@ -1,0 +1,6 @@
+figure,file,description
+1,figures/exp03_fig1_doppler_frequencies_REAL.png,Frecuencias: MIC1/MIC2 y componente común en paneles separados
+2,figures/exp03_fig2_velocity_comparison_REAL.png,Velocidad diferencial WALO (MIC1+MIC2) frente a Tracker
+3,figures/exp03_fig3_velocity_mic1_vs_tracker_REAL.png,Velocidad MIC1 con referencia propia por ensayo frente a Tracker
+4,figures/exp03_fig4_velocity_mic2_vs_tracker_REAL.png,Velocidad MIC2 con referencia propia por ensayo frente a Tracker
+5,figures/exp03_fig5_position_comparison_REAL.png,Desplazamiento reconstruido WALO frente a Tracker
