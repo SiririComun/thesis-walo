@@ -50,3 +50,6 @@ figures/*
 # Configuración local de editores
 # ==================================================
 .vscode/
+
+data/exp03.mp4
+data/exp03_raw_dual_channel.npz
