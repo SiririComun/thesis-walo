@@ -1,0 +1,33 @@
+comparison,estimator,metric,value
+differential,WALO diferencial (MIC1 + MIC2),n,8099.0
+differential,WALO diferencial (MIC1 + MIC2),r,0.7752177196645796
+differential,WALO diferencial (MIC1 + MIC2),mae_m_s,0.43746776928081244
+differential,WALO diferencial (MIC1 + MIC2),rmse_m_s,0.6037402221887378
+differential,WALO diferencial (MIC1 + MIC2),bias_m_s,-0.037877674554153556
+differential,WALO diferencial (MIC1 + MIC2),rms_walo_m_s,0.7047992285722875
+differential,WALO diferencial (MIC1 + MIC2),rms_tracker_m_s,0.9561379098175892
+differential,WALO diferencial (MIC1 + MIC2),rms_ratio,0.7371313503370536
+mic1,WALO MIC1 (referencia propia),n,7996.0
+mic1,WALO MIC1 (referencia propia),r,0.48015527215167736
+mic1,WALO MIC1 (referencia propia),mae_m_s,0.6667917159749428
+mic1,WALO MIC1 (referencia propia),rmse_m_s,0.9260954773297861
+mic1,WALO MIC1 (referencia propia),bias_m_s,0.03825518636415073
+mic1,WALO MIC1 (referencia propia),rms_walo_m_s,0.8564303641181918
+mic1,WALO MIC1 (referencia propia),rms_tracker_m_s,0.9611808022161077
+mic1,WALO MIC1 (referencia propia),rms_ratio,0.8910190071874071
+mic2,WALO MIC2 (referencia propia),n,8000.0
+mic2,WALO MIC2 (referencia propia),r,0.7108177902921722
+mic2,WALO MIC2 (referencia propia),mae_m_s,0.5728142339555968
+mic2,WALO MIC2 (referencia propia),rmse_m_s,0.7567380405081513
+mic2,WALO MIC2 (referencia propia),bias_m_s,-0.23329583698563083
+mic2,WALO MIC2 (referencia propia),rms_walo_m_s,0.9532082293736897
+mic2,WALO MIC2 (referencia propia),rms_tracker_m_s,0.9556243766691754
+mic2,WALO MIC2 (referencia propia),rms_ratio,0.9974716558571818
+position,WALO vs Tracker,n,9316.0
+position,WALO vs Tracker,r,0.8887775585607316
+position,WALO vs Tracker,mae_m,0.2140068957046683
+position,WALO vs Tracker,rmse_m,0.27344605908357084
+position,WALO vs Tracker,bias_m,-0.10605960977586193
+position,WALO vs Tracker,mean_peak_walo_m,1.2239505172901999
+position,WALO vs Tracker,mean_peak_tracker_m,1.6723060606059998
+position,WALO vs Tracker,mean_peak_ratio,0.7318938477366232
