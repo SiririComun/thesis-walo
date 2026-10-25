@@ -8,15 +8,16 @@ Generación de figuras del Experimento 01: caracterización radial.
 Entradas:
     data/distance_characterization_raw_mic1.csv
     data/distance_characterization_raw_mic2.csv
+    data/exp01_rssi_distance_prediction.csv
 
 Salidas:
-    figures/exp01_fig1_amplitude_calibration.png
-    figures/exp01_fig3_distance_prediction_MOCK.png
-    figures/exp01_fig4_toa_range.png
+    figures/exp01_fig1_calibration_four_panel.png
+    figures/exp01_fig2_method_distance_comparison.png
+    figures/exp01_fig3_method_residual_comparison.png
+    data/exp01_rssi_validation_metrics.csv
 
-IMPORTANTE:
-    La Figura 3 utiliza datos sintéticos de demostración.
-    No representa resultados experimentales.
+La validación RSSI utiliza coeficientes k fijados previamente.
+No reajusta k con los datos de validación.
 
 Uso:
     python scripts/generate_exp01_figures.py
@@ -43,6 +44,14 @@ FIGURES_DIR = ROOT / "figures"
 CSV_FILES = {
     "Micrófono 1": DATA_DIR / "distance_characterization_raw_mic1.csv",
     "Micrófono 2": DATA_DIR / "distance_characterization_raw_mic2.csv",
+}
+
+# Coeficientes obtenidos durante la calibración original.
+# Se mantienen congelados: NO se estiman a partir del CSV de validación.
+RSSI_VALIDATION_FILE = DATA_DIR / "exp01_rssi_distance_prediction.csv"
+FIXED_AMPLITUDE_K = {
+    "Micrófono 1": 20.6934438197599,
+    "Micrófono 2": 18.8589498970794,
 }
 
 REQUIRED_COLUMNS = {
@@ -468,395 +477,186 @@ def plot_combined_calibration(data):
     return fits
 
 # ============================================================
-# 6. FIGURA 3: ESTIMACIÓN DE DISTANCIA (MOCK)
+# 6. VALIDACIÓN INDEPENDIENTE RSSI (DATOS REALES)
 # ============================================================
 
-def plot_mock_distance(amp_fits):
-    """Predicción sintética RMS con la misma composición que la figura ToA.
+def load_rssi_validation():
+    """Carga datos nuevos y aplica los coeficientes k congelados."""
+    if not RSSI_VALIDATION_FILE.exists():
+        raise FileNotFoundError(f"No se encontró {RSSI_VALIDATION_FILE}")
+    df = pd.read_csv(RSSI_VALIDATION_FILE)
+    required = {"microphone", "repeat", "r_ref_cm", "k_amplitude", "amp_mv"}
+    missing = required.difference(df.columns)
+    if missing:
+        raise ValueError(f"Faltan columnas en CSV RSSI: {sorted(missing)}")
+    for col in ["repeat", "r_ref_cm", "k_amplitude", "amp_mv"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df = df.dropna(subset=list(required)).copy()
+    df = df[(df.r_ref_cm > 0) & (df.amp_mv > 0)].copy()
 
-    Panel superior: media estimada por distancia de referencia ± 1σ.
-    Panel inferior: residuos individuales y media ± 1σ por posición.
+    unknown = set(df.microphone.unique()) - set(FIXED_AMPLITUDE_K)
+    if unknown:
+        raise ValueError(f"Micrófonos desconocidos: {sorted(unknown)}")
 
-    Se generan repeticiones sintéticas únicamente para visualizar la
-    estructura gráfica; no son observaciones ni estimaciones medidas.
-    """
-    rng = np.random.default_rng(20261020)
-    r_ref_cm = np.array([15, 20, 25, 30, 40, 50, 60, 80, 100], dtype=float)
-    n_repeats = 10
+    for mic, group in df.groupby("microphone"):
+        if not np.allclose(group.k_amplitude, FIXED_AMPLITUDE_K[mic],
+                           rtol=0, atol=1e-8):
+            raise ValueError(f"k de {mic} no coincide con el k congelado.")
 
-    fig, (ax_top, ax_res) = plt.subplots(
-        2, 1, figsize=FIGSIZE_TALL, sharex=True,
-        gridspec_kw={"height_ratios": [1.35, 1.0], "hspace": 0.10},
+    # k [mV*m] / amplitud [mV] = distancia [m]; convertir a cm.
+    df["r_est_cm_recomputed"] = df.apply(
+        lambda row: 100 * FIXED_AMPLITUDE_K[row.microphone] / row.amp_mv,
+        axis=1,
     )
+    if "r_est_cm" in df:
+        recorded = pd.to_numeric(df.r_est_cm, errors="coerce")
+        valid = recorded.notna()
+        if valid.any() and not np.allclose(
+            recorded[valid], df.loc[valid, "r_est_cm_recomputed"],
+            rtol=1e-7, atol=1e-7
+        ):
+            raise ValueError("r_est_cm no coincide con k fijo / amp_mv.")
 
-    offsets = {"Micrófono 1": -0.65, "Micrófono 2": 0.65}
-    all_estimates, all_residuals = [], []
-
-    for name in CSV_FILES:
-        color = COLORS[name]
-        k_a = amp_fits[name][0]
-        offset = offsets[name]
-        r_ref_m = r_ref_cm / 100.0
-
-        # Variación relativa sintética alrededor de la amplitud ideal.
-        relative_noise = rng.normal(0.0, 0.035, size=(n_repeats, r_ref_cm.size))
-        amp_synthetic = (k_a / r_ref_m)[None, :] * (1.0 + relative_noise)
-        estimates = (k_a / amp_synthetic) * 100.0
-        residuals_mm = (estimates - r_ref_cm[None, :]) * 10.0
-
-        mean_est = np.mean(estimates, axis=0)
-        std_est = np.std(estimates, axis=0, ddof=1)
-        mean_res = np.mean(residuals_mm, axis=0)
-        std_res = np.std(residuals_mm, axis=0, ddof=1)
-
-        ax_top.errorbar(
-            r_ref_cm, mean_est, yerr=std_est, fmt="o-", color=color,
-            ecolor=color, markersize=6, capsize=4, elinewidth=1.5,
-            linewidth=2.0, markeredgecolor="white", markeredgewidth=0.7,
-            label=name, zorder=4,
-        )
-
-        xj = r_ref_cm + offset
-        for row in residuals_mm:
-            ax_res.scatter(xj, row, s=20, color=color, alpha=0.22,
-                           edgecolors="none", zorder=2)
-        ax_res.errorbar(
-            xj, mean_res, yerr=std_res, fmt="o", color=color,
-            ecolor=color, markersize=5.5, capsize=4, elinewidth=1.5,
-            markeredgecolor="white", markeredgewidth=0.6,
-            label=f"{name}: media ± 1σ", zorder=4,
-        )
-        all_estimates.extend(estimates.ravel().tolist())
-        all_residuals.extend(residuals_mm.ravel().tolist())
-
-    ideal = np.linspace(r_ref_cm.min(), r_ref_cm.max(), 250)
-    ax_top.plot(ideal, ideal, "--", color=COLORS["reference"],
-                linewidth=1.6, label="Referencia ideal", zorder=1)
-    ax_top.set_ylabel(r"Distancia estimada $\hat r$ [cm]")
-    ax_top.set_title("(a) Estimación de distancia", pad=10)
-    ax_top.legend(loc="upper left", ncol=2)
-    style_axis(ax_top)
-
-    ax_res.axhline(0, color=COLORS["reference"], linestyle="--",
-                   linewidth=1.5, label="Residuo nulo", zorder=1)
-    ax_res.set_xlabel(r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]")
-    ax_res.set_ylabel(r"Residuo $e_i$ [mm]")
-    ax_res.set_title("(b) Residuos de estimación", pad=10)
-    ax_res.legend(loc="upper left", ncol=2)
-    style_axis(ax_res)
-
-    ax_top.set_xlim(r_ref_cm.min() - 4, r_ref_cm.max() + 4)
-    low = min(r_ref_cm.min(), np.min(all_estimates))
-    high = max(r_ref_cm.max(), np.max(all_estimates))
-    margin = 0.08 * (high - low)
-    ax_top.set_ylim(low - margin, high + margin)
-    lim = max(abs(np.min(all_residuals)), abs(np.max(all_residuals)), 1.0) * 1.18
-    ax_res.set_ylim(-1100, 1100)
-
-    fig.text(0.5, 0.015,
-             "MOCK — datos sintéticos; no son mediciones experimentales",
-             ha="center", va="bottom", fontsize=10, color=COLORS["mock"])
-    fig.subplots_adjust(left=0.14, right=0.97, top=0.96, bottom=0.10, hspace=0.28)
-    save_figure(fig, "exp01_fig3_distance_prediction_MOCK")
+    df["error_cm"] = df.r_est_cm_recomputed - df.r_ref_cm
+    df["abs_error_cm"] = df.error_cm.abs()
+    df["abs_percentage_error"] = 100 * df.abs_error_cm / df.r_ref_cm
+    return df.sort_values(["microphone", "r_ref_cm", "repeat"]).reset_index(drop=True)
 
 
-# ============================================================
-# 7. FIGURA 4: ESTIMACIÓN DE DISTANCIA MEDIANTE ToA
-# ============================================================
-
-def plot_toa(data):
-    """
-    Evaluación experimental de la estimación de distancia mediante ToA.
-
-    Panel superior:
-        Media de la distancia estimada por posición ± desviación estándar.
-
-    Panel inferior:
-        Mediciones individuales de los residuos y media ± desviación
-        estándar por posición.
-
-    Residuo:
-        e_i = r_ToA,i - r_ref,i
-
-    Las métricas se calculan sobre las mediciones individuales,
-    no sobre las medias agrupadas.
-    """
-
-    fig, (ax_top, ax_res) = plt.subplots(
-        2,
-        1,
-        figsize=FIGSIZE_TALL,
-        sharex=True,
-        gridspec_kw={
-            "height_ratios": [1.35, 1.0],
-            "hspace": 0.08,
-        },
-    )
-
-    metrics = {}
-
-    all_reference = []
-    all_estimated = []
-    all_residuals = []
-
-    offsets = {
-        "Micrófono 1": -0.7,
-        "Micrófono 2": +0.7,
+def rssi_metrics(group):
+    e = group.error_cm.to_numpy(dtype=float)
+    return {
+        "n": len(e),
+        "bias_cm": np.mean(e),
+        "mae_cm": np.mean(np.abs(e)),
+        "rmse_cm": np.sqrt(np.mean(e**2)),
+        "mape_pct": group.abs_percentage_error.mean(),
+        "max_abs_error_cm": np.max(np.abs(e)),
     }
 
-    # --------------------------------------------------------
-    # Procesamiento y representación de cada micrófono
-    # --------------------------------------------------------
 
-    for name, df in data.items():
+def summarize_rssi_validation(df):
+    rows = []
+    for mic in list(FIXED_AMPLITUDE_K) + ["Global"]:
+        g = df if mic == "Global" else df[df.microphone == mic]
+        if not g.empty:
+            rows.append({"microphone": mic, **rssi_metrics(g)})
+    return pd.DataFrame(rows)
 
-        color = COLORS[name]
-        offset = offsets[name]
 
-        valid = df[
-            ["r_tape_cm", "r_toa_cm"]
-        ].dropna()
+def _group_mean_std(df, x_col, y_col):
+    """Media, desviación estándar y N por distancia de referencia."""
+    return (df.groupby(x_col)[y_col].agg(["mean", "std", "count"])
+            .reset_index().sort_values(x_col))
 
-        valid = valid[
-            (valid["r_tape_cm"] > 0)
-            & (valid["r_toa_cm"] > 0)
-        ].copy()
 
-        if valid.empty:
-            raise ValueError(
-                f"No hay mediciones ToA válidas para {name}."
-            )
-
-        valid["residual_cm"] = (
-            valid["r_toa_cm"]
-            - valid["r_tape_cm"]
-        )
-
-        valid["residual_mm"] = (
-            10.0 * valid["residual_cm"]
-        )
-
-        metrics[name] = calculate_metrics(valid)
-
-        stats = (
-            valid.groupby("r_tape_cm")["r_toa_cm"]
-            .agg(["mean", "std", "count"])
-            .reset_index()
-            .sort_values("r_tape_cm")
-        )
-
+def _plot_method_prediction(ax, datasets, x_col, y_col, panel_title,
+                            x_label, y_label):
+    """Panel de predicción: medias ± DE para ambos micrófonos."""
+    for mic, frame in datasets.items():
+        stats = _group_mean_std(frame, x_col, y_col)
         stats["std"] = stats["std"].fillna(0.0)
-
-        x = stats["r_tape_cm"].to_numpy()
-        y = stats["mean"].to_numpy()
-        yerr = stats["std"].to_numpy()
-
-        # Panel superior: media por posición ± DE.
-        ax_top.errorbar(
-            x,
-            y,
-            yerr=yerr,
-            fmt="o-",
-            color=color,
-            ecolor=color,
-            markersize=5.5,
-            markeredgecolor="white",
-            markeredgewidth=0.6,
-            capsize=3.5,
-            elinewidth=1.25,
-            linewidth=1.7,
-            label=name,
-            zorder=4,
+        n_total = int(stats["count"].sum())
+        n_per_distance = int(stats["count"].min()) if len(stats) else 0
+        ax.errorbar(
+            stats[x_col], stats["mean"], yerr=stats["std"], fmt="o-",
+            color=COLORS[mic], ecolor=COLORS[mic], markersize=5.2,
+            markeredgecolor="white", markeredgewidth=0.6, capsize=3.2,
+            elinewidth=1.2, linewidth=1.7,
+            label=f"{mic} (n={n_total}; {n_per_distance}/dist.)", zorder=4,
         )
+    ideal = np.linspace(10, 105, 300)
+    ax.plot(ideal, ideal, "--", color=COLORS["reference"],
+            linewidth=1.5, label="Referencia ideal", zorder=1)
+    ax.set(xlim=(10, 105), ylim=(10, 110), xlabel=x_label,
+           ylabel=y_label, title=panel_title)
+    ax.legend(loc="upper left", framealpha=0.95, fontsize=8.5)
+    style_axis(ax)
 
-        # Panel inferior: mediciones individuales.
-        x_individual = (
-            valid["r_tape_cm"].to_numpy()
-            + offset
-        )
 
-        residuals = valid["residual_mm"].to_numpy()
+def _plot_residual_panel(ax, datasets, x_col, error_col, panel_title,
+                         ylabel, offsets, show_xlabel=False, show_legend=True):
+    """Residuos: mediciones individuales y media ± DE."""
+    for mic, frame in datasets.items():
+        offset = offsets[mic]
+        ax.scatter(frame[x_col].to_numpy(dtype=float) + offset,
+                   frame[error_col].to_numpy(dtype=float), s=17, alpha=0.28,
+                   color=COLORS[mic], edgecolors="none",
+                   label=f"{mic}: mediciones", zorder=2)
+        stats = _group_mean_std(frame, x_col, error_col)
+        stats["std"] = stats["std"].fillna(0.0)
+        ax.errorbar(stats[x_col] + offset, stats["mean"], yerr=stats["std"],
+                    fmt="o", color=COLORS[mic], ecolor=COLORS[mic],
+                    markersize=5.0, markeredgecolor="white", markeredgewidth=0.6,
+                    capsize=3.0, elinewidth=1.2,
+                    label=f"{mic}: media ± DE", zorder=4)
+    ax.axhline(0, color=COLORS["reference"], linestyle="--",
+               linewidth=1.5, label="Error nulo", zorder=1)
+    ax.set_title(panel_title)
+    ax.set_ylabel(ylabel)
+    if show_xlabel:
+        ax.set_xlabel(r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]")
+    else:
+        ax.set_xlabel("")
+    ax.set_xlim(10, 105)
+    if show_legend:
+        ax.legend(loc="best", framealpha=0.95, fontsize=8.0, ncol=2)
+    style_axis(ax)
 
-        ax_res.scatter(
-            x_individual,
-            residuals,
-            s=13,
-            color=color,
-            alpha=0.23,
-            edgecolors="none",
-            label=f"{name}: mediciones",
-            zorder=2,
-        )
 
-        # Estadísticas de residuos por posición.
-        residual_stats = (
-            valid.groupby("r_tape_cm")["residual_mm"]
-            .agg(["mean", "std", "count"])
-            .reset_index()
-            .sort_values("r_tape_cm")
-        )
+def plot_method_comparisons(rssi_df, toa_data, metrics):
+    """Dos figuras comparables: predicción RSSI/ToA y residuos RSSI/ToA."""
+    rssi, toa = {}, {}
+    for mic in FIXED_AMPLITUDE_K:
+        rssi[mic] = rssi_df[rssi_df.microphone == mic].copy()
+        raw = toa_data[mic][["r_tape_cm", "r_toa_cm"]].dropna().copy()
+        raw = raw[(raw.r_tape_cm > 0) & (raw.r_toa_cm > 0)]
+        raw["error_cm"] = raw.r_toa_cm - raw.r_tape_cm
+        toa[mic] = raw
 
-        residual_stats["std"] = (
-            residual_stats["std"].fillna(0.0)
-        )
-
-        x_res = (
-            residual_stats["r_tape_cm"].to_numpy()
-            + offset
-        )
-
-        mean_res = residual_stats["mean"].to_numpy()
-        std_res = residual_stats["std"].to_numpy()
-
-        ax_res.errorbar(
-            x_res,
-            mean_res,
-            yerr=std_res,
-            fmt="o",
-            color=color,
-            ecolor=color,
-            markersize=5.5,
-            markeredgecolor="white",
-            markeredgewidth=0.6,
-            capsize=3.5,
-            elinewidth=1.25,
-            label=f"{name}: media ± DE",
-            zorder=4,
-        )
-
-        all_reference.extend(
-            valid["r_tape_cm"].to_numpy().tolist()
-        )
-
-        all_estimated.extend(
-            valid["r_toa_cm"].to_numpy().tolist()
-        )
-
-        all_residuals.extend(residuals.tolist())
-
-    # --------------------------------------------------------
-    # Panel superior
-    # --------------------------------------------------------
-
-    xmin = min(all_reference)
-    xmax = max(all_reference)
-
-    ideal_x = np.linspace(
-        xmin,
-        xmax,
-        300,
+    # Figura 2: predicción lado a lado, con escalas idénticas.
+    fig, (ax_rssi, ax_toa) = plt.subplots(
+        1, 2, figsize=(15.0, 6.0), sharex=True, sharey=True)
+    _plot_method_prediction(
+        ax_rssi, rssi, "r_ref_cm", "r_est_cm_recomputed", "(a) RSSI",
+        r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]",
+        r"Distancia estimada $\hat r$ [cm]",
     )
-
-    ax_top.plot(
-        ideal_x,
-        ideal_x,
-        linestyle="--",
-        color=COLORS["reference"],
-        linewidth=1.5,
-        label="Referencia ideal",
-        zorder=1,
+    _plot_method_prediction(
+        ax_toa, toa, "r_tape_cm", "r_toa_cm", "(b) ToA",
+        r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]",
+        r"Distancia estimada $r_{\mathrm{ToA}}$ [cm]",
     )
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.13, top=0.92, wspace=0.22)
+    save_figure(fig, "exp01_fig2_method_distance_comparison")
 
-    ax_top.set_ylabel(
-        r"Distancia estimada $r_{\mathrm{ToA}}$ [cm]"
-    )
+    # Figura 3: residuos apilados, ambos en cm y con límites comunes.
+    fig, (ax_rssi_res, ax_toa_res) = plt.subplots(
+        2, 1, figsize=(11.5, 9.0), sharex=True, sharey=True,
+        gridspec_kw={"height_ratios": [1, 1], "hspace": 0.16})
+    offsets = {"Micrófono 1": -0.7, "Micrófono 2": 0.7}
+    _plot_residual_panel(
+        ax_rssi_res, rssi, "r_ref_cm", "error_cm", "(a) RSSI",
+        r"Residuo $e=\hat r-r_{\mathrm{ref}}$ [cm]", offsets)
+    _plot_residual_panel(
+        ax_toa_res, toa, "r_tape_cm", "error_cm", "(b) ToA",
+        r"Residuo $e=r_{\mathrm{ToA}}-r_{\mathrm{ref}}$ [cm]", offsets,
+        show_xlabel=True, show_legend=False)
+    all_errors = np.concatenate([
+        frame.error_cm.to_numpy(dtype=float)
+        for frame in list(rssi.values()) + list(toa.values()) if not frame.empty
+    ])
+    max_abs = float(np.nanmax(np.abs(all_errors)))
+    y_limit = max(2.0, float(np.ceil(max_abs * 1.10)))
+    ax_rssi_res.set_ylim(-y_limit, y_limit)
+    ax_toa_res.set_ylim(-y_limit, y_limit)
+    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.09, top=0.95, hspace=0.20)
+    save_figure(fig, "exp01_fig3_method_residual_comparison")
 
-    ax_top.set_title(
-        "(a) Estimación de distancia",
-        pad=9,
-    )
+    metrics_path = DATA_DIR / "exp01_rssi_validation_metrics.csv"
+    metrics.to_csv(metrics_path, index=False, float_format="%.8f")
+    print(f"  [+] Métricas RSSI guardadas en: {metrics_path}")
 
-    ax_top.legend(
-        loc="upper left",
-        frameon=True,
-        framealpha=0.95,
-    )
-
-    style_axis(ax_top)
-
-    # --------------------------------------------------------
-    # Panel inferior
-    # --------------------------------------------------------
-
-    ax_res.axhline(
-        0,
-        color=COLORS["reference"],
-        linestyle="--",
-        linewidth=1.5,
-        label="Error nulo",
-        zorder=1,
-    )
-
-    ax_res.set_xlabel(
-        r"Distancia de referencia $r_{\mathrm{ref}}$ [cm]"
-    )
-
-    ax_res.set_ylabel(
-        r"Residuo $e_i$ [mm]"
-    )
-
-    ax_res.set_title(
-        "(b) Residuos de estimación",
-        pad=9,
-    )
-
-    style_axis(ax_res)
-
-    # --------------------------------------------------------
-    # Límites de los ejes
-    # --------------------------------------------------------
-
-    ax_top.set_xlim(
-        xmin - 3,
-        xmax + 3,
-    )
-
-    upper_min = min(
-        min(all_reference),
-        min(all_estimated),
-    )
-
-    upper_max = max(
-        max(all_reference),
-        max(all_estimated),
-    )
-
-    margin = 0.08 * (upper_max - upper_min)
-
-    if margin == 0:
-        margin = 1.0
-
-    ax_top.set_ylim(
-        upper_min - margin,
-        upper_max + margin,
-    )
-
-    # Escala común con la figura MOCK de distancia: no se autoajusta por figura.
-    ax_res.set_ylim(-1100, 1100)
-
-    # --------------------------------------------------------
-    # Exportación
-    # --------------------------------------------------------
-
-    fig.subplots_adjust(
-        left=0.14,
-        right=0.97,
-        top=0.94,
-        bottom=0.11,
-        hspace=0.08,
-    )
-
-    save_figure(
-        fig,
-        "exp01_fig4_toa_range",
-    )
-
-    return metrics
-
-
-# ============================================================
-# 8. FUNCIÓN PRINCIPAL
-# ============================================================
 
 def main():
     print("\n" + "=" * 60)
@@ -868,11 +668,11 @@ def main():
     calibration_fits = plot_combined_calibration(data)
     amp_fits = calibration_fits["amplitude"]
 
-    print("\nGenerando Figura 3: estimación de distancia (MOCK)...")
-    plot_mock_distance(amp_fits)
-
-    print("\nGenerando Figura 4: estimación mediante ToA...")
-    toa_metrics = plot_toa(data)
+    print("\nValidando el estimador RSSI con datos nuevos y k congelados...")
+    validation = load_rssi_validation()
+    validation_metrics = summarize_rssi_validation(validation)
+    plot_method_comparisons(validation, data, validation_metrics)
+    print(validation_metrics.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
 
     print("\nCOEFICIENTES DE CALIBRACIÓN")
     for observable, results in calibration_fits.items():
@@ -880,12 +680,8 @@ def main():
         for name, (k, r2) in results.items():
             print(f"  {name}: k={k:.6g}, R²={r2:.5f}")
 
-    print("\nMÉTRICAS ToA")
-    for name, result in toa_metrics.items():
-        print(f"\n{name}: N={result['n']}, sesgo={result['bias']:+.3f} cm, "
-              f"MAE={result['mae']:.3f} cm, RMSE={result['rmse']:.3f} cm")
     print("\nProceso terminado. Revisa las figuras en figures/.")
-    print("La figura de predicción de distancia es sintética (MOCK).")
+    print("RSSI usa datos experimentales nuevos y k congelados; RSSI y ToA se comparan con escalas comunes.")
 
 
 # ============================================================
