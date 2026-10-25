@@ -1,20 +1,23 @@
 ==============================================================================
 ⚙️  PROJECT ENVIRONMENT & TOOLCHAIN CONSTRAINTS
 ==============================================================================
-• Repository State    : main @ c9f7745
+• Repository State    : main @ 1175dd3
 ==============================================================================
 
 Git Context & Branch Topology:
 
 ```log
-Current Branch: main | Working Tree: Dirty (2 modified/untracked files)
+Current Branch: main | Working Tree: Dirty (3 modified/untracked files)
 
 Branch Tracking & Divergence Status:
-* main                c9f7745 [origin/main: ahead 21] Update COG context configuration
-  remotes/origin/main e00fb23 Update generated thesis context
+* main                1175dd3 [origin/main] Fix ignore rules for organized figures
+  remotes/origin/main 1175dd3 Fix ignore rules for organized figures
 
 Multi-Branch Git Commit Graph:
-* c9f7745  (HEAD -> main) - 2026-10-25 : Update COG context configuration (SiririComun)
+* 1175dd3  (HEAD -> main, origin/main) - 2026-10-25 : Fix ignore rules for organized figures (SiririComun)
+* 5b9a3dd  - 2026-10-25 : Restore organized experimental figures and diagrams (SiririComun)
+* 7c143cf  - 2026-10-25 : Refresh generated thesis context (SiririComun)
+* c9f7745  - 2026-10-25 : Update COG context configuration (SiririComun)
 * 29505e5  - 2026-10-25 : Update compiled thesis manuscript (SiririComun)
 * ce37e41  - 2026-10-25 : Configure LaTeX experimental figure paths (SiririComun)
 * b98f868  - 2026-10-25 : Update chapter 4 experimental figure references (SiririComun)
@@ -26,9 +29,6 @@ Multi-Branch Git Commit Graph:
 * 917eb2c  - 2026-10-25 : Update Exp02 figure generation paths (SiririComun)
 * 322dfd0  - 2026-10-25 : Update Exp01 figure generation paths (SiririComun)
 * 99f4288  - 2026-10-25 : Organize LaTeX diagrams (SiririComun)
-* 5801a7b  - 2026-10-25 : Organize Exp03 Doppler manuscript figures (SiririComun)
-* eee0e9e  - 2026-10-25 : Organize Exp02 manuscript figures (SiririComun)
-* 34b12b4  - 2026-10-25 : Organize Exp01 manuscript figures (SiririComun)
 ```
 
 01_tratamiento_campo.tex: (chapters/01_tratamiento_campo.tex)
@@ -3155,6 +3155,1023 @@ dirección y evolución temporal constituye la contribución
 experimental central presentada en este capítulo.
 ```
 
+fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    block/.style={
+        draw=black!75,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!8,
+        align=center,
+        minimum height=1.0cm,
+        text width=2.45cm,
+        font=\small
+    },
+    proc/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!6,
+        align=center,
+        minimum height=1.0cm,
+        text width=2.55cm,
+        font=\small
+    },
+    blocks_style/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!6,
+        align=center,
+        minimum height=1.05cm,
+        text width=2.75cm,
+        font=\small
+    },
+    branch/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        minimum height=1.05cm,
+        text width=2.85cm,
+        font=\small
+    },
+    arrow/.style={->, line width=0.85pt, draw=black!75}
+]
+
+\node[block] (field) at (0.0, 1.85) {
+    Campo acústico\\
+    $p(\vec{r},t)$
+};
+
+\node[block] (transducers) at (0.0, -1.85) {
+    Dos transductores\\
+    $v_1(t),\,v_2(t)$
+};
+
+\draw[arrow] (field) -- (transducers);
+
+\node[proc] (adc) at (3.6, -1.85) {
+    Adquisición\\
+    ADC de 12 bits\\
+    Temporización común
+};
+
+\node[proc] (average) at (3.6, 1.85) {
+    Promediado\\
+    $M$ muestras\\
+    $f_s' = f_s / M$
+};
+
+\draw[arrow] (transducers) -- (adc);
+\draw[arrow] (adc) -- (average);
+
+\node[blocks_style] (blocks) at (7.4, 0.0) {
+    Formación de bloques\\
+    $N$ muestras por canal
+};
+
+\draw[arrow] (average.east) -- ++(0.5, 0.0) |- (blocks.west);
+
+\node[branch] (temporal) at (11.5, 1.85) {
+    \textbf{Rama temporal}\\
+    Filtrado pasabanda\\
+    y análisis de señal
+};
+
+\node[branch] (spectral) at (11.5, -1.85) {
+    \textbf{Rama espectral}\\
+    Enventanado\\
+    y análisis de Fourier
+};
+
+\draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (temporal.west);
+\draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (spectral.west);
+
+\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of temporal] {
+    ToA, fase, amplitud\\
+    y suma cuadrática ($Q$)
+};
+
+\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of spectral] {
+    Magnitud, fase y\\
+    frecuencia dominante ($\widehat{f}_0$)
+};
+
+\end{tikzpicture}
+```
+
+fig2_rama_a.tex: (figures/diagrams/fig2_rama_a.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    input/.style={
+        draw=black!75,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!10,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.25cm,
+        font=\small
+    },
+    proc/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!5,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.5cm,
+        font=\small
+    },
+    highlight/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!7,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.5cm,
+        font=\small
+    },
+    outnode/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        minimum height=0.85cm,
+        text width=2.35cm,
+        font=\small
+    },
+    arrow/.style={->, line width=0.8pt, draw=black!75}
+]
+
+\node[input] (signal) {
+    Señal adquirida\\
+    $v_i[n]$
+};
+
+\node[proc, right=0.65cm of signal] (filter) {
+    Filtrado pasabanda\\
+    Banda de interés\\
+    $y_i[n]$
+};
+
+\draw[arrow] (signal) -- (filter);
+
+\coordinate (fork) at ($(filter.east) + (0.55, 0.0)$);
+
+\node[highlight, above right=0.70cm and 1.15cm of filter] (hilbert) {
+    Transformada\\
+    de Hilbert\\
+    $z_i[n] = y_i[n] + j\widetilde{y}_i[n]$
+};
+
+\node[proc, below right=0.85cm and 1.15cm of filter] (gate) {
+    Selección temporal\\
+    Ventana directa\\
+    $T_{\mathrm{gate}} = K / f_0$
+};
+
+\node[highlight, below=0.65cm of gate] (toa_proc) {
+    Detección de arribo\\
+    Umbral $V_{\mathrm{th}}$ e\\
+    interpolación de cruce
+};
+
+\draw[line width=0.8pt, draw=black!75] (filter.east) -- (fork);
+\draw[arrow] (fork) |- (hilbert.west);
+\draw[arrow] (fork) |- (gate.west);
+\draw[arrow] (fork) |- (toa_proc.west);
+
+\node[outnode, right=0.70cm of hilbert] (env) {
+    Envolvente\\
+    $A_i[n] = |z_i[n]|$
+};
+
+\node[outnode, above=0.25cm of env] (phase) {
+    Fase instantánea\\
+    $\Phi_i[n] = \operatorname{arg} z_i[n]$
+};
+
+\node[outnode, below=0.25cm of env] (freq) {
+    Frecuencia inst.\\
+    $f_{i,\mathrm{inst}}[n]$ (Savitzky-G.)
+};
+
+\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (phase.west);
+\draw[arrow] (hilbert.east) -- (env.west);
+\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (freq.west);
+
+\node[outnode, right=0.70cm of gate] (energy) {
+    Energía y RMS\\
+    $Q_i = \sum (y_i - \bar{y})^2$\\
+    $A_{\mathrm{RMS},i}$ (Síncrona)
+};
+\draw[arrow] (gate) -- (energy);
+
+\node[outnode, right=0.70cm of toa_proc] (toa) {
+    Tiempo de llegada\\
+    $t_{\mathrm{arr},i}$
+};
+\draw[arrow] (toa_proc) -- (toa);
+
+\end{tikzpicture}
+```
+
+fig3_rama_b.tex: (figures/diagrams/fig3_rama_b.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    node distance=0.65cm and 0.75cm,
+    input/.style={
+        draw=black!75,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!10,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.3cm,
+        font=\small
+    },
+    proc/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!5,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.45cm,
+        font=\small
+    },
+    highlight/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!7,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.45cm,
+        font=\small
+    },
+    outnode/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.6cm,
+        font=\small
+    },
+    arrow/.style={->, line width=0.8pt, draw=black!75}
+]
+
+\node[input] (block) {
+    Bloque de muestras\\
+    $v_i[n]$\\
+    $n = 0,\dots,N-1$
+};
+
+\node[proc, right=of block] (window) {
+    Enventanado\\
+    $x_i[n] = w[n]v_i[n]$\\
+    Blackman--Harris
+};
+
+\node[proc, right=of window] (fft) {
+    Transformada\\
+    discreta de Fourier\\
+    $Z_i[k]$ (FFT)
+};
+
+\node[proc, right=of fft] (polar) {
+    Magnitud y fase\\
+    $|Z_i[k]|$ y $\Phi_i[k]$\\
+    Cálculo CORDIC
+};
+
+\draw[arrow] (block) -- (window);
+\draw[arrow] (window) -- (fft);
+\draw[arrow] (fft) -- (polar);
+
+\node[proc, below=1.3cm of polar] (peak) {
+    Identificación del\\
+    máximo espectral\\
+    Bin $k_0$
+};
+
+\node[proc, left=of peak] (interp) {
+    Interpolación\\
+    local parabólica\\
+    Desplazamiento $\delta$
+};
+
+\node[highlight, left=of interp] (freq) {
+    Frecuencia estimada\\
+    $\widehat{f}_0 = (k_0+\delta)\dfrac{f_s'}{N}$
+};
+
+\draw[arrow] (polar.south) -- (peak.north);
+\draw[arrow] (peak) -- (interp);
+\draw[arrow] (interp) -- (freq);
+
+\node[
+    draw=black!40,
+    dashed,
+    rounded corners=2pt,
+    fill=white,
+    font=\footnotesize,
+    inner sep=4pt,
+    below=0.35cm of fft
+] {
+    Separación entre bines: $\Delta f = f_s' / N$
+};
+
+\end{tikzpicture}
+```
+
+fig4_geometria_to_a.tex: (figures/diagrams/fig4_geometria_to_a.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    stand/.style={line width=1.4pt, draw=black!70},
+    baseplate/.style={draw=black!80, fill=black!20, rounded corners=1pt},
+    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.55cm},
+    source/.style={circle, draw=black!85, fill=orange!75, line width=1pt, minimum size=0.55cm},
+    tabletop/.style={draw=black!70, line width=0.8pt, pattern=north east lines, pattern color=black!25},
+    raydir/.style={->, line width=1.1pt, draw=UdeAGreen!85!black},
+    rayrefl/.style={->, line width=1pt, dashed, draw=red!70!black}
+]
+
+\draw[tabletop] (-5.2,-0.35) rectangle (5.2,0.0);
+\node[below=3pt, font=\footnotesize] at (0,-0.35) {Superficie reflectora horizontal (mesa o suelo)};
+
+\coordinate (Mic) at (-3.4, 2.2);
+\coordinate (Spk) at (3.4, 2.2);
+\coordinate (Bounce) at (0.0, 0.0);
+
+\draw[baseplate] (-3.8,0.0) rectangle (-3.0,0.12);
+\draw[stand] (-3.4,0.12) -- (Mic);
+\node[sensor] (NodeMic) at (Mic) {};
+\node[left=6pt, font=\small\bfseries] at (Mic) {Receptor ($R$)};
+
+\draw[baseplate] (3.0,0.0) rectangle (3.8,0.12);
+\draw[stand] (3.4,0.12) -- (Spk);
+\node[source] (NodeSpk) at (Spk) {};
+\node[right=6pt, font=\small\bfseries] at (Spk) {Fuente ($S$)};
+
+\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.4,0.25)$) arc (150:210:0.5);
+\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.7,0.40)$) arc (150:210:0.8);
+
+\draw[raydir] (NodeSpk.west) -- node[above=2pt, font=\footnotesize] {Onda directa: $r_{\mathrm{dir}} = r$} (NodeMic.east);
+
+\draw[rayrefl] (NodeSpk.south) -- node[below right=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (Bounce);
+\draw[rayrefl] (Bounce) -- node[below left=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (NodeMic.south);
+\fill[red!70!black] (Bounce) circle (1.8pt);
+
+\draw[dashed, draw=black!40, line width=0.6pt] (0.0,0.0) -- (0.0,2.2);
+\draw[<->, draw=black!70, line width=0.6pt] (-0.35,0.05) -- node[left=1pt, font=\small] {$h$} (-0.35,2.15);
+
+\node[
+    draw=black!70,
+    line width=0.7pt,
+    fill=white,
+    rounded corners=3pt,
+    inner sep=6pt,
+    anchor=south
+] at (0.0, 3.1) {
+    \footnotesize
+    \begin{tabular}{@{} l l @{}}
+        \multicolumn{2}{@{} l @{}}{\textbf{Geometría de reflexión y selección temporal:}} \\[3pt]
+        Trayectoria directa: & $r_{\mathrm{dir}} = r$ \\
+        Trayectoria reflejada: & $r_{\mathrm{refl}} = \sqrt{r^2+4h^2}$ \\
+        Diferencial de camino: & $\Delta r_{\mathrm{refl}} = \sqrt{r^2+4h^2} - r$ \\[4pt]
+        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Condición de selección temporal:}} \quad $c(T)T_{\mathrm{gate}} < \Delta r_{\mathrm{refl}}$}
+    \end{tabular}
+};
+
+\end{tikzpicture}
+```
+
+fig5_geometria_2d_angular.tex: (figures/diagrams/fig5_geometria_2d_angular.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    sensor/.style={
+        circle,
+        draw=black!85,
+        fill=gray!25,
+        line width=1pt,
+        minimum size=0.58cm
+    },
+    source/.style={
+        circle,
+        draw=black!85,
+        fill=orange!75,
+        line width=1.1pt,
+        minimum size=0.58cm
+    },
+    axis/.style={
+        ->,
+        line width=0.75pt,
+        draw=black!60
+    },
+    baseline/.style={
+        <->,
+        draw=black!70,
+        line width=0.7pt
+    },
+    pathRone/.style={
+        ->,
+        line width=1.2pt,
+        draw=UdeAGreen!85!black
+    },
+    pathRtwo/.style={
+        ->,
+        line width=1.2pt,
+        draw=blue!80!black
+    },
+    reference/.style={
+        dashed,
+        line width=0.9pt,
+        draw=black!65
+    },
+    projection/.style={
+        dotted,
+        line width=0.65pt,
+        draw=black!50
+    },
+    wavefront/.style={
+        line width=0.95pt,
+        draw=orange!90!black
+    }
+]
+
+\node[
+    draw=black!70,
+    line width=0.8pt,
+    fill=white,
+    rounded corners=4pt,
+    inner sep=9pt,
+    anchor=west
+] at (-6.1, 3.1) {
+    \small
+    \begin{tabular}{@{} l @{}}
+        \textbf{Geometría angular y PDoA:} \\[5pt]
+
+        Aproximación de campo lejano. \\[5pt]
+
+        Diferencia de camino:
+        \ $\Delta r = r_1-r_2=d\sin\theta$ \\[5pt]
+
+        Diferencia de fase:
+        \ $\Delta\Phi=
+        \dfrac{2\pi f_0}{c(T)}\Delta r$ \\[7pt]
+
+        \textcolor{UdeAGreen!85!black}{
+            \textbf{Condición de no-aliasing espacial:}
+        } \\[3pt]
+
+        $d\leq\dfrac{\lambda_0}{2}
+        =\dfrac{c(T)}{2f_0}$
+    \end{tabular}
+};
+
+\coordinate (Orig) at (3.8, 0);
+
+\draw[axis]
+    (0.35, 0) -- (7.2, 0)
+    node[right=3pt, font=\small] {$x$ (transversal)};
+
+\draw[axis]
+    (3.8, -0.65) -- (3.8, 7.25)
+    node[above=3pt, font=\small] {$y$ (normal al arreglo)};
+
+\coordinate (R1) at (1.7, 0);
+\coordinate (R2) at (5.9, 0);
+
+\node[sensor] (NodeR1) at (R1) {};
+
+\node[
+    below=12pt,
+    font=\small
+] at (R1) {
+    $R_1\left(-\frac{d}{2},0\right)$
+};
+
+\node[sensor] (NodeR2) at (R2) {};
+
+\node[
+    below=12pt,
+    font=\small
+] at (R2) {
+    $R_2\left(+\frac{d}{2},0\right)$
+};
+
+\draw[baseline]
+    (1.7, -1.65) --
+    node[below=3pt, font=\small]
+    {$d=\|\vec{r}_2-\vec{r}_1\|$}
+    (5.9, -1.65);
+
+\draw[projection]
+    (1.7, 0) -- (1.7, -1.65);
+
+\draw[projection]
+    (5.9, 0) -- (5.9, -1.65);
+
+\coordinate (S) at (6.6, 6.35);
+
+\node[source] (NodeS) at (S) {};
+
+\node[
+    above right=4pt,
+    font=\small\bfseries
+] at (NodeS) {Fuente $S(x,y)$};
+
+\draw[wavefront]
+    ($(S)+(205:0.48)$)
+    arc[start angle=205, end angle=265, radius=0.48];
+
+\draw[wavefront]
+    ($(S)+(205:0.78)$)
+    arc[start angle=205, end angle=265, radius=0.78];
+
+\draw[wavefront]
+    ($(S)+(205:1.08)$)
+    arc[start angle=205, end angle=265, radius=1.08];
+
+\draw[pathRone]
+    (NodeS) --
+    node[pos=0.53, above left=2pt, font=\small]
+    {$r_1$}
+    (NodeR1);
+
+\draw[pathRtwo]
+    (NodeS) --
+    node[pos=0.52, right=3pt, font=\small]
+    {$r_2$}
+    (NodeR2);
+
+\draw[reference, ->]
+    (Orig) --
+    node[pos=0.63, below right=2pt, font=\small]
+    {$r$}
+    (S);
+
+\draw[
+    line width=0.85pt,
+    draw=black!85
+]
+    ($(Orig)+(0,1.65)$)
+    arc[start angle=90, end angle=66.2, radius=1.65];
+
+\node[
+    font=\small\bfseries
+] at ($(Orig)+(78:2.0)$) {$\theta$};
+
+\path[use as bounding box]
+    (-6.35, -2.15) rectangle (9.3, 7.75);
+
+\end{tikzpicture}
+```
+
+fig6_doppler_fdoa.tex: (figures/diagrams/fig6_doppler_fdoa.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
+    source/.style={circle, draw=black!85, fill=orange!75, line width=1.1pt, minimum size=0.52cm},
+    axis/.style={->, line width=0.7pt, draw=black!60},
+    velarrow/.style={->, line width=1.2pt, draw=orange!90!black}
+]
+
+\draw[axis] (-5.6, 0.0) -- (5.6, 0.0)
+    node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
+
+\coordinate (R1) at (-4.8, 0.0);
+\node[sensor] (NodeR1) at (R1) {};
+\node[below=7pt, align=center] at (R1) {
+    \small\bfseries $R_1$\\[2pt]
+    \footnotesize\color{black!65} $x=0$
+};
+
+\coordinate (R2) at (4.8, 0.0);
+\node[sensor] (NodeR2) at (R2) {};
+\node[below=7pt, align=center] at (R2) {
+    \small\bfseries $R_2$\\[2pt]
+    \footnotesize\color{black!65} $x=L$
+};
+
+\coordinate (S) at (0.0, 0.0);
+\node[source] (NodeS) at (S) {};
+\node[below=7pt, font=\small\bfseries] at (S) {$S(t)$};
+
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
+\draw[line width=0.8pt, red!75!black]
+    ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
+
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
+\draw[line width=0.8pt, blue!75!black]
+    ($(-0.6,0.0)+(-22:1.55)$) arc (-22:22:1.55);
+
+\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0)
+    node[above=1pt, font=\small\bfseries] {$v(t)$};
+
+\draw[dotted, line width=0.5pt, draw=orange!80!black]
+    (0.0, 0.25) -- (0.0, 0.85);
+
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-2.0, 0.0) -- (-2.0, -0.9);
+\draw[dotted, line width=0.5pt, red!75!black]
+    (-1.1, 0.0) -- (-1.1, -0.9);
+
+\draw[<->, draw=red!75!black, line width=0.6pt]
+    (-2.0, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_1>\lambda_0$}
+    (-1.1, -0.9);
+
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (0.55, 0.0) -- (0.55, -0.9);
+\draw[dotted, line width=0.5pt, blue!75!black]
+    (1.05, 0.0) -- (1.05, -0.9);
+
+\draw[<->, draw=blue!75!black, line width=0.6pt]
+    (0.55, -0.9) --
+    node[below=2pt, font=\footnotesize] {$\lambda_2<\lambda_0$}
+    (1.05, -0.9);
+
+\node[
+    draw=black!70,
+    line width=0.7pt,
+    fill=white,
+    rounded corners=3pt,
+    inner sep=6pt,
+    anchor=south
+] at (0.0, 2.05) {
+    \footnotesize
+    \begin{tabular}{@{} l l @{}}
+        \multicolumn{2}{@{} l @{}}{
+            \textbf{Efecto Doppler para fuente móvil ($v\ll c$):}
+        } \\[3pt]
+
+        Frecuencia en $R_1$ (alejamiento):
+        & $f_1(t)\approx f_0\left(1-\frac{v(t)}{c(T)}\right)$ \\[2pt]
+
+        Frecuencia en $R_2$ (acercamiento):
+        & $f_2(t)\approx f_0\left(1+\frac{v(t)}{c(T)}\right)$ \\[4pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textcolor{UdeAGreen!85!black}{
+                \textbf{Estimador diferencial de velocidad:}
+            }
+            \quad
+            $v(t)=c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$
+        } \\[2pt]
+
+        \multicolumn{2}{@{} l @{}}{
+            \textit{\scriptsize La frecuencia emitida se cancela algebraicamente en este modelo.}
+        }
+    \end{tabular}
+};
+
+\end{tikzpicture}
+```
+
+fig7_arquitectura_walo.tex: (figures/diagrams/fig7_arquitectura_walo.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Latex,
+    font=\small,
+    block/.style={
+        draw,
+        rounded corners=2pt,
+        align=center,
+        minimum width=2.5cm,
+        minimum height=0.9cm,
+        inner sep=5pt
+    },
+    smallblock/.style={
+        draw,
+        rounded corners=2pt,
+        align=center,
+        minimum width=2.3cm,
+        minimum height=0.8cm,
+        inner sep=5pt
+    },
+    arrow/.style={->, thick}
+]
+
+\node[block] (mic1) at (0,2.0) {Micrófono 1};
+\node[block] (mic2) at (0,0.5) {Micrófono 2};
+
+\node[block] (xadc) at (3.4,1.25)
+    {XADC\\Conversión A/D};
+
+\node[block] (zynq) at (6.9,1.25)
+    {Zynq-7000\\PYNQ-Z2};
+
+\node[smallblock] (dma) at (10.2,2.15)
+    {DMA\\Transferencia};
+
+\node[smallblock] (processing) at (10.2,0.35)
+    {Procesamiento\\digital};
+
+\node[block] (software) at (13.6,2.15)
+    {Software\\de control};
+
+\node[smallblock] (analysis) at (13.6,0.35)
+    {Análisis\\de señales};
+
+\draw[arrow] (mic1.east) -- (xadc.west);
+\draw[arrow] (mic2.east) -- (xadc.west);
+
+\draw[arrow] (xadc.east) -- (zynq.west);
+\draw[arrow] (zynq.east) -- (dma.west);
+\draw[arrow] (zynq.east) -- (processing.west);
+
+\draw[arrow] (dma.east) -- (software.west);
+\draw[arrow] (processing.east) -- (software.south west);
+\draw[arrow] (software.south) -- (analysis.north);
+
+\node[smallblock] (pulse) at (3.4,-1.25)
+    {Pulso digital\\de salida AR2};
+
+\node[smallblock] (driver) at (7.1,-1.25)
+    {Etapa de excitación\\Transistor 2N2222A};
+
+\node[block] (buzzer) at (10.6,-1.25)
+    {Buzzer activo};
+
+\draw[arrow] (pulse.east) -- (driver.west);
+\draw[arrow] (driver.east) -- (buzzer.west);
+
+\draw[arrow, dashed] (zynq.south) -- ++(0,-0.55)
+    -| (pulse.north);
+
+\end{tikzpicture}
+```
+
+fig8_montaje_exp01.tex: (figures/diagrams/fig8_montaje_exp01.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Latex,
+    font=\small,
+    source/.style={
+        circle,
+        draw=orange!75!black,
+        fill=orange!25,
+        thick,
+        minimum size=6mm,
+        inner sep=0pt
+    },
+    receiver/.style={
+        circle,
+        draw=gray!65,
+        fill=gray!20,
+        thick,
+        minimum size=6mm,
+        inner sep=0pt
+    },
+    direct/.style={->, thick, green!45!black},
+    reflected/.style={->, thick, dashed, red!75!black},
+    dimension/.style={<->, thick}
+]
+
+\node[font=\bfseries] at (-3.0,3.25) {Vista superior};
+
+\node[source] (sourceTop) at (-3.0,1.85) {};
+\node[above=5pt] at (sourceTop.north) {Buzzer};
+
+\node[receiver] (receiverTop) at (-3.0,-0.75) {};
+\node[below=7pt] at (receiverTop.south) {Micrófono};
+
+\draw[direct] (sourceTop.south) -- (receiverTop.north)
+    node[midway,right=7pt,align=left] {Eje de\\propagación};
+
+\draw[dimension] (-4.0,1.85) -- (-4.0,-0.75)
+    node[midway,left] {$r$};
+
+\node[font=\bfseries] at (3.7,3.25) {Vista lateral};
+
+\filldraw[
+    fill=gray!12,
+    draw=black,
+    thick
+] (0,-0.45) rectangle (7.5,-0.18);
+
+\node[font=\scriptsize] at (3.75,-0.315) {Mesa};
+
+\draw[thick] (1.0,-0.18) -- (1.0,1.05);
+\draw[thick] (6.3,-0.18) -- (6.3,1.05);
+
+\node[receiver] (receiverSide) at (1.0,1.45) {};
+\node[above=6pt] at (receiverSide.north) {Micrófono};
+
+\node[source] (sourceSide) at (6.3,1.45) {};
+\node[above=6pt] at (sourceSide.north) {Buzzer};
+
+\draw[direct]
+    (sourceSide.west) -- (receiverSide.east)
+    node[midway,above=7pt] {$r$};
+
+\coordinate (bounce) at (3.65,-0.12);
+
+\draw[reflected]
+    (sourceSide.south west) -- (bounce)
+    -- (receiverSide.south east);
+
+\node[
+    font=\scriptsize,
+    text=red!75!black,
+    fill=white,
+    inner sep=2pt
+] at (3.65,0.22) {Reflexión en mesa};
+
+\draw[dimension] (7.0,-0.18) -- (7.0,1.05)
+    node[midway,right=5pt] {\SI{50}{cm}};
+
+\node[
+    draw,
+    rounded corners=2pt,
+    fill=gray!5,
+    text width=6.5cm,
+    align=center,
+    inner sep=7pt,
+    font=\scriptsize
+] at (3.75,-1.35) {
+    Fuente y receptor a altura aproximadamente constante,\\
+    enfrentados sobre el eje de propagación
+};
+
+\end{tikzpicture}
+```
+
+fig9_montaje_exp02.tex: (figures/diagrams/fig9_montaje_exp02.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    line cap=round,
+    line join=round,
+    font=\small,
+    x=1cm,
+    y=1cm
+]
+
+    \coordinate (O) at (-3,0);
+
+    \coordinate (Mone) at (-3.425,0);
+    \coordinate (Mtwo) at (-2.575,0);
+
+    \draw[line width=0.95pt]
+        (-5.35,0) -- (-0.65,0);
+
+    \draw[line width=0.95pt]
+        (-3,-0.05) -- (-3,4.35);
+
+    \foreach \ang in {-60,-45,-30,-15,15,30,45,60}{
+        \draw[
+            densely dashed,
+            line width=0.8pt
+        ]
+        ({-3+4.0*sin(\ang)},{4.0*cos(\ang)})
+        --
+        ({-3+0.38*sin(\ang)},{0.38*cos(\ang)});
+    }
+
+    \coordinate (S) at (
+        {-3+3.55*sin(30)},
+        {3.55*cos(30)}
+    );
+
+    \node[
+        circle,
+        draw=orange!85!black,
+        fill=orange!18,
+        line width=1pt,
+        minimum size=6mm,
+        inner sep=0pt
+    ] at (S) {};
+
+    \node[
+        anchor=south,
+        inner sep=2pt
+    ] at (-1.22,3.48) {Fuente};
+
+    \draw[
+        line width=0.85pt
+    ]
+    (-3,0.78)
+    arc[
+        start angle=90,
+        end angle=60,
+        radius=0.78
+    ];
+
+    \node[
+        fill=white,
+        inner sep=2pt
+    ] at (-2.77,0.83) {$\theta$};
+
+    \node[
+        fill=white,
+        inner sep=2pt
+    ] at (-4.05,2.35)
+    {$r=30\,\mathrm{cm}$};
+
+    \node[
+        circle,
+        draw=black!45,
+        fill=black!12,
+        line width=0.9pt,
+        minimum size=5.8mm,
+        inner sep=0pt
+    ] at (Mone) {};
+
+    \node[
+        circle,
+        draw=black!45,
+        fill=black!12,
+        line width=0.9pt,
+        minimum size=5.8mm,
+        inner sep=0pt
+    ] at (Mtwo) {};
+
+    \draw[black!65,line width=0.55pt]
+        (-3.425,-0.15) -- (-3.72,-0.48);
+
+    \draw[black!65,line width=0.55pt]
+        (-2.575,-0.15) -- (-2.28,-0.48);
+
+    \node[
+        anchor=north
+    ] at (-3.76,-0.48) {Mic. 1};
+
+    \node[
+        anchor=north
+    ] at (-2.24,-0.48) {Mic. 2};
+
+    \draw[densely dashed,black!45]
+        (-3.425,-0.22) -- (-3.425,-1.12);
+
+    \draw[densely dashed,black!45]
+        (-2.575,-0.22) -- (-2.575,-1.12);
+
+    \draw[
+        <->,
+        line width=0.75pt
+    ]
+        (-3.425,-1.02) -- (-2.575,-1.02);
+
+    \node[
+        fill=white,
+        inner sep=2pt
+    ] at (-3,-1.30)
+    {$d=5\,\mathrm{cm}$};
+
+    \fill (O) circle (1.4pt);
+
+    \node[
+        draw=black!65,
+        rounded corners=2pt,
+        fill=black!2,
+        line width=0.65pt,
+        text width=4.15cm,
+        align=left,
+        inner sep=9pt,
+        anchor=west
+    ] at (1.05,1.35) {
+        \textbf{Configuración experimental}\\[6pt]
+        Línea base: $5\,\mathrm{cm}$\\[3pt]
+        Distancia nominal: $30\,\mathrm{cm}$\\[3pt]
+        Ángulos: $-60^\circ$ a $+60^\circ$\\[3pt]
+        Paso angular: $15^\circ$
+    };
+
+\end{tikzpicture}
+```
+
 titlepage.tex: (frontmatter/titlepage.tex)
 
 ```latex
@@ -5046,6 +6063,225 @@ def save_figure(fig, directory, stem):
     print(f"  Guardado: {pdf}")
 ```
 
+fig10_montaje_exp03.tex: (figures/diagrams/fig10_montaje_exp03.tex)
+
+```latex
+\begin{tikzpicture}[
+    >=Stealth,
+    line cap=round,
+    line join=round,
+    font=\small,
+    x=1cm,
+    y=1cm
+]
+
+\draw[line width=1.2pt] (-0.8,0) -- (10.8,0);
+
+\node[anchor=north] at (5,-0.17)
+    {Riel de $2\,\mathrm{m}$};
+
+\draw[
+    fill=black!16,
+    draw=black,
+    line width=0.8pt
+] (-0.15,0) rectangle (0.15,0.72);
+
+\draw[
+    fill=black!16,
+    draw=black,
+    line width=0.8pt
+] (9.85,0) rectangle (10.15,0.72);
+
+\draw[line width=1pt,black!65]
+    (0,0.72) -- (0,1.62);
+
+\node[
+    circle,
+    draw=black!45,
+    fill=black!12,
+    line width=0.9pt,
+    minimum size=6mm,
+    inner sep=0pt
+] at (0,1.62) {};
+
+\node[anchor=south] at (0,1.94)
+    {Mic. 1};
+
+\draw[line width=1pt,black!65]
+    (10,0.72) -- (10,1.62);
+
+\node[
+    circle,
+    draw=black!45,
+    fill=black!12,
+    line width=0.9pt,
+    minimum size=6mm,
+    inner sep=0pt
+] at (10,1.62) {};
+
+\node[anchor=south] at (10,1.94)
+    {Mic. 2};
+
+\draw[
+    red!75!black,
+    line width=1.5pt
+]
+    (0.15,0.48)
+    -- (0.22,0.48)
+    -- (0.27,0.57)
+    -- (0.33,0.39)
+    -- (0.39,0.57)
+    -- (0.45,0.39)
+    -- (0.51,0.57)
+    -- (0.57,0.39)
+    -- (0.63,0.48)
+    -- (0.70,0.48);
+
+\draw[
+    red!75!black,
+    line width=1.5pt
+]
+    (9.30,0.48)
+    -- (9.37,0.48)
+    -- (9.43,0.57)
+    -- (9.49,0.39)
+    -- (9.55,0.57)
+    -- (9.61,0.39)
+    -- (9.67,0.57)
+    -- (9.73,0.39)
+    -- (9.79,0.48)
+    -- (9.85,0.48);
+
+\draw[
+    rounded corners=2pt,
+    fill=black!4,
+    draw=black,
+    line width=0.85pt
+] (1.35,0.27) rectangle (2.65,0.87);
+
+\draw[
+    fill=white,
+    draw=black,
+    line width=0.7pt
+] (1.65,0.105) circle (0.105);
+
+\draw[
+    fill=white,
+    draw=black,
+    line width=0.7pt
+] (2.35,0.105) circle (0.105);
+
+\node at (2.00,0.57)
+    {Carrito};
+
+\draw[line width=0.85pt]
+    (1.55,0.87) -- (1.55,1.47);
+
+\node[
+    circle,
+    draw=orange!85!black,
+    fill=orange!18,
+    line width=1pt,
+    minimum size=6mm,
+    inner sep=0pt
+] at (1.55,1.62) {};
+
+\node[anchor=west] at (1.82,1.62)
+    {Buzzer};
+
+\node[anchor=south] at (1.55,2.32)
+    {Liberación};
+
+\draw[
+    ->,
+    line width=0.85pt
+]
+    (1.55,2.27) -- (1.55,1.96);
+
+\draw[
+    ->,
+    line width=1pt
+]
+    (2.85,2.32) -- (8.15,2.32);
+
+\node[
+    fill=white,
+    inner sep=3pt
+]
+    at (5.50,2.32)
+    {Recorrido libre};
+
+\draw[densely dashed,black!45]
+    (0,-0.05) -- (0,-0.85);
+
+\draw[densely dashed,black!45]
+    (10,-0.05) -- (10,-0.85);
+
+\node[
+    fill=white,
+    inner sep=2pt
+]
+    at (0,-0.58)
+    {$0\,\mathrm{cm}$};
+
+\node[
+    fill=white,
+    inner sep=2pt
+]
+    at (10,-0.58)
+    {$200\,\mathrm{cm}$};
+
+\draw[
+    <->,
+    line width=0.85pt
+]
+    (0,-0.85) -- (10,-0.85);
+
+\node[
+    fill=white,
+    inner sep=3pt
+]
+    at (5,-1.10)
+    {Separación entre micrófonos: $200\,\mathrm{cm}$};
+
+\draw[densely dashed,black!45]
+    (0.70,-0.53) -- (0.70,-1.55);
+
+\draw[densely dashed,black!45]
+    (9.30,-0.53) -- (9.30,-1.55);
+
+\draw[
+    <->,
+    line width=0.85pt
+]
+    (0.70,-1.43) -- (9.30,-1.43);
+
+\node[
+    fill=white,
+    inner sep=3pt
+]
+    at (5,-1.70)
+    {Longitud útil aproximada: $180\,\mathrm{cm}$};
+
+\node[
+    draw=black!65,
+    rounded corners=2pt,
+    fill=black!2,
+    line width=0.65pt,
+    text width=3.65cm,
+    align=left,
+    inner sep=9pt,
+    anchor=west
+] at (11.05,1.45) {
+    \textbf{Protocolo previsto}\\[6pt]
+    10 ensayos\\[3pt]
+    Masa nominal: $200\,\mathrm{g}$\\[3pt]
+    Adquisición: $10\,\mathrm{s}$
+};
+
+\end{tikzpicture}
+```
+
 generate_exp03_real_figures.py: (scripts/generate_exp03_real_figures.py)
 
 ```python
@@ -5058,9 +6294,9 @@ Entradas:
   data/experiments/exp03_tracker_walo_aligned.csv
 
 Salidas:
-  figures/exp03_fig1_frequencies_with_rest_reference.png
-  figures/exp03_fig2_individual_mic_velocities.png
-  figures/exp03_fig3_joint_velocity_and_position.png
+  figures/experiments/exp03_fig1_frequencies_with_rest_reference.png
+  figures/experiments/exp03_fig2_individual_mic_velocities.png
+  figures/experiments/exp03_fig3_joint_velocity_and_position.png
   data/analysis/exp03_doppler/manuscript_figures/exp03_final_metrics.csv
   data/analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
   data/analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv

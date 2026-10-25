@@ -7,9 +7,9 @@ Entradas:
   data/experiments/exp03_tracker_walo_aligned.csv
 
 Salidas:
-  figures/exp03_fig1_frequencies_with_rest_reference.png
-  figures/exp03_fig2_individual_mic_velocities.png
-  figures/exp03_fig3_joint_velocity_and_position.png
+  figures/experiments/exp03_fig1_frequencies_with_rest_reference.png
+  figures/experiments/exp03_fig2_individual_mic_velocities.png
+  figures/experiments/exp03_fig3_joint_velocity_and_position.png
   data/analysis/exp03_doppler/manuscript_figures/exp03_final_metrics.csv
   data/analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
   data/analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv
