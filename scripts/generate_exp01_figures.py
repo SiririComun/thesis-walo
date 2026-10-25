@@ -6,15 +6,13 @@
 Generación de figuras del Experimento 01: caracterización radial.
 
 Entradas:
-    data/distance_characterization_raw_mic1.csv
-    data/distance_characterization_raw_mic2.csv
-    data/exp01_rssi_distance_prediction.csv
+    data/experiments/distance_characterization_raw_mic1.csv
+    data/experiments/distance_characterization_raw_mic2.csv
+    data/experiments/exp01_rssi_distance_prediction.csv
 
-Salidas:
-    figures/exp01_fig1_calibration_four_panel.png
-    figures/exp01_fig2_method_distance_comparison.png
-    figures/exp01_fig3_method_residual_comparison.png
-    data/exp01_rssi_validation_metrics.csv
+Salidas (PNG y PDF):
+    figures/experiments/exp01_*.png|pdf
+    data/analysis/exp01_rssi/manuscript_figures/exp01_rssi_validation_metrics.csv
 
 La validación RSSI utiliza coeficientes k fijados previamente.
 No reajusta k con los datos de validación.
@@ -38,17 +36,18 @@ from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_ax
 
 ROOT = Path(__file__).resolve().parents[1]
 
-DATA_DIR = ROOT / "data"
-FIGURES_DIR = ROOT / "figures"
+EXPERIMENTS_DIR = ROOT / "data" / "experiments"
+FIGURES_DIR = ROOT / "figures" / "experiments"
+ANALYSIS_DIR = ROOT / "data" / "analysis" / "exp01_rssi" / "manuscript_figures"
 
 CSV_FILES = {
-    "Micrófono 1": DATA_DIR / "distance_characterization_raw_mic1.csv",
-    "Micrófono 2": DATA_DIR / "distance_characterization_raw_mic2.csv",
+    "Micrófono 1": EXPERIMENTS_DIR / "distance_characterization_raw_mic1.csv",
+    "Micrófono 2": EXPERIMENTS_DIR / "distance_characterization_raw_mic2.csv",
 }
 
 # Coeficientes obtenidos durante la calibración original.
 # Se mantienen congelados: NO se estiman a partir del CSV de validación.
-RSSI_VALIDATION_FILE = DATA_DIR / "exp01_rssi_distance_prediction.csv"
+RSSI_VALIDATION_FILE = EXPERIMENTS_DIR / "exp01_rssi_distance_prediction.csv"
 FIXED_AMPLITUDE_K = {
     "Micrófono 1": 20.6934438197599,
     "Micrófono 2": 18.8589498970794,
@@ -653,7 +652,8 @@ def plot_method_comparisons(rssi_df, toa_data, metrics):
     fig.subplots_adjust(left=0.12, right=0.98, bottom=0.09, top=0.95, hspace=0.20)
     save_figure(fig, "exp01_fig3_method_residual_comparison")
 
-    metrics_path = DATA_DIR / "exp01_rssi_validation_metrics.csv"
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    metrics_path = ANALYSIS_DIR / "exp01_rssi_validation_metrics.csv"
     metrics.to_csv(metrics_path, index=False, float_format="%.8f")
     print(f"  [+] Métricas RSSI guardadas en: {metrics_path}")
 
@@ -662,6 +662,8 @@ def main():
     print("\n" + "=" * 60)
     print("EXPERIMENTO 01 - CARACTERIZACIÓN RADIAL")
     print("=" * 60)
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     data = load_data()
 
     print("\nGenerando calibración combinada de amplitud y energía...")
@@ -680,7 +682,7 @@ def main():
         for name, (k, r2) in results.items():
             print(f"  {name}: k={k:.6g}, R²={r2:.5f}")
 
-    print("\nProceso terminado. Revisa las figuras en figures/.")
+    print("\nProceso terminado. Revisa las figuras en figures/experiments/.")
     print("RSSI usa datos experimentales nuevos y k congelados; RSSI y ToA se comparan con escalas comunes.")
 
 
