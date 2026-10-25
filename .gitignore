@@ -32,11 +32,16 @@ __pycache__/
 
 # ==================================================
 # Figuras
-# Conservar únicamente .tex y .png
+# Conservar archivos .tex/.png en la raíz y las carpetas
+# organizadas de experimentos y diagramas (incluidos sus contenidos).
 # ==================================================
 figures/*
 !figures/*.tex
 !figures/*.png
+!figures/experiments/
+!figures/experiments/**
+!figures/diagrams/
+!figures/diagrams/**
 
 # ==================================================
 # Archivos temporales
