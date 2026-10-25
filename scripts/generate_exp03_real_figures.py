@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
 """
-Genera las cinco figuras reales de Exp03 y sus métricas con referencia individual por canal.
+Genera las tres figuras finales planificadas para Exp03 y sus métricas reproducibles.
 
 Entradas:
-  data/exp03_walo_doppler_10trials_10s.xlsx
-  data/exp03_tracker_walo_aligned.csv
+  data/experiments/exp03_walo_doppler_10trials_10s.xlsx
+  data/experiments/exp03_tracker_walo_aligned.csv
 
 Salidas:
-  figures/exp03_fig1_doppler_frequencies_REAL.png
-  figures/exp03_fig2_velocity_comparison_REAL.png
-  figures/exp03_fig3_velocity_mic1_vs_tracker_REAL.png
-  figures/exp03_fig4_velocity_mic2_vs_tracker_REAL.png
-  figures/exp03_fig5_position_comparison_REAL.png
-  analysis/exp03_doppler/manuscript_figures/exp03_real_figures_metrics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_sensor_baseline_diagnostics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_real_figures_manifest.csv
+  figures/exp03_fig1_frequencies_with_rest_reference.png
+  figures/exp03_fig2_individual_mic_velocities.png
+  figures/exp03_fig3_joint_velocity_and_position.png
+  data/analysis/exp03_doppler/manuscript_figures/exp03_final_metrics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_sensor_baseline_diagnostics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_real_figures_manifest.csv
 
 Las métricas se calculan con datos sin suavizar. El suavizado solo se usa
 para visualizar. MIC1 y MIC2 se recalculan desde las frecuencias medidas, usando una referencia independiente por canal y ensayo, estimada en un intervalo de reposo configurable. No se ajustan offsets con el Tracker.
@@ -35,7 +33,6 @@ from scipy.signal import savgol_filter
 from scipy.stats import pearsonr
 from scipy.signal import medfilt
 
-
 plt.rcParams.update({
     "font.family": "DejaVu Sans",
     "font.size": 9.5,
@@ -49,12 +46,10 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-
 def require_columns(df: pd.DataFrame, columns: set[str], source: str) -> None:
     missing = columns.difference(df.columns)
     if missing:
         raise ValueError(f"{source}: faltan columnas {sorted(missing)}")
-
 
 def smooth(values, window: int, polyorder: int = 3) -> np.ndarray:
     """Savitzky-Golay para visualización; nunca modifica los datos fuente."""
@@ -69,16 +64,13 @@ def smooth(values, window: int, polyorder: int = 3) -> np.ndarray:
         return y
     return savgol_filter(y, window_length=w, polyorder=polyorder, mode="interp")
 
-
 def pearson(x: np.ndarray, y: np.ndarray) -> float:
     if len(x) < 2 or np.std(x) == 0 or np.std(y) == 0:
         return float("nan")
     return float(pearsonr(x, y).statistic)
 
-
 def safe_ratio(a: float, b: float) -> float:
     return float(a / b) if np.isfinite(b) and b != 0 else float("nan")
-
 
 def velocity_metrics(walo: np.ndarray, tracker: np.ndarray,
                      movement_valid: np.ndarray | None = None) -> dict:
@@ -108,7 +100,6 @@ def velocity_metrics(walo: np.ndarray, tracker: np.ndarray,
         "rms_ratio": safe_ratio(rms_w, rms_t),
     }
 
-
 def add_metric_header(fig, legend_handles, legend_labels, metrics_text):
     """Franja superior independiente: evita solapamiento con las curvas."""
     header = fig.add_axes([0.075, 0.865, 0.85, 0.105])
@@ -125,14 +116,12 @@ def add_metric_header(fig, legend_handles, legend_labels, metrics_text):
                   edgecolor="0.80", alpha=1.0),
     )
 
-
 def mean_sd_by_time(df, time_col, columns):
     agg = {}
     for source, label in columns.items():
         agg[f"{label}_mean"] = (source, "mean")
         agg[f"{label}_sd"] = (source, "std")
     return df.groupby(time_col, sort=True).agg(**agg).reset_index()
-
 
 def load_and_merge(xlsx: Path, aligned_path: Path) -> tuple[pd.DataFrame, pd.DataFrame, float]:
     aligned = pd.read_csv(aligned_path)
@@ -157,7 +146,6 @@ def load_and_merge(xlsx: Path, aligned_path: Path) -> tuple[pd.DataFrame, pd.Dat
         warnings.warn(f"{missing:.1%} de filas alineadas no tienen frecuencia individual.")
     return raw, aligned, c_sound
 
-
 def load_movement_onsets(events_path: Path) -> pd.DataFrame:
     """Carga el inicio de movimiento detectado independientemente en el Tracker.
 
@@ -179,7 +167,6 @@ def load_movement_onsets(events_path: Path) -> pd.DataFrame:
         raise ValueError("Hay ensayos duplicados en el archivo de eventos.")
     return onsets
 
-
 def apply_movement_onset_mask(df: pd.DataFrame, onsets: pd.DataFrame) -> pd.DataFrame:
     """Marca como no válidas todas las muestras anteriores al movimiento real."""
     out = df.merge(onsets, on="trial", how="left", validate="many_to_one")
@@ -191,7 +178,6 @@ def apply_movement_onset_mask(df: pd.DataFrame, onsets: pd.DataFrame) -> pd.Data
         out["t_walo_original_s"] - out["tau_s"]
     )
     return out
-
 
 def estimate_individual_velocities(
     merged: pd.DataFrame, c_sound: float, baseline_start: float,
@@ -279,9 +265,7 @@ def estimate_individual_velocities(
         )
     return out, diagnostics
 
-
-
-def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
+def plot_frequencies(raw, output, window, polyorder, tmin, tmax, baseline_diagnostics):
     raw = raw[(raw.time_s >= tmin) & (raw.time_s <= tmax)].copy()
     chunks = []
     for _, g in raw.groupby("trial", sort=True):
@@ -312,6 +296,15 @@ def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
         sd = avg[f"{key}_sd"].fillna(0).to_numpy()
         ax.plot(t, m, color=color, lw=2.0, label=f"{label}: media")
         ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+    # Referencias de reposo: media entre ensayos de las medianas f0
+    # estimadas individualmente para cada micrófono.
+    f0_means = baseline_diagnostics.groupby("sensor")["f0_reference_hz"].mean()
+    f0_mic1 = float(f0_means.loc["mic1"])
+    f0_mic2 = float(f0_means.loc["mic2"])
+    ax.axhline(f0_mic1, color="tab:blue", ls="--", lw=1.15, alpha=0.9,
+               label=f"MIC1 reposo: {f0_mic1:.2f} Hz")
+    ax.axhline(f0_mic2, color="tab:orange", ls="--", lw=1.15, alpha=0.9,
+               label=f"MIC2 reposo: {f0_mic2:.2f} Hz")
     ax.set_ylabel("Frecuencia (Hz)")
     ax.set_title("(a) Mediciones independientes: MIC1 y MIC2", loc="left", pad=7)
     ax.grid(True, alpha=0.22)
@@ -323,6 +316,9 @@ def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
     sd = avg["common_sd"].fillna(0).to_numpy()
     ax.plot(t, m, color="tab:green", lw=2.15, label="Componente común: media")
     ax.fill_between(t, m - sd, m + sd, color="tab:green", alpha=0.16, linewidth=0)
+    f0_common = 0.5 * (f0_mic1 + f0_mic2)
+    ax.axhline(f0_common, color="tab:green", ls="--", lw=1.15, alpha=0.9,
+               label=f"Reposo común: {f0_common:.2f} Hz")
     ax.set_ylabel("Frecuencia (Hz)")
     ax.set_xlabel("Tiempo (s)")
     ax.set_title("(b) Componente común", loc="left", pad=7)
@@ -351,7 +347,6 @@ def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
         })
     return pd.DataFrame(rows)
 
-
 def smooth_after_onset(values: np.ndarray, valid: np.ndarray,
                        window: int, polyorder: int) -> np.ndarray:
     """Suaviza solo desde el inicio de movimiento; nunca rellena el reposo."""
@@ -368,7 +363,6 @@ def smooth_after_onset(values: np.ndarray, valid: np.ndarray,
     segment[~valid[first:]] = np.nan
     out[first:] = smooth(segment, window, polyorder)
     return out
-
 
 def plot_velocity_comparison(df, output, metrics, estimator_col, estimator_label,
                              title, window, polyorder, tmin, tmax):
@@ -429,6 +423,190 @@ def plot_velocity_comparison(df, output, metrics, estimator_col, estimator_label
     plt.close(fig)
 
 
+def plot_individual_sensor_comparison(df, output, metrics_by_sensor,
+                                      window, polyorder, tmin, tmax):
+    """Una figura de dos paneles: MIC1 y MIC2, cada uno frente a Tracker."""
+    fig, axes = plt.subplots(2, 1, figsize=(10.5, 8.0), sharex=True)
+    specs = [
+        ("v_mic1_corrected_m_s", "MIC1", metrics_by_sensor["mic1"]),
+        ("v_mic2_corrected_m_s", "MIC2", metrics_by_sensor["mic2"]),
+    ]
+    for ax, (column, sensor, metrics) in zip(axes, specs):
+        raw = df[(df.tau_s >= tmin) & (df.tau_s <= tmax)].sort_values(
+            ["trial", "tau_s"]
+        ).copy()
+        chunks = []
+        for _, g in raw.groupby("trial", sort=True):
+            g = g.copy()
+            valid = g["movement_valid"].to_numpy(bool)
+            for col, dest in [
+                (column, "walo_plot"),
+                ("vx_tracker_interp_m_s", "tracker_plot"),
+            ]:
+                y = g[col].to_numpy(float, copy=True)
+                y[np.abs(y) > 3.0] = np.nan
+                g[dest] = smooth_after_onset(y, valid, window, polyorder)
+            chunks.append(g)
+        s = pd.concat(chunks, ignore_index=True)
+        avg = mean_sd_by_time(s, "tau_s", {
+            "walo_plot": "walo", "tracker_plot": "tracker"
+        })
+        for _, g in s.groupby("trial", sort=True):
+            ax.plot(g.tau_s, g.walo_plot, color="tab:blue", lw=0.55, alpha=0.10)
+            ax.plot(g.tau_s, g.tracker_plot, color="tab:orange", lw=0.55, alpha=0.10)
+        t = avg.tau_s.to_numpy()
+        for key, label, color in [
+            ("walo", f"WALO {sensor}", "tab:blue"),
+            ("tracker", "Tracker", "tab:orange"),
+        ]:
+            m = avg[f"{key}_mean"].to_numpy()
+            sd = avg[f"{key}_sd"].fillna(0).to_numpy()
+            ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+            ax.plot(t, m, color=color, lw=2.1, label=f"{label}: media ± 1 DE")
+        ax.axhline(0, color="0.35", lw=0.8, ls="--")
+        ax.set_ylabel("Velocidad (m/s)")
+        ax.set_title(f"({ 'a' if sensor == 'MIC1' else 'b' }) {sensor}", loc="left")
+        ax.grid(True, alpha=0.22)
+        ax.legend(frameon=False, loc="upper right")
+        ax.text(
+            0.015, 0.04,
+            f"n={metrics['n']:,} | r={metrics['r']:.3f} | "
+            f"MAE={metrics['mae_m_s']:.3f} m/s | "
+            f"RMSE={metrics['rmse_m_s']:.3f} m/s | "
+            f"sesgo={metrics['bias_m_s']:+.3f} m/s",
+            transform=ax.transAxes, ha="left", va="bottom", fontsize=8.2,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white",
+                      edgecolor="0.82", alpha=0.95)
+        )
+    axes[-1].set_xlim(tmin, tmax)
+    axes[-1].set_xlabel("Tiempo relativo al evento de alineación (s)")
+    fig.suptitle("Exp03 — Reconstrucción individual de velocidad por micrófono",
+                 fontsize=12, y=0.99)
+    fig.tight_layout(rect=[0.04, 0.03, 0.98, 0.96])
+    fig.savefig(output, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_common_velocity_and_position(df, pos, output, velocity_metrics_row,
+                                      position_metrics_row, window, position_window,
+                                      polyorder, tmin, tmax):
+    """Dos paneles con leyendas y métricas en bandas externas, sin tapar los datos."""
+    from matplotlib.gridspec import GridSpec
+
+    fig = plt.figure(figsize=(14.2, 7.0))
+    gs = GridSpec(
+        3, 2, figure=fig,
+        height_ratios=[0.13, 1.0, 0.22],
+        hspace=0.30, wspace=0.16,
+        left=0.075, right=0.985, top=0.88, bottom=0.10
+    )
+    legend_axes = [fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1])]
+    axes = [fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])]
+    metric_axes = [fig.add_subplot(gs[2, 0]), fig.add_subplot(gs[2, 1])]
+    for lax, maxis in zip(legend_axes, metric_axes):
+        lax.set_axis_off()
+        maxis.set_axis_off()
+
+    # Panel izquierdo: velocidad diferencial conjunta.
+    ax = axes[0]
+    raw = df[(df.tau_s >= tmin) & (df.tau_s <= tmax)].sort_values(
+        ["trial", "tau_s"]
+    ).copy()
+    chunks = []
+    for _, g in raw.groupby("trial", sort=True):
+        g = g.copy()
+        valid = g["movement_valid"].to_numpy(bool)
+        for col, dest in [
+            ("v_walo_m_s", "walo_plot"),
+            ("vx_tracker_interp_m_s", "tracker_plot"),
+        ]:
+            y = g[col].to_numpy(float, copy=True)
+            y[np.abs(y) > 3.0] = np.nan
+            g[dest] = smooth_after_onset(y, valid, window, polyorder)
+        chunks.append(g)
+    s = pd.concat(chunks, ignore_index=True)
+    avg = mean_sd_by_time(s, "tau_s", {
+        "walo_plot": "walo", "tracker_plot": "tracker"
+    })
+    for _, g in s.groupby("trial", sort=True):
+        ax.plot(g.tau_s, g.walo_plot, color="tab:blue", lw=0.5, alpha=0.07)
+        ax.plot(g.tau_s, g.tracker_plot, color="tab:orange", lw=0.5, alpha=0.07)
+    t = avg.tau_s.to_numpy()
+    for key, label, color in [
+        ("walo", "WALO: Doppler conjunto", "tab:blue"),
+        ("tracker", "Tracker", "tab:orange"),
+    ]:
+        m = avg[f"{key}_mean"].to_numpy()
+        sd = avg[f"{key}_sd"].fillna(0).to_numpy()
+        ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+        ax.plot(t, m, color=color, lw=2.2, label=f"{label}: media ± 1 DE")
+    ax.axhline(0, color="0.35", lw=0.8, ls="--")
+    ax.set(xlim=(tmin, tmax), xlabel="Tiempo relativo al evento (s)",
+           ylabel="Velocidad (m/s)", title="(a) Velocidad reconstruida")
+    ax.grid(True, alpha=0.22)
+
+    # Panel derecho: desplazamiento integrado.
+    ax = axes[1]
+    p = pos[(pos.tau_s >= tmin) & (pos.tau_s <= tmax)].copy()
+    chunks = []
+    for _, g in p.groupby("trial", sort=True):
+        g = g.sort_values("tau_s").copy()
+        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), position_window, polyorder)
+        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), position_window, polyorder)
+        chunks.append(g)
+    ps = pd.concat(chunks, ignore_index=True)
+    pavg = mean_sd_by_time(ps, "tau_s", {"xw_plot": "walo", "xt_plot": "tracker"})
+    for _, g in ps.groupby("trial", sort=True):
+        ax.plot(g.tau_s, g.xw_plot, color="tab:blue", lw=0.5, alpha=0.07)
+        ax.plot(g.tau_s, g.xt_plot, color="tab:orange", lw=0.5, alpha=0.07)
+    t = pavg.tau_s.to_numpy()
+    for key, label, color in [
+        ("walo", "WALO: trayectoria Doppler", "tab:blue"),
+        ("tracker", "Tracker", "tab:orange"),
+    ]:
+        m = pavg[f"{key}_mean"].to_numpy()
+        sd = pavg[f"{key}_sd"].fillna(0).to_numpy()
+        ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+        ax.plot(t, m, color=color, lw=2.2, label=f"{label}: media ± 1 DE")
+    ax.set(xlim=(tmin, tmax), xlabel="Tiempo relativo al evento (s)",
+           ylabel="Desplazamiento relativo (m)", title="(b) Trayectoria reconstruida")
+    ax.grid(True, alpha=0.22)
+
+    # Las leyendas ocupan una fila dedicada fuera de las zonas de datos.
+    for lax, plot_ax in zip(legend_axes, axes):
+        handles, labels = plot_ax.get_legend_handles_labels()
+        lax.legend(handles, labels, loc="center", ncol=1, frameon=False,
+                   fontsize=8.5, handlelength=2.5)
+
+    # Métricas en tarjetas independientes bajo cada panel.
+    metric_axes[0].text(
+        0.5, 0.5,
+        f"n = {velocity_metrics_row['n']:,}    |    r = {velocity_metrics_row['r']:.3f}\n"
+        f"MAE = {velocity_metrics_row['mae_m_s']:.3f} m/s    |    "
+        f"RMSE = {velocity_metrics_row['rmse_m_s']:.3f} m/s\n"
+        f"Sesgo = {velocity_metrics_row['bias_m_s']:+.3f} m/s    |    "
+        f"Razón RMS = {velocity_metrics_row['rms_ratio']:.2f}",
+        transform=metric_axes[0].transAxes, ha="center", va="center", fontsize=8.5,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
+                  edgecolor="0.78", alpha=1.0)
+    )
+    metric_axes[1].text(
+        0.5, 0.5,
+        f"n = {position_metrics_row['n']:,}    |    r = {position_metrics_row['r']:.3f}\n"
+        f"MAE = {position_metrics_row['mae_m']:.3f} m    |    "
+        f"RMSE = {position_metrics_row['rmse_m']:.3f} m\n"
+        f"Sesgo = {position_metrics_row['bias_m']:+.3f} m    |    "
+        f"Razón de picos = {position_metrics_row['mean_peak_ratio']:.2f}",
+        transform=metric_axes[1].transAxes, ha="center", va="center", fontsize=8.5,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
+                  edgecolor="0.78", alpha=1.0)
+    )
+
+    fig.suptitle("Exp03 — Estimación conjunta Doppler: velocidad y trayectoria",
+                 fontsize=13, y=0.97)
+    fig.savefig(output, dpi=300)
+    plt.close(fig)
+
 def position_metrics_and_data(aligned):
     chunks = []
     for trial, group in aligned.groupby("trial", sort=True):
@@ -461,14 +639,13 @@ def position_metrics_and_data(aligned):
     }
     return pos, metrics
 
-
 def plot_position(pos, output, metrics, window, polyorder, tmin, tmax):
     raw = pos[(pos.tau_s >= tmin) & (pos.tau_s <= tmax)].copy()
     chunks = []
     for _, g in raw.groupby("trial", sort=True):
         g = g.sort_values("tau_s").copy()
-        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), window, polyorder)
-        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), window, polyorder)
+        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), position_window, polyorder)
+        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), position_window, polyorder)
         chunks.append(g)
     s = pd.concat(chunks, ignore_index=True)
     avg = mean_sd_by_time(s, "tau_s", {"xw_plot": "walo", "xt_plot": "tracker"})
@@ -510,7 +687,7 @@ def plot_position(pos, output, metrics, window, polyorder, tmin, tmax):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Genera las cinco figuras y métricas reales de Exp03."
+        description="Genera las tres figuras finales planificadas para Exp03."
     )
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--frequency-window", type=int, default=51)
@@ -521,22 +698,24 @@ def main():
     parser.add_argument("--frequency-tmax", type=float, default=9.5)
     parser.add_argument("--comparison-tmin", type=float, default=-1.8)
     parser.add_argument("--comparison-tmax", type=float, default=7.5)
-    parser.add_argument("--baseline-start", type=float, default=0.50, help="Inicio del intervalo de reposo WALO (s).")
-    parser.add_argument("--baseline-end", type=float, default=0.80, help="Fin del intervalo de reposo WALO (s).")
-    parser.add_argument("--baseline-median-kernel", type=int, default=9, help="Filtro mediano impar para velocidades individuales.")
+    parser.add_argument("--baseline-start", type=float, default=0.50)
+    parser.add_argument("--baseline-end", type=float, default=0.80)
+    parser.add_argument("--baseline-median-kernel", type=int, default=9)
     args = parser.parse_args()
 
     root = args.root.resolve()
-    xlsx = root / "data" / "exp03_walo_doppler_10trials_10s.xlsx"
-    aligned_path = root / "data" / "exp03_tracker_walo_aligned.csv"
-    events_path = root / "data" / "exp03_synchronization_events.csv"
-    figures = root / "figures"
-    out_dir = root / "analysis" / "exp03_doppler" / "manuscript_figures"
+    experiments_dir = root / "data" / "experiments"
+    xlsx = experiments_dir / "exp03_walo_doppler_10trials_10s.xlsx"
+    aligned_path = experiments_dir / "exp03_tracker_walo_aligned.csv"
+    events_path = experiments_dir / "exp03_synchronization_events.csv"
+    figures = root / "figures" / "experiments"
+    out_dir = (root / "data" / "analysis" / "exp03_doppler"
+              / "manuscript_figures")
     figures.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
     for p in (xlsx, aligned_path, events_path):
-        if not p.exists():
-            raise FileNotFoundError(f"No se encontró: {p}")
+        if not p.is_file():
+            raise FileNotFoundError(f"No se encontró el archivo requerido: {p}")
 
     raw, aligned, c_sound = load_and_merge(xlsx, aligned_path)
     movement_onsets = load_movement_onsets(events_path)
@@ -547,125 +726,87 @@ def main():
     )
 
     outputs = {
-        "frequency": figures / "exp03_fig1_doppler_frequencies_REAL.png",
-        "differential": figures / "exp03_fig2_velocity_comparison_REAL.png",
-        "mic1": figures / "exp03_fig3_velocity_mic1_vs_tracker_REAL.png",
-        "mic2": figures / "exp03_fig4_velocity_mic2_vs_tracker_REAL.png",
-        "position": figures / "exp03_fig5_position_comparison_REAL.png",
+        "frequency": figures / "exp03_fig1_frequencies_with_rest_reference.png",
+        "individual": figures / "exp03_fig2_individual_mic_velocities.png",
+        "joint": figures / "exp03_fig3_joint_velocity_and_position.png",
     }
 
     freq_stats = plot_frequencies(
         raw, outputs["frequency"], args.frequency_window, args.polyorder,
-        args.frequency_tmin, args.frequency_tmax
+        args.frequency_tmin, args.frequency_tmax, baseline_diagnostics
     )
 
-    # Estimador diferencial: columna ya sincronizada en el CSV alineado.
-    specs = [
-        ("differential", "v_walo_m_s", "WALO diferencial (MIC1 + MIC2)",
-         "Exp03 — Velocidad Doppler diferencial frente al seguimiento visual"),
-        ("mic1", "v_mic1_corrected_m_s", "WALO MIC1 (referencia propia)",
-         "Exp03 — Velocidad Doppler calculada solo con MIC1 frente al tracker"),
-        ("mic2", "v_mic2_corrected_m_s", "WALO MIC2 (referencia propia)",
-         "Exp03 — Velocidad Doppler calculada solo con MIC2 frente al tracker"),
-    ]
-    all_metric_rows = []
-    sensor_metric_rows = []
-    for key, col, label, title in specs:
-        metrics = velocity_metrics(
+    # Comparación individual: referencias f0 independientes por sensor y ensayo.
+    mic_metrics = {}
+    for key, col in [
+        ("mic1", "v_mic1_corrected_m_s"),
+        ("mic2", "v_mic2_corrected_m_s"),
+    ]:
+        mic_metrics[key] = velocity_metrics(
             aligned[col].to_numpy(float),
             aligned["vx_tracker_interp_m_s"].to_numpy(float),
             aligned["movement_valid"].to_numpy(bool)
         )
-        plot_velocity_comparison(
-            aligned, outputs[key], metrics, col, label, title,
-            args.kinematic_window, args.polyorder,
-            args.comparison_tmin, args.comparison_tmax
-        )
-        for metric, value in metrics.items():
-            row = {"comparison": key, "estimator": label,
-                   "metric": metric, "value": value}
-            all_metric_rows.append(row)
-            sensor_metric_rows.append(row)
-
-    pos, pos_metrics = position_metrics_and_data(aligned)
-    plot_position(
-        pos, outputs["position"], pos_metrics,
-        args.position_window, args.polyorder,
+    plot_individual_sensor_comparison(
+        aligned, outputs["individual"], mic_metrics,
+        args.kinematic_window, args.polyorder,
         args.comparison_tmin, args.comparison_tmax
     )
+
+    # La estimación conjunta es la velocidad diferencial ya calculada por WALO:
+    # v = c (f2-f1)/(f1+f2) = c (f2-f1)/(2 f_common).
+    # No se obtiene convirtiendo f_common por sí sola en una velocidad.
+    common_velocity_metrics = velocity_metrics(
+        aligned["v_walo_m_s"].to_numpy(float),
+        aligned["vx_tracker_interp_m_s"].to_numpy(float),
+        aligned["movement_valid"].to_numpy(bool)
+    )
+    pos, pos_metrics = position_metrics_and_data(aligned)
+    plot_common_velocity_and_position(
+        aligned, pos, outputs["joint"], common_velocity_metrics, pos_metrics,
+        args.kinematic_window, args.position_window, args.polyorder,
+        args.comparison_tmin, args.comparison_tmax
+    )
+
+    metric_rows = []
+    for sensor, metrics in mic_metrics.items():
+        for metric, value in metrics.items():
+            metric_rows.append({"comparison": sensor, "metric": metric, "value": value})
+    for metric, value in common_velocity_metrics.items():
+        metric_rows.append({"comparison": "joint_velocity", "metric": metric, "value": value})
     for metric, value in pos_metrics.items():
-        all_metric_rows.append({
-            "comparison": "position", "estimator": "WALO vs Tracker",
-            "metric": metric, "value": value
-        })
+        metric_rows.append({"comparison": "position", "metric": metric, "value": value})
 
-    metrics_path = out_dir / "exp03_real_figures_metrics.csv"
-    sensor_path = out_dir / "exp03_velocity_metrics_by_sensor.csv"
-    freq_path = out_dir / "exp03_frequency_statistics.csv"
-    baseline_path = out_dir / "exp03_sensor_baseline_diagnostics.csv"
-    onset_path = out_dir / "exp03_movement_onsets_used.csv"
-    manifest_path = out_dir / "exp03_real_figures_manifest.csv"
-
-    pd.DataFrame(all_metric_rows).to_csv(metrics_path, index=False)
-    pd.DataFrame(sensor_metric_rows).to_csv(sensor_path, index=False)
-    freq_stats.to_csv(freq_path, index=False)
-    baseline_diagnostics.to_csv(baseline_path, index=False)
-    alignment_offsets = (
-        aligned.assign(_offset=aligned["tau_s"] - aligned["t_walo_original_s"])
-        .groupby("trial")["_offset"].median()
-    )
-    movement_onsets.assign(
-        tau_onset_s=movement_onsets["tracker_onset_t_s"]
-        + movement_onsets["trial"].map(alignment_offsets).to_numpy()
-    ).to_csv(onset_path, index=False)
-
-    manifest = pd.DataFrame([
+    pd.DataFrame(metric_rows).to_csv(out_dir / "exp03_final_metrics.csv", index=False)
+    pd.DataFrame([
         {"figure": 1, "file": str(outputs["frequency"].relative_to(root)),
-         "description": "Frecuencias: MIC1/MIC2 y componente común en paneles separados"},
-        {"figure": 2, "file": str(outputs["differential"].relative_to(root)),
-         "description": "Velocidad diferencial WALO (MIC1+MIC2) frente a Tracker"},
-        {"figure": 3, "file": str(outputs["mic1"].relative_to(root)),
-         "description": "Velocidad MIC1 con referencia propia por ensayo frente a Tracker"},
-        {"figure": 4, "file": str(outputs["mic2"].relative_to(root)),
-         "description": "Velocidad MIC2 con referencia propia por ensayo frente a Tracker"},
-        {"figure": 5, "file": str(outputs["position"].relative_to(root)),
-         "description": "Desplazamiento reconstruido WALO frente a Tracker"},
-    ])
-    manifest.to_csv(manifest_path, index=False)
+         "description": "Frecuencias MIC1/MIC2 y componente común con referencias medias de reposo"},
+        {"figure": 2, "file": str(outputs["individual"].relative_to(root)),
+         "description": "Velocidad reconstruida individualmente por MIC1 y MIC2 frente a Tracker"},
+        {"figure": 3, "file": str(outputs["joint"].relative_to(root)),
+         "description": "Velocidad Doppler conjunta y trayectoria reconstruida frente a Tracker"},
+    ]).to_csv(out_dir / "exp03_final_figures_manifest.csv", index=False)
+    freq_stats.to_csv(out_dir / "exp03_frequency_statistics.csv", index=False)
+    baseline_diagnostics.to_csv(out_dir / "exp03_sensor_baseline_diagnostics.csv", index=False)
+    movement_onsets.to_csv(out_dir / "exp03_movement_onsets_used.csv", index=False)
 
-    print("\nReferencias individuales estimadas (Hz):")
-    print(baseline_diagnostics.pivot(index="trial", columns="sensor", values="f0_reference_hz").round(3).to_string())
-    print("\nInicio de movimiento usado por ensayo (Tracker independiente):")
-    print(movement_onsets.to_string(index=False))
-    print("\nLas muestras anteriores al inicio se excluyeron de figuras 2–4 y sus métricas.")
-    print(f"Intervalo de reposo usado para f0: [{args.baseline_start:.2f}, {args.baseline_end:.2f}] s")
-    print(f"Velocidad del sonido: {c_sound:.3f} m/s")
-    print("\nFiguras generadas:")
-    for p in outputs.values():
-        print(f"  {p.relative_to(root)}")
-    print("\nArchivos de métricas:")
-    for p in (metrics_path, sensor_path, freq_path, baseline_path, onset_path, manifest_path):
-        print(f"  {p.relative_to(root)}")
-
-    print("\nComparación de velocidades (datos sin suavizar):")
-    for key, _, label, _ in specs:
-        m = next(
-            velocity_metrics(
-                aligned[spec[1]].to_numpy(float),
-                aligned["vx_tracker_interp_m_s"].to_numpy(float),
-                aligned["movement_valid"].to_numpy(bool)
-            ) for spec in specs if spec[0] == key
-        )
-        print(
-            f"  {label}: n={m['n']:,}, r={m['r']:.3f}, "
-            f"MAE={m['mae_m_s']:.3f} m/s, RMSE={m['rmse_m_s']:.3f} m/s, "
-            f"sesgo={m['bias_m_s']:+.3f} m/s, razón RMS={m['rms_ratio']:.2f}"
-        )
-    print(
-        f"\nPosición: n={pos_metrics['n']:,}, r={pos_metrics['r']:.3f}, "
-        f"MAE={pos_metrics['mae_m']:.3f} m, RMSE={pos_metrics['rmse_m']:.3f} m"
-    )
-
+    print("\\nFIGURAS GENERADAS")
+    for path in outputs.values():
+        print(f"  {path.relative_to(root)}")
+    print("\\nMÉTRICAS (datos sin suavizar)")
+    for name, metrics in [("MIC1", mic_metrics["mic1"]),
+                          ("MIC2", mic_metrics["mic2"]),
+                          ("Doppler conjunto", common_velocity_metrics)]:
+        print(f"{name}: n={metrics['n']}, r={metrics['r']:.3f}, "
+              f"MAE={metrics['mae_m_s']:.3f} m/s, "
+              f"RMSE={metrics['rmse_m_s']:.3f} m/s, "
+              f"sesgo={metrics['bias_m_s']:+.3f} m/s, "
+              f"razón RMS={metrics['rms_ratio']:.2f}")
+    print(f"Posición: n={pos_metrics['n']}, r={pos_metrics['r']:.3f}, "
+          f"MAE={pos_metrics['mae_m']:.3f} m, RMSE={pos_metrics['rmse_m']:.3f} m")
+    print("\\nReferencias medias de reposo (Hz):")
+    print(baseline_diagnostics.groupby("sensor")["f0_reference_hz"].agg(["mean", "std"]).round(3))
+    print("\\nRevise especialmente el diagnóstico de estabilidad del intervalo de reposo.")
 
 if __name__ == "__main__":
     main()
