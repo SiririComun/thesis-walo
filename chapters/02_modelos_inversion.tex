@@ -100,6 +100,18 @@ Esta relación fija la escala de conversión entre el instante detectado
 y la distancia estimada. La detección del arribo y la calibración del
 retardo determinan la calidad de esa estimación.
 
+Cuando se dispone de varios receptores con posiciones conocidas y de
+un instante de emisión común conocido, cada medición ToA corregida
+proporciona una distancia entre la fuente y el receptor. En tres
+dimensiones, una distancia fija define una esfera centrada en el
+receptor. La intersección de las superficies asociadas a varios
+receptores constituye la base geométrica de la trilateración por
+intersección de esferas. Esta formulación requiere una referencia
+temporal de emisión y sincronización suficientes para estimar distancias
+absolutas; no debe confundirse con TDoA, que utiliza diferencias de
+tiempos y elimina el instante común de emisión. El desarrollo geométrico
+y sus limitaciones se presenta en el Apéndice~\ref{app:trilateracion_esferas}.
+
 \subsection{Calibración radial de amplitud y energía digital}
 
 En un medio homogéneo y sin pérdidas, una fuente puntual que radia
@@ -284,6 +296,28 @@ partir de la diferencia temporal entre canales. En WALO, el cálculo
 utiliza la separación conocida entre micrófonos y la corrección de
 retardo intercanal obtenida durante la caracterización del sistema.
 
+La ecuación angular anterior corresponde a la aproximación de campo
+lejano. Sin esa aproximación, la diferencia temporal entre dos
+receptores se relaciona directamente con la diferencia de sus
+distancias a la fuente:
+
+\begin{equation}
+    \|\mathbf{x}-\mathbf{r}_1\|
+    -\|\mathbf{x}-\mathbf{r}_2\|
+    = c(T)\Delta t.
+    \label{eq:hiperbola_tdoa}
+\end{equation}
+
+En dos dimensiones, el conjunto de posiciones $\mathbf{x}$ que
+satisface esta ecuación es una hipérbola cuyos focos se encuentran en
+las posiciones de los receptores. En tres dimensiones, la superficie
+correspondiente es un hiperboloide de dos hojas. Por tanto, la
+formulación angular de campo lejano puede interpretarse como una
+aproximación de la relación geométrica general. La localización
+hiperbólica requiere combinar restricciones de varios pares de
+receptores y resolver su intersección; no es equivalente a estimar
+únicamente un ángulo con un arreglo de dos micrófonos.
+
 \subsection{Diferencia de fase intercanal (PDoA)}
 
 Para una señal armónica de frecuencia $f_0$, la diferencia de fase
@@ -324,13 +358,33 @@ La diferencia de fase y la diferencia de tiempos describen la misma
 diferencia de camino mediante observables distintos:
 
 \begin{equation}
-    \Delta\Phi = 2\pi f_0\Delta t.
+    \Delta\Phi = 2\pi f_0\Delta t
+    \quad (\mathrm{mod}\;2\pi).
     \label{eq:relacion_fase_tiempo}
 \end{equation}
 
-En WALO, TDOA utiliza la separación temporal entre los arribos
-detectados y PDoA utiliza la diferencia de fase de la componente
-armónica presente en ambos canales.
+La relación de fase también puede expresarse como una restricción
+geométrica de diferencia de distancias. Para cada entero admisible
+$n$, la ecuación~\eqref{eq:ambiguedad_fase} fija un valor posible de
+$r_1-r_2$ y, por tanto, define una hipérbola en dos dimensiones. Debido
+a la periodicidad de la fase, una medición PDoA monocromática puede
+corresponder a una familia discreta de hipérbolas, en lugar de una
+única curva. La selección de la rama correcta requiere información
+adicional, por ejemplo, limitar el sector angular, reducir la
+separación entre sensores respecto de la longitud de onda o combinar
+mediciones con otras frecuencias o con TDoA.
+
+Así, TDoA y PDoA comparten una interpretación geométrica basada en
+diferencias de camino, pero no son observables equivalentes: TDoA mide
+una diferencia temporal de llegada, mientras que PDoA mide una
+diferencia de fase definida módulo $2\pi$. En el régimen de campo
+lejano ambas pueden reducirse a relaciones angulares; en campo cercano
+la restricción de diferencia de distancias conserva su forma
+hiperbólica. En WALO, TDOA utiliza la separación temporal entre los
+arribos detectados y PDoA utiliza la diferencia de fase de la componente
+armónica presente en ambos canales. La formulación hiperbólica general
+se incluye aquí como interpretación geométrica del modelo y no implica
+que WALO implemente una solución de multilateración hiperbólica.
 
 \subsection{Separación entre sensores}
 

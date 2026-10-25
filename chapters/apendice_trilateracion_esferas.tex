@@ -1,0 +1,160 @@
+% Este archivo se incorpora desde el documento principal después de
+% ejecutar \appendix. No contiene una nueva declaración \appendix.
+\chapter{Trilateración acústica por intersección de esferas}
+\label{app:trilateracion_esferas}
+
+\section{Alcance y supuestos}
+
+La trilateración por intersección de esferas estima la posición de una
+fuente a partir de distancias absolutas medidas desde varios receptores
+de posición conocida. Se presenta como una extensión geométrica
+exploratoria de los modelos de localización desarrollados en esta tesis.
+No corresponde a un método implementado ni validado experimentalmente
+en WALO y, por tanto, no se utiliza para producir los resultados
+presentados en los capítulos experimentales.
+
+Se considera una fuente en la posición tridimensional
+$\mathbf{x}=(x,y,z)$ y $N$ receptores en posiciones conocidas
+$\mathbf{r}_i=(x_i,y_i,z_i)$. Si el instante de emisión
+$t_{\mathrm{em}}$ es conocido y los retardos instrumentales de cada
+canal han sido calibrados, la distancia fuente--receptor puede
+estimarse mediante
+
+\begin{equation}
+    \rho_i = c(T)\left[
+    t_{\mathrm{arr},i}-t_{\mathrm{em}}-t_{\mathrm{off},i}
+    \right].
+    \label{eq:app_esfera_distancia}
+\end{equation}
+
+La ecuación geométrica de cada medición es
+
+\begin{equation}
+    \|\mathbf{x}-\mathbf{r}_i\|=\rho_i,
+    \label{eq:app_esfera_general}
+\end{equation}
+
+o, de forma equivalente,
+
+\begin{equation}
+    (x-x_i)^2+(y-y_i)^2+(z-z_i)^2=\rho_i^2.
+    \label{eq:app_esfera_expandida}
+\end{equation}
+
+Cada medición define una esfera centrada en el receptor. La posición
+buscada pertenece a la intersección de todas las superficies
+compatibles.
+
+\section{Progresión geométrica según el número de receptores}
+
+\paragraph{Un receptor: una esfera.}
+Con un único receptor, la ecuación
+\eqref{eq:app_esfera_general} define una esfera de radio $\rho_1$.
+La fuente puede encontrarse en cualquier punto de esa superficie, por
+lo que la posición tridimensional no queda determinada de manera única.
+
+\paragraph{Dos receptores: una circunferencia.}
+Con dos receptores, la posición debe pertenecer simultáneamente a dos
+esferas. Si estas se intersectan transversalmente, su intersección es
+una circunferencia. El centro de esa circunferencia se encuentra sobre
+la línea que une los centros de las esferas. Si las esferas son
+tangentes, la intersección se reduce a un punto; si no se intersectan,
+las distancias medidas son geométricamente incompatibles en el modelo
+ideal.
+
+\paragraph{Tres receptores: dos puntos posibles.}
+Una tercera esfera intersecta, en el caso genérico, la circunferencia
+definida por las dos primeras. Si existe intersección transversal,
+pueden quedar dos puntos posibles, situados a lados opuestos del plano
+que contiene los tres centros de los receptores. Esta ambigüedad
+refleja que tres centros coplanares no permiten distinguir por sí solos
+entre las dos posiciones reflejadas respecto de ese plano. En casos
+tangenciales la intersección puede reducirse a un único punto, y en
+casos incompatibles puede no existir intersección exacta.
+
+\paragraph{Cuatro receptores: una solución puntual bajo geometría adecuada.}
+Una cuarta medición aporta una restricción adicional. Si los cuatro
+centros de los receptores no son coplanares, las distancias son
+compatibles y la geometría está suficientemente bien condicionada,
+la intersección puede determinar una posición única. Cuatro
+receptores no garantizan por sí solos unicidad: la disposición
+espacial, la incertidumbre de las distancias y la sincronización
+determinan si la solución es única y estable.
+
+\section{Formulación algebraica}
+
+Para mostrar cómo se obtiene una solución a partir de las distancias,
+se eleva al cuadrado la ecuación~\eqref{eq:app_esfera_general}:
+
+\begin{equation}
+    \|\mathbf{x}-\mathbf{r}_i\|^2=\rho_i^2.
+\end{equation}
+
+Al restar la ecuación del primer receptor de la ecuación del receptor
+$i$, se elimina el término cuadrático $\|\mathbf{x}\|^2$ y se obtiene
+
+\begin{equation}
+    2(\mathbf{r}_i-\mathbf{r}_1)^\mathsf{T}\mathbf{x}
+    =
+    \|\mathbf{r}_i\|^2-\|\mathbf{r}_1\|^2
+    +\rho_1^2-\rho_i^2.
+    \label{eq:app_esfera_linealizada}
+\end{equation}
+
+Estas ecuaciones son lineales en las coordenadas de la fuente. En
+tres dimensiones se requieren suficientes restricciones linealmente
+independientes para determinar las tres coordenadas. Con cuatro
+receptores no coplanares, las tres ecuaciones obtenidas al restar la
+primera medición de las otras tres pueden determinar una solución
+algebraica, siempre que la matriz geométrica tenga rango completo.
+La solución debe verificarse sustituyéndola en las ecuaciones
+esféricas originales.
+
+En presencia de ruido, las esferas medidas generalmente no se
+intersectan en un punto exacto. En ese caso, puede formularse una
+estimación no lineal de mínimos cuadrados:
+
+\begin{equation}
+    \hat{\mathbf{x}}=
+    \underset{\mathbf{x}}{\operatorname{arg\,min}}
+    \sum_{i=1}^{N}w_i
+    \left(
+    \|\mathbf{x}-\mathbf{r}_i\|-\rho_i
+    \right)^2,
+    \label{eq:app_esfera_minimos_cuadrados}
+\end{equation}
+
+donde $w_i$ representa un peso asociado a la incertidumbre de cada
+distancia. La selección de pesos y el análisis de incertidumbre
+requieren caracterizar experimentalmente cada canal y la geometría
+del arreglo.
+
+\section{Diferencia respecto de TDoA y limitaciones experimentales}
+
+La trilateración por esferas requiere distancias absolutas. Para
+obtenerlas a partir de ToA se necesita conocer el instante de emisión,
+mantener una referencia temporal común y calibrar los retardos
+instrumentales. Si el instante de emisión es desconocido, las
+distancias absolutas no pueden obtenerse directamente de los tiempos
+de llegada sin introducir una incógnita adicional.
+
+TDoA elimina el instante común de emisión al restar los tiempos
+registrados por dos receptores. Esa resta conduce a una diferencia de
+distancias constante y, por ello, a una hipérbola en dos dimensiones
+o a un hiperboloide en tres dimensiones. PDoA puede representar una
+restricción análoga a partir de la diferencia de fase, pero la
+periodicidad módulo $2\pi$ introduce ambigüedad en el número de ciclos.
+Por tanto, la intersección de esferas y la multilateración hiperbólica
+son formulaciones geométricas relacionadas, pero parten de observables
+y requisitos de sincronización diferentes.
+
+La viabilidad de este método en WALO requeriría, como mínimo,
+incorporar más receptores con posiciones tridimensionales conocidas,
+caracterizar los retardos de cada canal, disponer de una referencia
+de emisión común y evaluar la incertidumbre de las distancias
+estimadas. También sería necesario estudiar la geometría del arreglo,
+la influencia de las reflexiones y la estabilidad de la velocidad
+del sonido. Estos requisitos exceden la validación experimental
+realizada en esta tesis; el método se conserva, por ello, como una
+posible línea de extensión y no como una capacidad demostrada del
+instrumento.

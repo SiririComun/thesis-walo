@@ -679,10 +679,22 @@ donde:
     \sum_{n=0}^{N-1}v_i[n].
 \end{equation}
 
+La primera expresión incluye tanto la componente continua como la
+componente alterna de la señal. La segunda elimina la media del intervalo
+y cuantifica únicamente la componente alterna. Por ello, ambas
+definiciones no son intercambiables cuando existe un desplazamiento
+continuo significativo. En cada aplicación debe indicarse cuál de las
+dos se utiliza y sobre qué señal se calcula: $v_i[n]$ representa la
+señal eléctrica considerada en esta definición, mientras que cualquier
+señal filtrada o transformada debe identificarse explícitamente antes
+de calcular su valor eficaz.
+
 La amplitud eficaz cuantifica el nivel eléctrico de la señal en el
-intervalo considerado. Su conversión a presión acústica eficaz se
-realiza mediante la sensibilidad del micrófono y la calibración de
-la cadena de adquisición.
+intervalo considerado. Su conversión a presión acústica eficaz requiere
+conocer la sensibilidad del micrófono y la respuesta calibrada de la
+cadena de adquisición; sin esa calibración, el resultado debe
+interpretarse como una magnitud eléctrica y no como una medida absoluta
+de presión sonora.
 
 \subsection{Magnitud cuadrática acumulada}
 
@@ -700,17 +712,24 @@ temporal. Para una ventana de $N_{\mathrm{gate}}$ muestras:
     \label{eq:energia_directa}
 \end{equation}
 
-donde $n_0$ y $n_1$ delimitan el intervalo considerado y
+donde $n_0$ y $n_1$ delimitan el intervalo considerado,
 $\overline{y}_{i,\mathrm{gate}}$ es el valor medio de las muestras
-dentro de esa ventana.
+dentro de esa ventana y el número de muestras incluido, con ambos
+extremos considerados, es
+
+\begin{equation}
+    N_{\mathrm{gate}}=n_1-n_0+1.
+    \label{eq:numero_muestras_gate}
+\end{equation}
 
 La expresión define una suma cuadrática discreta cuyo valor depende
 de la amplitud de la señal, la duración de la ventana, la frecuencia
 de muestreo y la escala numérica. En este capítulo, $Q_i$ se utiliza
-como indicador digital del nivel de señal. Su relación con magnitudes
-acústicas absolutas se establece mediante la sensibilidad del
-transductor, la respuesta de la cadena electrónica y la normalización
-temporal.
+como indicador digital del nivel de señal. No representa por sí misma
+energía acústica ni energía eléctrica expresada en julios. Su uso para
+comparar magnitudes acústicas requiere mantener condiciones de
+adquisición equivalentes y considerar la sensibilidad del transductor,
+la respuesta de la cadena electrónica y la duración de la ventana.
 
 \section{Detección de tiempos de llegada}
 
@@ -780,14 +799,16 @@ entre sus tiempos de llegada:
 \begin{equation}
     \Delta t
     =
-    t_{\mathrm{arr},2}
+    t_{\mathrm{arr},1}
     -
-    t_{\mathrm{arr},1}.
+    t_{\mathrm{arr},2}.
     \label{eq:delta_t_toa}
 \end{equation}
 
 La diferencia de tiempos de llegada (\textit{Time Difference of Arrival},
-TDOA) se relaciona con la diferencia de distancias recorridas:
+TDOA) se define aquí con el orden $R_1-R_2$, en concordancia con la
+convención geométrica del capítulo 2. Por tanto, se relaciona con la
+diferencia de distancias recorridas $r_1-r_2$ mediante:
 
 \begin{equation}
     \Delta r
@@ -796,10 +817,11 @@ TDOA) se relaciona con la diferencia de distancias recorridas:
     \label{eq:delta_r_tdoa}
 \end{equation}
 
-El signo de la diferencia depende del orden asignado a los receptores.
-Su valor se relaciona con la dirección de llegada y, mediante la
-geometría y separación del arreglo, con la diferencia de caminos
-acústicos. Por tanto, el TDOA aporta una restricción geométrica que
+Con esta convención, un cambio en el orden de los receptores invierte
+el signo de $\Delta t$ y de $\Delta r$. Su valor se relaciona con la
+dirección de llegada y, mediante la geometría y separación del arreglo,
+con la diferencia de caminos acústicos. Por tanto, el TDOA aporta una
+restricción geométrica que
 se combina con el modelo del arreglo para estimar la posición de
 la fuente.
 
@@ -1182,7 +1204,7 @@ contribuciones:
 \begin{enumerate}
     \item \textbf{Incertidumbre de referencia:} asociada a los
     instrumentos y procedimientos utilizados para establecer las
-    distancias, los ángulos, las masas y las demás magnitudes de
+    distancias, los ángulos y las demás magnitudes de
     referencia.
 
     \item \textbf{Repetibilidad:} asociada a la dispersión de las
