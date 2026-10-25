@@ -1,34 +1,34 @@
 ==============================================================================
 ⚙️  PROJECT ENVIRONMENT & TOOLCHAIN CONSTRAINTS
 ==============================================================================
-• Repository State    : main @ a845091
+• Repository State    : main @ c9f7745
 ==============================================================================
 
 Git Context & Branch Topology:
 
 ```log
-Current Branch: main | Working Tree: Dirty (1 modified/untracked files)
+Current Branch: main | Working Tree: Dirty (2 modified/untracked files)
 
 Branch Tracking & Divergence Status:
-* main                a845091 [origin/main: ahead 3] Add Exp03 Doppler analysis diagnostics and metrics
-  remotes/origin/main 433a893 docs(context): refresh repository summary
+* main                c9f7745 [origin/main: ahead 21] Update COG context configuration
+  remotes/origin/main e00fb23 Update generated thesis context
 
 Multi-Branch Git Commit Graph:
-* a845091  (HEAD -> main) - 2026-10-25 : Add Exp03 Doppler analysis diagnostics and metrics (SiririComun)
-* 8dc1c70  - 2026-10-25 : Add Exp01 RSSI validation data and metrics (SiririComun)
-* 4588eb9  - 2026-10-25 : Update Exp01 calibration and comparison figures (SiririComun)
-* 433a893  (origin/main) - 2026-10-24 : docs(context): refresh repository summary (SiririComun)
-* 10b9a02  - 2026-10-24 : chore(cog): update context generation configuration (SiririComun)
-* c692556  - 2026-10-24 : chore(repo): exclude large experimental artifacts (SiririComun)
-* 46019f6  - 2026-10-24 : data(exp03): add real figure generation manifest (SiririComun)
-* 7cc3f1b  - 2026-10-24 : data(exp03): add real experimental validation metrics (SiririComun)
-* fb696d2  - 2026-10-24 : feat(exp03): add real position comparison figure (SiririComun)
-* e0cef88  - 2026-10-24 : feat(exp03): add individual microphone velocity comparisons (SiririComun)
-* 4e96e49  - 2026-10-24 : feat(exp03): add Doppler frequency and combined velocity figures (SiririComun)
-* 8b4aa15  - 2026-10-24 : feat(exp03): add real Doppler figure generator (SiririComun)
-* aebe274  - 2026-10-24 : chore(scripts): remove obsolete mock generation files (SiririComun)
-* e65c99e  - 2026-10-24 : chore(exp03): remove obsolete mock figures (SiririComun)
-* 7d9282f  - 2026-10-24 : chore(exp03): remove synthetic mock dataset (SiririComun)
+* c9f7745  (HEAD -> main) - 2026-10-25 : Update COG context configuration (SiririComun)
+* 29505e5  - 2026-10-25 : Update compiled thesis manuscript (SiririComun)
+* ce37e41  - 2026-10-25 : Configure LaTeX experimental figure paths (SiririComun)
+* b98f868  - 2026-10-25 : Update chapter 4 experimental figure references (SiririComun)
+* aa5f422  - 2026-10-25 : Update chapter 3 LaTeX references (SiririComun)
+* 6b01490  - 2026-10-25 : Update chapter 2 LaTeX references (SiririComun)
+* 520250f  - 2026-10-25 : Update chapter 1 LaTeX references (SiririComun)
+* 3df5c1c  - 2026-10-25 : Update Exp03 Tracker synchronization paths (SiririComun)
+* bf4d0f4  - 2026-10-25 : Update Exp03 figure generation paths (SiririComun)
+* 917eb2c  - 2026-10-25 : Update Exp02 figure generation paths (SiririComun)
+* 322dfd0  - 2026-10-25 : Update Exp01 figure generation paths (SiririComun)
+* 99f4288  - 2026-10-25 : Organize LaTeX diagrams (SiririComun)
+* 5801a7b  - 2026-10-25 : Organize Exp03 Doppler manuscript figures (SiririComun)
+* eee0e9e  - 2026-10-25 : Organize Exp02 manuscript figures (SiririComun)
+* 34b12b4  - 2026-10-25 : Organize Exp01 manuscript figures (SiririComun)
 ```
 
 01_tratamiento_campo.tex: (chapters/01_tratamiento_campo.tex)
@@ -212,7 +212,7 @@ temporal y espectral.
 
 \begin{figure}[htbp]
     \centering
-    \input{figures/fig1_discretizacion.tex}
+    \input{figures/diagrams/fig1_discretizacion.tex}
     \vspace{0.3cm}
     \caption{Representación general de la cadena de adquisición y
     acondicionamiento de las señales de los dos receptores.}
@@ -823,7 +823,7 @@ construir observables asociados al efecto Doppler.
 
 \begin{figure}[htbp]
     \centering
-    \input{figures/fig3_rama_b.tex}
+    \input{figures/diagrams/fig3_rama_b.tex}
     \vspace{0.3cm}
     \caption{Representación general del procesamiento espectral de las
     señales adquiridas.}
@@ -1258,7 +1258,7 @@ la ventana temporal de observación.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig4_geometria_to_a.tex}
+    \input{figures/diagrams/fig4_geometria_to_a.tex}
     \vspace{0.25cm}
     \caption{Geometría de propagación directa y reflexión especular
     en una superficie horizontal. Para una fuente y un receptor
@@ -1463,7 +1463,7 @@ Figura~\ref{fig:geometria_2d_angular}.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig5_geometria_2d_angular.tex}
+    \input{figures/diagrams/fig5_geometria_2d_angular.tex}
     \vspace{0.25cm}
     \caption{Geometría de un arreglo lineal de dos receptores
     y una fuente acústica. El ángulo de incidencia $\theta$ se
@@ -1594,7 +1594,7 @@ Figura~\ref{fig:doppler_fdoa}.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig6_doppler_fdoa.tex}
+    \input{figures/diagrams/fig6_doppler_fdoa.tex}
     \vspace{0.25cm}
     \caption{Esquema del efecto Doppler para una fuente móvil
     que se desplaza entre dos receptores fijos. La frecuencia
@@ -1820,7 +1820,7 @@ caracterización acústica presentada en este trabajo.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig7_arquitectura_walo.tex}
+    \input{figures/diagrams/fig7_arquitectura_walo.tex}
     \caption{Arquitectura funcional de WALO. Se distinguen la
     recepción analógica, la adquisición mediante XADC, el
     procesamiento en FPGA y la transferencia de datos hacia
@@ -1969,7 +1969,7 @@ y de la identificación de los centros de los transductores.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig8_montaje_exp01.tex}
+    \input{figures/diagrams/fig8_montaje_exp01.tex}
     \caption{Montaje experimental para la caracterización
     radial. La fuente y el micrófono se mantienen a una
     altura aproximadamente constante y enfrentados sobre
@@ -2109,7 +2109,7 @@ transductores se mantuvo aproximadamente en
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig9_montaje_exp02.tex}
+    \input{figures/diagrams/fig9_montaje_exp02.tex}
     \caption{Montaje del experimento angular. Los micrófonos
     forman una línea base de \SI{5}{\centi\metre} y la
     fuente se desplaza sobre posiciones angulares
@@ -2236,7 +2236,7 @@ porque no se dispone de una medición documentada.
 
 \begin{figure}[!htbp]
     \centering
-    \input{figures/fig10_montaje_exp03.tex}
+    \input{figures/diagrams/fig10_montaje_exp03.tex}
     \caption{Esquema del montaje cinemático.
     El carro con la fuente acústica se desplaza sobre
     un riel entre dos micrófonos fijos. El elástico
@@ -2636,7 +2636,7 @@ de representación de cada magnitud.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]
-    {figures/exp01_fig1_calibration_four_panel.png}
+    {exp01_fig1_calibration_four_panel.png}
     \caption{
         Calibración radial de los dos canales de recepción.
         (a) Amplitud RMS en el dominio linealizado $1/r$;
@@ -2710,7 +2710,7 @@ la respuesta instrumental utilizada durante las mediciones.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp01_fig3_distance_prediction_MOCK.png}
+    {exp01_fig2_method_distance_comparison.png}
     \caption{
         Estimación de distancia a partir de RSSI para ambos
         canales. La visualización se presenta como figura MOCK
@@ -2731,7 +2731,7 @@ mediante ToA y sus residuos respecto a las distancias de referencia.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp01_fig4_toa_range.png}
+    {exp01_fig3_method_residual_comparison.png}
     \caption{
         Caracterización experimental de la estimación de
         distancia mediante el tiempo de llegada de la señal
@@ -2820,7 +2820,7 @@ a lo largo del intervalo angular evaluado.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp02_fig1_angle_benchmark.png}
+    {exp02_fig1_angle_benchmark.png}
     \caption{
         Comparación entre los ángulos de referencia y las
         estimaciones obtenidas mediante PDoA y TDoA.
@@ -2873,7 +2873,7 @@ de ambos métodos.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/exp02_fig3_angular_residuals.png}
+    {exp02_fig3_angular_residuals.png}
     \caption{
         Distribución de los residuos angulares obtenidos
         mediante PDoA y TDoA.
@@ -2948,7 +2948,7 @@ frecuencias recibidas y su componente común.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig1_doppler_frequencies.png}
+    {exp03_fig1_frequencies_with_rest_reference.png}
     \caption{
         Evolución temporal de las frecuencias recibidas por
         los dos micrófonos y representación de la componente
@@ -2983,7 +2983,7 @@ repeticiones consideradas.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig2_velocity_comparison.png}
+    {exp03_fig2_individual_mic_velocities.png}
     \caption{
         Comparación de la velocidad reconstruida mediante
         el modelo Doppler y la velocidad de referencia.
@@ -3026,7 +3026,7 @@ y la trayectoria de referencia.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
-    {figures/mock_exp03_fig3_position_comparison.png}
+    {exp03_fig3_joint_velocity_and_position.png}
     \caption{
         Comparación de la posición reconstruida mediante
         integración de la velocidad Doppler y la trayectoria
@@ -3153,1023 +3153,6 @@ y el análisis Doppler extiende la caracterización al
 movimiento de la fuente. Esta integración de distancia,
 dirección y evolución temporal constituye la contribución
 experimental central presentada en este capítulo.
-```
-
-fig1_discretizacion.tex: (figures/fig1_discretizacion.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    block/.style={
-        draw=black!75,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=gray!8,
-        align=center,
-        minimum height=1.0cm,
-        text width=2.45cm,
-        font=\small
-    },
-    proc/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=UdeAGreen!6,
-        align=center,
-        minimum height=1.0cm,
-        text width=2.55cm,
-        font=\small
-    },
-    blocks_style/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=UdeAGreen!6,
-        align=center,
-        minimum height=1.05cm,
-        text width=2.75cm,
-        font=\small
-    },
-    branch/.style={
-        draw=black!80,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=white,
-        align=center,
-        minimum height=1.05cm,
-        text width=2.85cm,
-        font=\small
-    },
-    arrow/.style={->, line width=0.85pt, draw=black!75}
-]
-
-\node[block] (field) at (0.0, 1.85) {
-    Campo acústico\\
-    $p(\vec{r},t)$
-};
-
-\node[block] (transducers) at (0.0, -1.85) {
-    Dos transductores\\
-    $v_1(t),\,v_2(t)$
-};
-
-\draw[arrow] (field) -- (transducers);
-
-\node[proc] (adc) at (3.6, -1.85) {
-    Adquisición\\
-    ADC de 12 bits\\
-    Temporización común
-};
-
-\node[proc] (average) at (3.6, 1.85) {
-    Promediado\\
-    $M$ muestras\\
-    $f_s' = f_s / M$
-};
-
-\draw[arrow] (transducers) -- (adc);
-\draw[arrow] (adc) -- (average);
-
-\node[blocks_style] (blocks) at (7.4, 0.0) {
-    Formación de bloques\\
-    $N$ muestras por canal
-};
-
-\draw[arrow] (average.east) -- ++(0.5, 0.0) |- (blocks.west);
-
-\node[branch] (temporal) at (11.5, 1.85) {
-    \textbf{Rama temporal}\\
-    Filtrado pasabanda\\
-    y análisis de señal
-};
-
-\node[branch] (spectral) at (11.5, -1.85) {
-    \textbf{Rama espectral}\\
-    Enventanado\\
-    y análisis de Fourier
-};
-
-\draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (temporal.west);
-\draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (spectral.west);
-
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of temporal] {
-    ToA, fase, amplitud\\
-    y suma cuadrática ($Q$)
-};
-
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of spectral] {
-    Magnitud, fase y\\
-    frecuencia dominante ($\widehat{f}_0$)
-};
-
-\end{tikzpicture}
-```
-
-fig2_rama_a.tex: (figures/fig2_rama_a.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    input/.style={
-        draw=black!75,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=gray!10,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.25cm,
-        font=\small
-    },
-    proc/.style={
-        draw=black!80,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=gray!5,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.5cm,
-        font=\small
-    },
-    highlight/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=UdeAGreen!7,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.5cm,
-        font=\small
-    },
-    outnode/.style={
-        draw=black!80,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=white,
-        align=center,
-        minimum height=0.85cm,
-        text width=2.35cm,
-        font=\small
-    },
-    arrow/.style={->, line width=0.8pt, draw=black!75}
-]
-
-\node[input] (signal) {
-    Señal adquirida\\
-    $v_i[n]$
-};
-
-\node[proc, right=0.65cm of signal] (filter) {
-    Filtrado pasabanda\\
-    Banda de interés\\
-    $y_i[n]$
-};
-
-\draw[arrow] (signal) -- (filter);
-
-\coordinate (fork) at ($(filter.east) + (0.55, 0.0)$);
-
-\node[highlight, above right=0.70cm and 1.15cm of filter] (hilbert) {
-    Transformada\\
-    de Hilbert\\
-    $z_i[n] = y_i[n] + j\widetilde{y}_i[n]$
-};
-
-\node[proc, below right=0.85cm and 1.15cm of filter] (gate) {
-    Selección temporal\\
-    Ventana directa\\
-    $T_{\mathrm{gate}} = K / f_0$
-};
-
-\node[highlight, below=0.65cm of gate] (toa_proc) {
-    Detección de arribo\\
-    Umbral $V_{\mathrm{th}}$ e\\
-    interpolación de cruce
-};
-
-\draw[line width=0.8pt, draw=black!75] (filter.east) -- (fork);
-\draw[arrow] (fork) |- (hilbert.west);
-\draw[arrow] (fork) |- (gate.west);
-\draw[arrow] (fork) |- (toa_proc.west);
-
-\node[outnode, right=0.70cm of hilbert] (env) {
-    Envolvente\\
-    $A_i[n] = |z_i[n]|$
-};
-
-\node[outnode, above=0.25cm of env] (phase) {
-    Fase instantánea\\
-    $\Phi_i[n] = \operatorname{arg} z_i[n]$
-};
-
-\node[outnode, below=0.25cm of env] (freq) {
-    Frecuencia inst.\\
-    $f_{i,\mathrm{inst}}[n]$ (Savitzky-G.)
-};
-
-\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (phase.west);
-\draw[arrow] (hilbert.east) -- (env.west);
-\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (freq.west);
-
-\node[outnode, right=0.70cm of gate] (energy) {
-    Energía y RMS\\
-    $Q_i = \sum (y_i - \bar{y})^2$\\
-    $A_{\mathrm{RMS},i}$ (Síncrona)
-};
-\draw[arrow] (gate) -- (energy);
-
-\node[outnode, right=0.70cm of toa_proc] (toa) {
-    Tiempo de llegada\\
-    $t_{\mathrm{arr},i}$
-};
-\draw[arrow] (toa_proc) -- (toa);
-
-\end{tikzpicture}
-```
-
-fig3_rama_b.tex: (figures/fig3_rama_b.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    node distance=0.65cm and 0.75cm,
-    input/.style={
-        draw=black!75,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=gray!10,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.3cm,
-        font=\small
-    },
-    proc/.style={
-        draw=black!80,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=gray!5,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
-        font=\small
-    },
-    highlight/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=UdeAGreen!7,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
-        font=\small
-    },
-    outnode/.style={
-        draw=black!80,
-        line width=0.8pt,
-        rounded corners=2pt,
-        fill=white,
-        align=center,
-        minimum height=0.95cm,
-        text width=2.6cm,
-        font=\small
-    },
-    arrow/.style={->, line width=0.8pt, draw=black!75}
-]
-
-\node[input] (block) {
-    Bloque de muestras\\
-    $v_i[n]$\\
-    $n = 0,\dots,N-1$
-};
-
-\node[proc, right=of block] (window) {
-    Enventanado\\
-    $x_i[n] = w[n]v_i[n]$\\
-    Blackman--Harris
-};
-
-\node[proc, right=of window] (fft) {
-    Transformada\\
-    discreta de Fourier\\
-    $Z_i[k]$ (FFT)
-};
-
-\node[proc, right=of fft] (polar) {
-    Magnitud y fase\\
-    $|Z_i[k]|$ y $\Phi_i[k]$\\
-    Cálculo CORDIC
-};
-
-\draw[arrow] (block) -- (window);
-\draw[arrow] (window) -- (fft);
-\draw[arrow] (fft) -- (polar);
-
-\node[proc, below=1.3cm of polar] (peak) {
-    Identificación del\\
-    máximo espectral\\
-    Bin $k_0$
-};
-
-\node[proc, left=of peak] (interp) {
-    Interpolación\\
-    local parabólica\\
-    Desplazamiento $\delta$
-};
-
-\node[highlight, left=of interp] (freq) {
-    Frecuencia estimada\\
-    $\widehat{f}_0 = (k_0+\delta)\dfrac{f_s'}{N}$
-};
-
-\draw[arrow] (polar.south) -- (peak.north);
-\draw[arrow] (peak) -- (interp);
-\draw[arrow] (interp) -- (freq);
-
-\node[
-    draw=black!40,
-    dashed,
-    rounded corners=2pt,
-    fill=white,
-    font=\footnotesize,
-    inner sep=4pt,
-    below=0.35cm of fft
-] {
-    Separación entre bines: $\Delta f = f_s' / N$
-};
-
-\end{tikzpicture}
-```
-
-fig4_geometria_to_a.tex: (figures/fig4_geometria_to_a.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    stand/.style={line width=1.4pt, draw=black!70},
-    baseplate/.style={draw=black!80, fill=black!20, rounded corners=1pt},
-    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.55cm},
-    source/.style={circle, draw=black!85, fill=orange!75, line width=1pt, minimum size=0.55cm},
-    tabletop/.style={draw=black!70, line width=0.8pt, pattern=north east lines, pattern color=black!25},
-    raydir/.style={->, line width=1.1pt, draw=UdeAGreen!85!black},
-    rayrefl/.style={->, line width=1pt, dashed, draw=red!70!black}
-]
-
-\draw[tabletop] (-5.2,-0.35) rectangle (5.2,0.0);
-\node[below=3pt, font=\footnotesize] at (0,-0.35) {Superficie reflectora horizontal (mesa o suelo)};
-
-\coordinate (Mic) at (-3.4, 2.2);
-\coordinate (Spk) at (3.4, 2.2);
-\coordinate (Bounce) at (0.0, 0.0);
-
-\draw[baseplate] (-3.8,0.0) rectangle (-3.0,0.12);
-\draw[stand] (-3.4,0.12) -- (Mic);
-\node[sensor] (NodeMic) at (Mic) {};
-\node[left=6pt, font=\small\bfseries] at (Mic) {Receptor ($R$)};
-
-\draw[baseplate] (3.0,0.0) rectangle (3.8,0.12);
-\draw[stand] (3.4,0.12) -- (Spk);
-\node[source] (NodeSpk) at (Spk) {};
-\node[right=6pt, font=\small\bfseries] at (Spk) {Fuente ($S$)};
-
-\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.4,0.25)$) arc (150:210:0.5);
-\draw[line width=0.8pt, orange!85!black] ($(Spk)+(-0.7,0.40)$) arc (150:210:0.8);
-
-\draw[raydir] (NodeSpk.west) -- node[above=2pt, font=\footnotesize] {Onda directa: $r_{\mathrm{dir}} = r$} (NodeMic.east);
-
-\draw[rayrefl] (NodeSpk.south) -- node[below right=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (Bounce);
-\draw[rayrefl] (Bounce) -- node[below left=1pt, font=\footnotesize, text=red!70!black] {$r_{\mathrm{refl}}/2$} (NodeMic.south);
-\fill[red!70!black] (Bounce) circle (1.8pt);
-
-\draw[dashed, draw=black!40, line width=0.6pt] (0.0,0.0) -- (0.0,2.2);
-\draw[<->, draw=black!70, line width=0.6pt] (-0.35,0.05) -- node[left=1pt, font=\small] {$h$} (-0.35,2.15);
-
-\node[
-    draw=black!70,
-    line width=0.7pt,
-    fill=white,
-    rounded corners=3pt,
-    inner sep=6pt,
-    anchor=south
-] at (0.0, 3.1) {
-    \footnotesize
-    \begin{tabular}{@{} l l @{}}
-        \multicolumn{2}{@{} l @{}}{\textbf{Geometría de reflexión y selección temporal:}} \\[3pt]
-        Trayectoria directa: & $r_{\mathrm{dir}} = r$ \\
-        Trayectoria reflejada: & $r_{\mathrm{refl}} = \sqrt{r^2+4h^2}$ \\
-        Diferencial de camino: & $\Delta r_{\mathrm{refl}} = \sqrt{r^2+4h^2} - r$ \\[4pt]
-        \multicolumn{2}{@{} l @{}}{\textcolor{UdeAGreen!85!black}{\textbf{Condición de selección temporal:}} \quad $c(T)T_{\mathrm{gate}} < \Delta r_{\mathrm{refl}}$}
-    \end{tabular}
-};
-
-\end{tikzpicture}
-```
-
-fig5_geometria_2d_angular.tex: (figures/fig5_geometria_2d_angular.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    sensor/.style={
-        circle,
-        draw=black!85,
-        fill=gray!25,
-        line width=1pt,
-        minimum size=0.58cm
-    },
-    source/.style={
-        circle,
-        draw=black!85,
-        fill=orange!75,
-        line width=1.1pt,
-        minimum size=0.58cm
-    },
-    axis/.style={
-        ->,
-        line width=0.75pt,
-        draw=black!60
-    },
-    baseline/.style={
-        <->,
-        draw=black!70,
-        line width=0.7pt
-    },
-    pathRone/.style={
-        ->,
-        line width=1.2pt,
-        draw=UdeAGreen!85!black
-    },
-    pathRtwo/.style={
-        ->,
-        line width=1.2pt,
-        draw=blue!80!black
-    },
-    reference/.style={
-        dashed,
-        line width=0.9pt,
-        draw=black!65
-    },
-    projection/.style={
-        dotted,
-        line width=0.65pt,
-        draw=black!50
-    },
-    wavefront/.style={
-        line width=0.95pt,
-        draw=orange!90!black
-    }
-]
-
-\node[
-    draw=black!70,
-    line width=0.8pt,
-    fill=white,
-    rounded corners=4pt,
-    inner sep=9pt,
-    anchor=west
-] at (-6.1, 3.1) {
-    \small
-    \begin{tabular}{@{} l @{}}
-        \textbf{Geometría angular y PDoA:} \\[5pt]
-
-        Aproximación de campo lejano. \\[5pt]
-
-        Diferencia de camino:
-        \ $\Delta r = r_1-r_2=d\sin\theta$ \\[5pt]
-
-        Diferencia de fase:
-        \ $\Delta\Phi=
-        \dfrac{2\pi f_0}{c(T)}\Delta r$ \\[7pt]
-
-        \textcolor{UdeAGreen!85!black}{
-            \textbf{Condición de no-aliasing espacial:}
-        } \\[3pt]
-
-        $d\leq\dfrac{\lambda_0}{2}
-        =\dfrac{c(T)}{2f_0}$
-    \end{tabular}
-};
-
-\coordinate (Orig) at (3.8, 0);
-
-\draw[axis]
-    (0.35, 0) -- (7.2, 0)
-    node[right=3pt, font=\small] {$x$ (transversal)};
-
-\draw[axis]
-    (3.8, -0.65) -- (3.8, 7.25)
-    node[above=3pt, font=\small] {$y$ (normal al arreglo)};
-
-\coordinate (R1) at (1.7, 0);
-\coordinate (R2) at (5.9, 0);
-
-\node[sensor] (NodeR1) at (R1) {};
-
-\node[
-    below=12pt,
-    font=\small
-] at (R1) {
-    $R_1\left(-\frac{d}{2},0\right)$
-};
-
-\node[sensor] (NodeR2) at (R2) {};
-
-\node[
-    below=12pt,
-    font=\small
-] at (R2) {
-    $R_2\left(+\frac{d}{2},0\right)$
-};
-
-\draw[baseline]
-    (1.7, -1.65) --
-    node[below=3pt, font=\small]
-    {$d=\|\vec{r}_2-\vec{r}_1\|$}
-    (5.9, -1.65);
-
-\draw[projection]
-    (1.7, 0) -- (1.7, -1.65);
-
-\draw[projection]
-    (5.9, 0) -- (5.9, -1.65);
-
-\coordinate (S) at (6.6, 6.35);
-
-\node[source] (NodeS) at (S) {};
-
-\node[
-    above right=4pt,
-    font=\small\bfseries
-] at (NodeS) {Fuente $S(x,y)$};
-
-\draw[wavefront]
-    ($(S)+(205:0.48)$)
-    arc[start angle=205, end angle=265, radius=0.48];
-
-\draw[wavefront]
-    ($(S)+(205:0.78)$)
-    arc[start angle=205, end angle=265, radius=0.78];
-
-\draw[wavefront]
-    ($(S)+(205:1.08)$)
-    arc[start angle=205, end angle=265, radius=1.08];
-
-\draw[pathRone]
-    (NodeS) --
-    node[pos=0.53, above left=2pt, font=\small]
-    {$r_1$}
-    (NodeR1);
-
-\draw[pathRtwo]
-    (NodeS) --
-    node[pos=0.52, right=3pt, font=\small]
-    {$r_2$}
-    (NodeR2);
-
-\draw[reference, ->]
-    (Orig) --
-    node[pos=0.63, below right=2pt, font=\small]
-    {$r$}
-    (S);
-
-\draw[
-    line width=0.85pt,
-    draw=black!85
-]
-    ($(Orig)+(0,1.65)$)
-    arc[start angle=90, end angle=66.2, radius=1.65];
-
-\node[
-    font=\small\bfseries
-] at ($(Orig)+(78:2.0)$) {$\theta$};
-
-\path[use as bounding box]
-    (-6.35, -2.15) rectangle (9.3, 7.75);
-
-\end{tikzpicture}
-```
-
-fig6_doppler_fdoa.tex: (figures/fig6_doppler_fdoa.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    sensor/.style={circle, draw=black!85, fill=gray!25, line width=1pt, minimum size=0.52cm},
-    source/.style={circle, draw=black!85, fill=orange!75, line width=1.1pt, minimum size=0.52cm},
-    axis/.style={->, line width=0.7pt, draw=black!60},
-    velarrow/.style={->, line width=1.2pt, draw=orange!90!black}
-]
-
-\draw[axis] (-5.6, 0.0) -- (5.6, 0.0)
-    node[right=2pt, font=\small] {$x$ (trayectoria 1D)};
-
-\coordinate (R1) at (-4.8, 0.0);
-\node[sensor] (NodeR1) at (R1) {};
-\node[below=7pt, align=center] at (R1) {
-    \small\bfseries $R_1$\\[2pt]
-    \footnotesize\color{black!65} $x=0$
-};
-
-\coordinate (R2) at (4.8, 0.0);
-\node[sensor] (NodeR2) at (R2) {};
-\node[below=7pt, align=center] at (R2) {
-    \small\bfseries $R_2$\\[2pt]
-    \footnotesize\color{black!65} $x=L$
-};
-
-\coordinate (S) at (0.0, 0.0);
-\node[source] (NodeS) at (S) {};
-\node[below=7pt, font=\small\bfseries] at (S) {$S(t)$};
-
-\draw[line width=0.8pt, red!75!black]
-    ($(-0.1, 0.0)+(155:0.75)$) arc (155:205:0.75);
-\draw[line width=0.8pt, red!75!black]
-    ($(-0.35,0.0)+(155:1.45)$) arc (155:205:1.45);
-\draw[line width=0.8pt, red!75!black]
-    ($(-0.6, 0.0)+(155:2.15)$) arc (155:205:2.15);
-
-\draw[line width=0.8pt, blue!75!black]
-    ($(-0.1, 0.0)+(-22:0.55)$) arc (-22:22:0.55);
-\draw[line width=0.8pt, blue!75!black]
-    ($(-0.35,0.0)+(-22:1.05)$) arc (-22:22:1.05);
-\draw[line width=0.8pt, blue!75!black]
-    ($(-0.6,0.0)+(-22:1.55)$) arc (-22:22:1.55);
-
-\draw[velarrow] (0.0, 0.85) -- ++(1.15, 0.0)
-    node[above=1pt, font=\small\bfseries] {$v(t)$};
-
-\draw[dotted, line width=0.5pt, draw=orange!80!black]
-    (0.0, 0.25) -- (0.0, 0.85);
-
-\draw[dotted, line width=0.5pt, red!75!black]
-    (-2.0, 0.0) -- (-2.0, -0.9);
-\draw[dotted, line width=0.5pt, red!75!black]
-    (-1.1, 0.0) -- (-1.1, -0.9);
-
-\draw[<->, draw=red!75!black, line width=0.6pt]
-    (-2.0, -0.9) --
-    node[below=2pt, font=\footnotesize] {$\lambda_1>\lambda_0$}
-    (-1.1, -0.9);
-
-\draw[dotted, line width=0.5pt, blue!75!black]
-    (0.55, 0.0) -- (0.55, -0.9);
-\draw[dotted, line width=0.5pt, blue!75!black]
-    (1.05, 0.0) -- (1.05, -0.9);
-
-\draw[<->, draw=blue!75!black, line width=0.6pt]
-    (0.55, -0.9) --
-    node[below=2pt, font=\footnotesize] {$\lambda_2<\lambda_0$}
-    (1.05, -0.9);
-
-\node[
-    draw=black!70,
-    line width=0.7pt,
-    fill=white,
-    rounded corners=3pt,
-    inner sep=6pt,
-    anchor=south
-] at (0.0, 2.05) {
-    \footnotesize
-    \begin{tabular}{@{} l l @{}}
-        \multicolumn{2}{@{} l @{}}{
-            \textbf{Efecto Doppler para fuente móvil ($v\ll c$):}
-        } \\[3pt]
-
-        Frecuencia en $R_1$ (alejamiento):
-        & $f_1(t)\approx f_0\left(1-\frac{v(t)}{c(T)}\right)$ \\[2pt]
-
-        Frecuencia en $R_2$ (acercamiento):
-        & $f_2(t)\approx f_0\left(1+\frac{v(t)}{c(T)}\right)$ \\[4pt]
-
-        \multicolumn{2}{@{} l @{}}{
-            \textcolor{UdeAGreen!85!black}{
-                \textbf{Estimador diferencial de velocidad:}
-            }
-            \quad
-            $v(t)=c(T)\dfrac{f_2(t)-f_1(t)}{f_1(t)+f_2(t)}$
-        } \\[2pt]
-
-        \multicolumn{2}{@{} l @{}}{
-            \textit{\scriptsize La frecuencia emitida se cancela algebraicamente en este modelo.}
-        }
-    \end{tabular}
-};
-
-\end{tikzpicture}
-```
-
-fig7_arquitectura_walo.tex: (figures/fig7_arquitectura_walo.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Latex,
-    font=\small,
-    block/.style={
-        draw,
-        rounded corners=2pt,
-        align=center,
-        minimum width=2.5cm,
-        minimum height=0.9cm,
-        inner sep=5pt
-    },
-    smallblock/.style={
-        draw,
-        rounded corners=2pt,
-        align=center,
-        minimum width=2.3cm,
-        minimum height=0.8cm,
-        inner sep=5pt
-    },
-    arrow/.style={->, thick}
-]
-
-\node[block] (mic1) at (0,2.0) {Micrófono 1};
-\node[block] (mic2) at (0,0.5) {Micrófono 2};
-
-\node[block] (xadc) at (3.4,1.25)
-    {XADC\\Conversión A/D};
-
-\node[block] (zynq) at (6.9,1.25)
-    {Zynq-7000\\PYNQ-Z2};
-
-\node[smallblock] (dma) at (10.2,2.15)
-    {DMA\\Transferencia};
-
-\node[smallblock] (processing) at (10.2,0.35)
-    {Procesamiento\\digital};
-
-\node[block] (software) at (13.6,2.15)
-    {Software\\de control};
-
-\node[smallblock] (analysis) at (13.6,0.35)
-    {Análisis\\de señales};
-
-\draw[arrow] (mic1.east) -- (xadc.west);
-\draw[arrow] (mic2.east) -- (xadc.west);
-
-\draw[arrow] (xadc.east) -- (zynq.west);
-\draw[arrow] (zynq.east) -- (dma.west);
-\draw[arrow] (zynq.east) -- (processing.west);
-
-\draw[arrow] (dma.east) -- (software.west);
-\draw[arrow] (processing.east) -- (software.south west);
-\draw[arrow] (software.south) -- (analysis.north);
-
-\node[smallblock] (pulse) at (3.4,-1.25)
-    {Pulso digital\\de salida AR2};
-
-\node[smallblock] (driver) at (7.1,-1.25)
-    {Etapa de excitación\\Transistor 2N2222A};
-
-\node[block] (buzzer) at (10.6,-1.25)
-    {Buzzer activo};
-
-\draw[arrow] (pulse.east) -- (driver.west);
-\draw[arrow] (driver.east) -- (buzzer.west);
-
-\draw[arrow, dashed] (zynq.south) -- ++(0,-0.55)
-    -| (pulse.north);
-
-\end{tikzpicture}
-```
-
-fig8_montaje_exp01.tex: (figures/fig8_montaje_exp01.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Latex,
-    font=\small,
-    source/.style={
-        circle,
-        draw=orange!75!black,
-        fill=orange!25,
-        thick,
-        minimum size=6mm,
-        inner sep=0pt
-    },
-    receiver/.style={
-        circle,
-        draw=gray!65,
-        fill=gray!20,
-        thick,
-        minimum size=6mm,
-        inner sep=0pt
-    },
-    direct/.style={->, thick, green!45!black},
-    reflected/.style={->, thick, dashed, red!75!black},
-    dimension/.style={<->, thick}
-]
-
-\node[font=\bfseries] at (-3.0,3.25) {Vista superior};
-
-\node[source] (sourceTop) at (-3.0,1.85) {};
-\node[above=5pt] at (sourceTop.north) {Buzzer};
-
-\node[receiver] (receiverTop) at (-3.0,-0.75) {};
-\node[below=7pt] at (receiverTop.south) {Micrófono};
-
-\draw[direct] (sourceTop.south) -- (receiverTop.north)
-    node[midway,right=7pt,align=left] {Eje de\\propagación};
-
-\draw[dimension] (-4.0,1.85) -- (-4.0,-0.75)
-    node[midway,left] {$r$};
-
-\node[font=\bfseries] at (3.7,3.25) {Vista lateral};
-
-\filldraw[
-    fill=gray!12,
-    draw=black,
-    thick
-] (0,-0.45) rectangle (7.5,-0.18);
-
-\node[font=\scriptsize] at (3.75,-0.315) {Mesa};
-
-\draw[thick] (1.0,-0.18) -- (1.0,1.05);
-\draw[thick] (6.3,-0.18) -- (6.3,1.05);
-
-\node[receiver] (receiverSide) at (1.0,1.45) {};
-\node[above=6pt] at (receiverSide.north) {Micrófono};
-
-\node[source] (sourceSide) at (6.3,1.45) {};
-\node[above=6pt] at (sourceSide.north) {Buzzer};
-
-\draw[direct]
-    (sourceSide.west) -- (receiverSide.east)
-    node[midway,above=7pt] {$r$};
-
-\coordinate (bounce) at (3.65,-0.12);
-
-\draw[reflected]
-    (sourceSide.south west) -- (bounce)
-    -- (receiverSide.south east);
-
-\node[
-    font=\scriptsize,
-    text=red!75!black,
-    fill=white,
-    inner sep=2pt
-] at (3.65,0.22) {Reflexión en mesa};
-
-\draw[dimension] (7.0,-0.18) -- (7.0,1.05)
-    node[midway,right=5pt] {\SI{50}{cm}};
-
-\node[
-    draw,
-    rounded corners=2pt,
-    fill=gray!5,
-    text width=6.5cm,
-    align=center,
-    inner sep=7pt,
-    font=\scriptsize
-] at (3.75,-1.35) {
-    Fuente y receptor a altura aproximadamente constante,\\
-    enfrentados sobre el eje de propagación
-};
-
-\end{tikzpicture}
-```
-
-fig9_montaje_exp02.tex: (figures/fig9_montaje_exp02.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    line cap=round,
-    line join=round,
-    font=\small,
-    x=1cm,
-    y=1cm
-]
-
-    \coordinate (O) at (-3,0);
-
-    \coordinate (Mone) at (-3.425,0);
-    \coordinate (Mtwo) at (-2.575,0);
-
-    \draw[line width=0.95pt]
-        (-5.35,0) -- (-0.65,0);
-
-    \draw[line width=0.95pt]
-        (-3,-0.05) -- (-3,4.35);
-
-    \foreach \ang in {-60,-45,-30,-15,15,30,45,60}{
-        \draw[
-            densely dashed,
-            line width=0.8pt
-        ]
-        ({-3+4.0*sin(\ang)},{4.0*cos(\ang)})
-        --
-        ({-3+0.38*sin(\ang)},{0.38*cos(\ang)});
-    }
-
-    \coordinate (S) at (
-        {-3+3.55*sin(30)},
-        {3.55*cos(30)}
-    );
-
-    \node[
-        circle,
-        draw=orange!85!black,
-        fill=orange!18,
-        line width=1pt,
-        minimum size=6mm,
-        inner sep=0pt
-    ] at (S) {};
-
-    \node[
-        anchor=south,
-        inner sep=2pt
-    ] at (-1.22,3.48) {Fuente};
-
-    \draw[
-        line width=0.85pt
-    ]
-    (-3,0.78)
-    arc[
-        start angle=90,
-        end angle=60,
-        radius=0.78
-    ];
-
-    \node[
-        fill=white,
-        inner sep=2pt
-    ] at (-2.77,0.83) {$\theta$};
-
-    \node[
-        fill=white,
-        inner sep=2pt
-    ] at (-4.05,2.35)
-    {$r=30\,\mathrm{cm}$};
-
-    \node[
-        circle,
-        draw=black!45,
-        fill=black!12,
-        line width=0.9pt,
-        minimum size=5.8mm,
-        inner sep=0pt
-    ] at (Mone) {};
-
-    \node[
-        circle,
-        draw=black!45,
-        fill=black!12,
-        line width=0.9pt,
-        minimum size=5.8mm,
-        inner sep=0pt
-    ] at (Mtwo) {};
-
-    \draw[black!65,line width=0.55pt]
-        (-3.425,-0.15) -- (-3.72,-0.48);
-
-    \draw[black!65,line width=0.55pt]
-        (-2.575,-0.15) -- (-2.28,-0.48);
-
-    \node[
-        anchor=north
-    ] at (-3.76,-0.48) {Mic. 1};
-
-    \node[
-        anchor=north
-    ] at (-2.24,-0.48) {Mic. 2};
-
-    \draw[densely dashed,black!45]
-        (-3.425,-0.22) -- (-3.425,-1.12);
-
-    \draw[densely dashed,black!45]
-        (-2.575,-0.22) -- (-2.575,-1.12);
-
-    \draw[
-        <->,
-        line width=0.75pt
-    ]
-        (-3.425,-1.02) -- (-2.575,-1.02);
-
-    \node[
-        fill=white,
-        inner sep=2pt
-    ] at (-3,-1.30)
-    {$d=5\,\mathrm{cm}$};
-
-    \fill (O) circle (1.4pt);
-
-    \node[
-        draw=black!65,
-        rounded corners=2pt,
-        fill=black!2,
-        line width=0.65pt,
-        text width=4.15cm,
-        align=left,
-        inner sep=9pt,
-        anchor=west
-    ] at (1.05,1.35) {
-        \textbf{Configuración experimental}\\[6pt]
-        Línea base: $5\,\mathrm{cm}$\\[3pt]
-        Distancia nominal: $30\,\mathrm{cm}$\\[3pt]
-        Ángulos: $-60^\circ$ a $+60^\circ$\\[3pt]
-        Paso angular: $15^\circ$
-    };
-
-\end{tikzpicture}
 ```
 
 titlepage.tex: (frontmatter/titlepage.tex)
@@ -4375,6 +3358,10 @@ preamble.tex: (preamble.tex)
 \DeclareSIUnit\sample{sample}
 
 \usepackage{graphicx}
+\graphicspath{
+    {figures/}
+    {figures/experiments/}
+}
 \usepackage{float}
 \usepackage{tikz}
 
@@ -4859,15 +3846,13 @@ generate_exp01_figures.py: (scripts/generate_exp01_figures.py)
 Generación de figuras del Experimento 01: caracterización radial.
 
 Entradas:
-    data/distance_characterization_raw_mic1.csv
-    data/distance_characterization_raw_mic2.csv
-    data/exp01_rssi_distance_prediction.csv
+    data/experiments/distance_characterization_raw_mic1.csv
+    data/experiments/distance_characterization_raw_mic2.csv
+    data/experiments/exp01_rssi_distance_prediction.csv
 
-Salidas:
-    figures/exp01_fig1_calibration_four_panel.png
-    figures/exp01_fig2_method_distance_comparison.png
-    figures/exp01_fig3_method_residual_comparison.png
-    data/exp01_rssi_validation_metrics.csv
+Salidas (PNG y PDF):
+    figures/experiments/exp01_*.png|pdf
+    data/analysis/exp01_rssi/manuscript_figures/exp01_rssi_validation_metrics.csv
 
 La validación RSSI utiliza coeficientes k fijados previamente.
 No reajusta k con los datos de validación.
@@ -4890,17 +3875,18 @@ from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_ax
 
 ROOT = Path(__file__).resolve().parents[1]
 
-DATA_DIR = ROOT / "data"
-FIGURES_DIR = ROOT / "figures"
+EXPERIMENTS_DIR = ROOT / "data" / "experiments"
+FIGURES_DIR = ROOT / "figures" / "experiments"
+ANALYSIS_DIR = ROOT / "data" / "analysis" / "exp01_rssi" / "manuscript_figures"
 
 CSV_FILES = {
-    "Micrófono 1": DATA_DIR / "distance_characterization_raw_mic1.csv",
-    "Micrófono 2": DATA_DIR / "distance_characterization_raw_mic2.csv",
+    "Micrófono 1": EXPERIMENTS_DIR / "distance_characterization_raw_mic1.csv",
+    "Micrófono 2": EXPERIMENTS_DIR / "distance_characterization_raw_mic2.csv",
 }
 
 # Coeficientes obtenidos durante la calibración original.
 # Se mantienen congelados: NO se estiman a partir del CSV de validación.
-RSSI_VALIDATION_FILE = DATA_DIR / "exp01_rssi_distance_prediction.csv"
+RSSI_VALIDATION_FILE = EXPERIMENTS_DIR / "exp01_rssi_distance_prediction.csv"
 FIXED_AMPLITUDE_K = {
     "Micrófono 1": 20.6934438197599,
     "Micrófono 2": 18.8589498970794,
@@ -5488,7 +4474,8 @@ def plot_method_comparisons(rssi_df, toa_data, metrics):
     fig.subplots_adjust(left=0.12, right=0.98, bottom=0.09, top=0.95, hspace=0.20)
     save_figure(fig, "exp01_fig3_method_residual_comparison")
 
-    metrics_path = DATA_DIR / "exp01_rssi_validation_metrics.csv"
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    metrics_path = ANALYSIS_DIR / "exp01_rssi_validation_metrics.csv"
     metrics.to_csv(metrics_path, index=False, float_format="%.8f")
     print(f"  [+] Métricas RSSI guardadas en: {metrics_path}")
 
@@ -5496,6 +4483,8 @@ def main():
     print("\n" + "=" * 60)
     print("EXPERIMENTO 01 - CARACTERIZACIÓN RADIAL")
     print("=" * 60)
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     data = load_data()
 
     print("\nGenerando calibración combinada de amplitud y energía...")
@@ -5514,7 +4503,7 @@ def main():
         for name, (k, r2) in results.items():
             print(f"  {name}: k={k:.6g}, R²={r2:.5f}")
 
-    print("\nProceso terminado. Revisa las figuras en figures/.")
+    print("\nProceso terminado. Revisa las figuras en figures/experiments/.")
     print("RSSI usa datos experimentales nuevos y k congelados; RSSI y ToA se comparan con escalas comunes.")
 
 # ============================================================
@@ -5546,11 +4535,11 @@ generate_exp02_figures.py: (scripts/generate_exp02_figures.py)
 Experimento 02 — caracterización angular.
 
 Genera dos figuras a partir de:
-    data/angle_benchmark_patched_prototype.csv
+    data/experiments/angle_benchmark_patched_prototype.csv
 
 Salidas (PNG y PDF):
-    figures/exp02_fig1_angle_benchmark
-    figures/exp02_fig3_angular_residuals
+    figures/experiments/exp02_fig1_angle_benchmark
+    figures/experiments/exp02_fig3_angular_residuals
 
 Se utilizan exclusivamente:
     station_id, target_deg, pulse_num,
@@ -5575,8 +4564,8 @@ from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_ax
 # ============================================================
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_FILE = ROOT / "data" / "angle_benchmark_patched_prototype.csv"
-FIGURES_DIR = ROOT / "figures"
+DATA_FILE = ROOT / "data" / "experiments" / "angle_benchmark_patched_prototype.csv"
+FIGURES_DIR = ROOT / "figures" / "experiments"
 
 BASELINE_CM = 5.0
 DPI = 300
@@ -5959,6 +4948,7 @@ def main():
     print("EXPERIMENTO 02 — CARACTERIZACIÓN ANGULAR")
     print("=" * 62)
 
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     df = load_data()
     summary = summarize_by_target(df)
     metrics = calculate_metrics(df)
@@ -6056,247 +5046,26 @@ def save_figure(fig, directory, stem):
     print(f"  Guardado: {pdf}")
 ```
 
-fig10_montaje_exp03.tex: (figures/fig10_montaje_exp03.tex)
-
-```latex
-\begin{tikzpicture}[
-    >=Stealth,
-    line cap=round,
-    line join=round,
-    font=\small,
-    x=1cm,
-    y=1cm
-]
-
-\draw[line width=1.2pt] (-0.8,0) -- (10.8,0);
-
-\node[anchor=north] at (5,-0.17)
-    {Riel de $2\,\mathrm{m}$};
-
-\draw[
-    fill=black!16,
-    draw=black,
-    line width=0.8pt
-] (-0.15,0) rectangle (0.15,0.72);
-
-\draw[
-    fill=black!16,
-    draw=black,
-    line width=0.8pt
-] (9.85,0) rectangle (10.15,0.72);
-
-\draw[line width=1pt,black!65]
-    (0,0.72) -- (0,1.62);
-
-\node[
-    circle,
-    draw=black!45,
-    fill=black!12,
-    line width=0.9pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (0,1.62) {};
-
-\node[anchor=south] at (0,1.94)
-    {Mic. 1};
-
-\draw[line width=1pt,black!65]
-    (10,0.72) -- (10,1.62);
-
-\node[
-    circle,
-    draw=black!45,
-    fill=black!12,
-    line width=0.9pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (10,1.62) {};
-
-\node[anchor=south] at (10,1.94)
-    {Mic. 2};
-
-\draw[
-    red!75!black,
-    line width=1.5pt
-]
-    (0.15,0.48)
-    -- (0.22,0.48)
-    -- (0.27,0.57)
-    -- (0.33,0.39)
-    -- (0.39,0.57)
-    -- (0.45,0.39)
-    -- (0.51,0.57)
-    -- (0.57,0.39)
-    -- (0.63,0.48)
-    -- (0.70,0.48);
-
-\draw[
-    red!75!black,
-    line width=1.5pt
-]
-    (9.30,0.48)
-    -- (9.37,0.48)
-    -- (9.43,0.57)
-    -- (9.49,0.39)
-    -- (9.55,0.57)
-    -- (9.61,0.39)
-    -- (9.67,0.57)
-    -- (9.73,0.39)
-    -- (9.79,0.48)
-    -- (9.85,0.48);
-
-\draw[
-    rounded corners=2pt,
-    fill=black!4,
-    draw=black,
-    line width=0.85pt
-] (1.35,0.27) rectangle (2.65,0.87);
-
-\draw[
-    fill=white,
-    draw=black,
-    line width=0.7pt
-] (1.65,0.105) circle (0.105);
-
-\draw[
-    fill=white,
-    draw=black,
-    line width=0.7pt
-] (2.35,0.105) circle (0.105);
-
-\node at (2.00,0.57)
-    {Carrito};
-
-\draw[line width=0.85pt]
-    (1.55,0.87) -- (1.55,1.47);
-
-\node[
-    circle,
-    draw=orange!85!black,
-    fill=orange!18,
-    line width=1pt,
-    minimum size=6mm,
-    inner sep=0pt
-] at (1.55,1.62) {};
-
-\node[anchor=west] at (1.82,1.62)
-    {Buzzer};
-
-\node[anchor=south] at (1.55,2.32)
-    {Liberación};
-
-\draw[
-    ->,
-    line width=0.85pt
-]
-    (1.55,2.27) -- (1.55,1.96);
-
-\draw[
-    ->,
-    line width=1pt
-]
-    (2.85,2.32) -- (8.15,2.32);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5.50,2.32)
-    {Recorrido libre};
-
-\draw[densely dashed,black!45]
-    (0,-0.05) -- (0,-0.85);
-
-\draw[densely dashed,black!45]
-    (10,-0.05) -- (10,-0.85);
-
-\node[
-    fill=white,
-    inner sep=2pt
-]
-    at (0,-0.58)
-    {$0\,\mathrm{cm}$};
-
-\node[
-    fill=white,
-    inner sep=2pt
-]
-    at (10,-0.58)
-    {$200\,\mathrm{cm}$};
-
-\draw[
-    <->,
-    line width=0.85pt
-]
-    (0,-0.85) -- (10,-0.85);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5,-1.10)
-    {Separación entre micrófonos: $200\,\mathrm{cm}$};
-
-\draw[densely dashed,black!45]
-    (0.70,-0.53) -- (0.70,-1.55);
-
-\draw[densely dashed,black!45]
-    (9.30,-0.53) -- (9.30,-1.55);
-
-\draw[
-    <->,
-    line width=0.85pt
-]
-    (0.70,-1.43) -- (9.30,-1.43);
-
-\node[
-    fill=white,
-    inner sep=3pt
-]
-    at (5,-1.70)
-    {Longitud útil aproximada: $180\,\mathrm{cm}$};
-
-\node[
-    draw=black!65,
-    rounded corners=2pt,
-    fill=black!2,
-    line width=0.65pt,
-    text width=3.65cm,
-    align=left,
-    inner sep=9pt,
-    anchor=west
-] at (11.05,1.45) {
-    \textbf{Protocolo previsto}\\[6pt]
-    10 ensayos\\[3pt]
-    Masa nominal: $200\,\mathrm{g}$\\[3pt]
-    Adquisición: $10\,\mathrm{s}$
-};
-
-\end{tikzpicture}
-```
-
 generate_exp03_real_figures.py: (scripts/generate_exp03_real_figures.py)
 
 ```python
 #!/usr/bin/env python3
 """
-Genera las cinco figuras reales de Exp03 y sus métricas con referencia individual por canal.
+Genera las tres figuras finales planificadas para Exp03 y sus métricas reproducibles.
 
 Entradas:
-  data/exp03_walo_doppler_10trials_10s.xlsx
-  data/exp03_tracker_walo_aligned.csv
+  data/experiments/exp03_walo_doppler_10trials_10s.xlsx
+  data/experiments/exp03_tracker_walo_aligned.csv
 
 Salidas:
-  figures/exp03_fig1_doppler_frequencies_REAL.png
-  figures/exp03_fig2_velocity_comparison_REAL.png
-  figures/exp03_fig3_velocity_mic1_vs_tracker_REAL.png
-  figures/exp03_fig4_velocity_mic2_vs_tracker_REAL.png
-  figures/exp03_fig5_position_comparison_REAL.png
-  analysis/exp03_doppler/manuscript_figures/exp03_real_figures_metrics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_sensor_baseline_diagnostics.csv
-  analysis/exp03_doppler/manuscript_figures/exp03_real_figures_manifest.csv
+  figures/exp03_fig1_frequencies_with_rest_reference.png
+  figures/exp03_fig2_individual_mic_velocities.png
+  figures/exp03_fig3_joint_velocity_and_position.png
+  data/analysis/exp03_doppler/manuscript_figures/exp03_final_metrics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_velocity_metrics_by_sensor.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_frequency_statistics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_sensor_baseline_diagnostics.csv
+  data/analysis/exp03_doppler/manuscript_figures/exp03_real_figures_manifest.csv
 
 Las métricas se calculan con datos sin suavizar. El suavizado solo se usa
 para visualizar. MIC1 y MIC2 se recalculan desde las frecuencias medidas, usando una referencia independiente por canal y ensayo, estimada en un intervalo de reposo configurable. No se ajustan offsets con el Tracker.
@@ -6547,7 +5316,7 @@ def estimate_individual_velocities(
         )
     return out, diagnostics
 
-def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
+def plot_frequencies(raw, output, window, polyorder, tmin, tmax, baseline_diagnostics):
     raw = raw[(raw.time_s >= tmin) & (raw.time_s <= tmax)].copy()
     chunks = []
     for _, g in raw.groupby("trial", sort=True):
@@ -6578,6 +5347,15 @@ def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
         sd = avg[f"{key}_sd"].fillna(0).to_numpy()
         ax.plot(t, m, color=color, lw=2.0, label=f"{label}: media")
         ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+    # Referencias de reposo: media entre ensayos de las medianas f0
+    # estimadas individualmente para cada micrófono.
+    f0_means = baseline_diagnostics.groupby("sensor")["f0_reference_hz"].mean()
+    f0_mic1 = float(f0_means.loc["mic1"])
+    f0_mic2 = float(f0_means.loc["mic2"])
+    ax.axhline(f0_mic1, color="tab:blue", ls="--", lw=1.15, alpha=0.9,
+               label=f"MIC1 reposo: {f0_mic1:.2f} Hz")
+    ax.axhline(f0_mic2, color="tab:orange", ls="--", lw=1.15, alpha=0.9,
+               label=f"MIC2 reposo: {f0_mic2:.2f} Hz")
     ax.set_ylabel("Frecuencia (Hz)")
     ax.set_title("(a) Mediciones independientes: MIC1 y MIC2", loc="left", pad=7)
     ax.grid(True, alpha=0.22)
@@ -6589,6 +5367,9 @@ def plot_frequencies(raw, output, window, polyorder, tmin, tmax):
     sd = avg["common_sd"].fillna(0).to_numpy()
     ax.plot(t, m, color="tab:green", lw=2.15, label="Componente común: media")
     ax.fill_between(t, m - sd, m + sd, color="tab:green", alpha=0.16, linewidth=0)
+    f0_common = 0.5 * (f0_mic1 + f0_mic2)
+    ax.axhline(f0_common, color="tab:green", ls="--", lw=1.15, alpha=0.9,
+               label=f"Reposo común: {f0_common:.2f} Hz")
     ax.set_ylabel("Frecuencia (Hz)")
     ax.set_xlabel("Tiempo (s)")
     ax.set_title("(b) Componente común", loc="left", pad=7)
@@ -6692,6 +5473,189 @@ def plot_velocity_comparison(df, output, metrics, estimator_col, estimator_label
     fig.savefig(output, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
+def plot_individual_sensor_comparison(df, output, metrics_by_sensor,
+                                      window, polyorder, tmin, tmax):
+    """Una figura de dos paneles: MIC1 y MIC2, cada uno frente a Tracker."""
+    fig, axes = plt.subplots(2, 1, figsize=(10.5, 8.0), sharex=True)
+    specs = [
+        ("v_mic1_corrected_m_s", "MIC1", metrics_by_sensor["mic1"]),
+        ("v_mic2_corrected_m_s", "MIC2", metrics_by_sensor["mic2"]),
+    ]
+    for ax, (column, sensor, metrics) in zip(axes, specs):
+        raw = df[(df.tau_s >= tmin) & (df.tau_s <= tmax)].sort_values(
+            ["trial", "tau_s"]
+        ).copy()
+        chunks = []
+        for _, g in raw.groupby("trial", sort=True):
+            g = g.copy()
+            valid = g["movement_valid"].to_numpy(bool)
+            for col, dest in [
+                (column, "walo_plot"),
+                ("vx_tracker_interp_m_s", "tracker_plot"),
+            ]:
+                y = g[col].to_numpy(float, copy=True)
+                y[np.abs(y) > 3.0] = np.nan
+                g[dest] = smooth_after_onset(y, valid, window, polyorder)
+            chunks.append(g)
+        s = pd.concat(chunks, ignore_index=True)
+        avg = mean_sd_by_time(s, "tau_s", {
+            "walo_plot": "walo", "tracker_plot": "tracker"
+        })
+        for _, g in s.groupby("trial", sort=True):
+            ax.plot(g.tau_s, g.walo_plot, color="tab:blue", lw=0.55, alpha=0.10)
+            ax.plot(g.tau_s, g.tracker_plot, color="tab:orange", lw=0.55, alpha=0.10)
+        t = avg.tau_s.to_numpy()
+        for key, label, color in [
+            ("walo", f"WALO {sensor}", "tab:blue"),
+            ("tracker", "Tracker", "tab:orange"),
+        ]:
+            m = avg[f"{key}_mean"].to_numpy()
+            sd = avg[f"{key}_sd"].fillna(0).to_numpy()
+            ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+            ax.plot(t, m, color=color, lw=2.1, label=f"{label}: media ± 1 DE")
+        ax.axhline(0, color="0.35", lw=0.8, ls="--")
+        ax.set_ylabel("Velocidad (m/s)")
+        ax.set_title(f"({ 'a' if sensor == 'MIC1' else 'b' }) {sensor}", loc="left")
+        ax.grid(True, alpha=0.22)
+        ax.legend(frameon=False, loc="upper right")
+        ax.text(
+            0.015, 0.04,
+            f"n={metrics['n']:,} | r={metrics['r']:.3f} | "
+            f"MAE={metrics['mae_m_s']:.3f} m/s | "
+            f"RMSE={metrics['rmse_m_s']:.3f} m/s | "
+            f"sesgo={metrics['bias_m_s']:+.3f} m/s",
+            transform=ax.transAxes, ha="left", va="bottom", fontsize=8.2,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white",
+                      edgecolor="0.82", alpha=0.95)
+        )
+    axes[-1].set_xlim(tmin, tmax)
+    axes[-1].set_xlabel("Tiempo relativo al evento de alineación (s)")
+    fig.suptitle("Exp03 — Reconstrucción individual de velocidad por micrófono",
+                 fontsize=12, y=0.99)
+    fig.tight_layout(rect=[0.04, 0.03, 0.98, 0.96])
+    fig.savefig(output, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+def plot_common_velocity_and_position(df, pos, output, velocity_metrics_row,
+                                      position_metrics_row, window, position_window,
+                                      polyorder, tmin, tmax):
+    """Dos paneles con leyendas y métricas en bandas externas, sin tapar los datos."""
+    from matplotlib.gridspec import GridSpec
+
+    fig = plt.figure(figsize=(14.2, 7.0))
+    gs = GridSpec(
+        3, 2, figure=fig,
+        height_ratios=[0.13, 1.0, 0.22],
+        hspace=0.30, wspace=0.16,
+        left=0.075, right=0.985, top=0.88, bottom=0.10
+    )
+    legend_axes = [fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1])]
+    axes = [fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])]
+    metric_axes = [fig.add_subplot(gs[2, 0]), fig.add_subplot(gs[2, 1])]
+    for lax, maxis in zip(legend_axes, metric_axes):
+        lax.set_axis_off()
+        maxis.set_axis_off()
+
+    # Panel izquierdo: velocidad diferencial conjunta.
+    ax = axes[0]
+    raw = df[(df.tau_s >= tmin) & (df.tau_s <= tmax)].sort_values(
+        ["trial", "tau_s"]
+    ).copy()
+    chunks = []
+    for _, g in raw.groupby("trial", sort=True):
+        g = g.copy()
+        valid = g["movement_valid"].to_numpy(bool)
+        for col, dest in [
+            ("v_walo_m_s", "walo_plot"),
+            ("vx_tracker_interp_m_s", "tracker_plot"),
+        ]:
+            y = g[col].to_numpy(float, copy=True)
+            y[np.abs(y) > 3.0] = np.nan
+            g[dest] = smooth_after_onset(y, valid, window, polyorder)
+        chunks.append(g)
+    s = pd.concat(chunks, ignore_index=True)
+    avg = mean_sd_by_time(s, "tau_s", {
+        "walo_plot": "walo", "tracker_plot": "tracker"
+    })
+    for _, g in s.groupby("trial", sort=True):
+        ax.plot(g.tau_s, g.walo_plot, color="tab:blue", lw=0.5, alpha=0.07)
+        ax.plot(g.tau_s, g.tracker_plot, color="tab:orange", lw=0.5, alpha=0.07)
+    t = avg.tau_s.to_numpy()
+    for key, label, color in [
+        ("walo", "WALO: Doppler conjunto", "tab:blue"),
+        ("tracker", "Tracker", "tab:orange"),
+    ]:
+        m = avg[f"{key}_mean"].to_numpy()
+        sd = avg[f"{key}_sd"].fillna(0).to_numpy()
+        ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+        ax.plot(t, m, color=color, lw=2.2, label=f"{label}: media ± 1 DE")
+    ax.axhline(0, color="0.35", lw=0.8, ls="--")
+    ax.set(xlim=(tmin, tmax), xlabel="Tiempo relativo al evento (s)",
+           ylabel="Velocidad (m/s)", title="(a) Velocidad reconstruida")
+    ax.grid(True, alpha=0.22)
+
+    # Panel derecho: desplazamiento integrado.
+    ax = axes[1]
+    p = pos[(pos.tau_s >= tmin) & (pos.tau_s <= tmax)].copy()
+    chunks = []
+    for _, g in p.groupby("trial", sort=True):
+        g = g.sort_values("tau_s").copy()
+        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), position_window, polyorder)
+        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), position_window, polyorder)
+        chunks.append(g)
+    ps = pd.concat(chunks, ignore_index=True)
+    pavg = mean_sd_by_time(ps, "tau_s", {"xw_plot": "walo", "xt_plot": "tracker"})
+    for _, g in ps.groupby("trial", sort=True):
+        ax.plot(g.tau_s, g.xw_plot, color="tab:blue", lw=0.5, alpha=0.07)
+        ax.plot(g.tau_s, g.xt_plot, color="tab:orange", lw=0.5, alpha=0.07)
+    t = pavg.tau_s.to_numpy()
+    for key, label, color in [
+        ("walo", "WALO: trayectoria Doppler", "tab:blue"),
+        ("tracker", "Tracker", "tab:orange"),
+    ]:
+        m = pavg[f"{key}_mean"].to_numpy()
+        sd = pavg[f"{key}_sd"].fillna(0).to_numpy()
+        ax.fill_between(t, m - sd, m + sd, color=color, alpha=0.14, linewidth=0)
+        ax.plot(t, m, color=color, lw=2.2, label=f"{label}: media ± 1 DE")
+    ax.set(xlim=(tmin, tmax), xlabel="Tiempo relativo al evento (s)",
+           ylabel="Desplazamiento relativo (m)", title="(b) Trayectoria reconstruida")
+    ax.grid(True, alpha=0.22)
+
+    # Las leyendas ocupan una fila dedicada fuera de las zonas de datos.
+    for lax, plot_ax in zip(legend_axes, axes):
+        handles, labels = plot_ax.get_legend_handles_labels()
+        lax.legend(handles, labels, loc="center", ncol=1, frameon=False,
+                   fontsize=8.5, handlelength=2.5)
+
+    # Métricas en tarjetas independientes bajo cada panel.
+    metric_axes[0].text(
+        0.5, 0.5,
+        f"n = {velocity_metrics_row['n']:,}    |    r = {velocity_metrics_row['r']:.3f}\n"
+        f"MAE = {velocity_metrics_row['mae_m_s']:.3f} m/s    |    "
+        f"RMSE = {velocity_metrics_row['rmse_m_s']:.3f} m/s\n"
+        f"Sesgo = {velocity_metrics_row['bias_m_s']:+.3f} m/s    |    "
+        f"Razón RMS = {velocity_metrics_row['rms_ratio']:.2f}",
+        transform=metric_axes[0].transAxes, ha="center", va="center", fontsize=8.5,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
+                  edgecolor="0.78", alpha=1.0)
+    )
+    metric_axes[1].text(
+        0.5, 0.5,
+        f"n = {position_metrics_row['n']:,}    |    r = {position_metrics_row['r']:.3f}\n"
+        f"MAE = {position_metrics_row['mae_m']:.3f} m    |    "
+        f"RMSE = {position_metrics_row['rmse_m']:.3f} m\n"
+        f"Sesgo = {position_metrics_row['bias_m']:+.3f} m    |    "
+        f"Razón de picos = {position_metrics_row['mean_peak_ratio']:.2f}",
+        transform=metric_axes[1].transAxes, ha="center", va="center", fontsize=8.5,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor="white",
+                  edgecolor="0.78", alpha=1.0)
+    )
+
+    fig.suptitle("Exp03 — Estimación conjunta Doppler: velocidad y trayectoria",
+                 fontsize=13, y=0.97)
+    fig.savefig(output, dpi=300)
+    plt.close(fig)
+
 def position_metrics_and_data(aligned):
     chunks = []
     for trial, group in aligned.groupby("trial", sort=True):
@@ -6729,8 +5693,8 @@ def plot_position(pos, output, metrics, window, polyorder, tmin, tmax):
     chunks = []
     for _, g in raw.groupby("trial", sort=True):
         g = g.sort_values("tau_s").copy()
-        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), window, polyorder)
-        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), window, polyorder)
+        g["xw_plot"] = smooth(g.x_walo_rel.to_numpy(float), position_window, polyorder)
+        g["xt_plot"] = smooth(g.x_tracker_rel.to_numpy(float), position_window, polyorder)
         chunks.append(g)
     s = pd.concat(chunks, ignore_index=True)
     avg = mean_sd_by_time(s, "tau_s", {"xw_plot": "walo", "xt_plot": "tracker"})
@@ -6771,7 +5735,7 @@ def plot_position(pos, output, metrics, window, polyorder, tmin, tmax):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Genera las cinco figuras y métricas reales de Exp03."
+        description="Genera las tres figuras finales planificadas para Exp03."
     )
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--frequency-window", type=int, default=51)
@@ -6782,22 +5746,24 @@ def main():
     parser.add_argument("--frequency-tmax", type=float, default=9.5)
     parser.add_argument("--comparison-tmin", type=float, default=-1.8)
     parser.add_argument("--comparison-tmax", type=float, default=7.5)
-    parser.add_argument("--baseline-start", type=float, default=0.50, help="Inicio del intervalo de reposo WALO (s).")
-    parser.add_argument("--baseline-end", type=float, default=0.80, help="Fin del intervalo de reposo WALO (s).")
-    parser.add_argument("--baseline-median-kernel", type=int, default=9, help="Filtro mediano impar para velocidades individuales.")
+    parser.add_argument("--baseline-start", type=float, default=0.50)
+    parser.add_argument("--baseline-end", type=float, default=0.80)
+    parser.add_argument("--baseline-median-kernel", type=int, default=9)
     args = parser.parse_args()
 
     root = args.root.resolve()
-    xlsx = root / "data" / "exp03_walo_doppler_10trials_10s.xlsx"
-    aligned_path = root / "data" / "exp03_tracker_walo_aligned.csv"
-    events_path = root / "data" / "exp03_synchronization_events.csv"
-    figures = root / "figures"
-    out_dir = root / "analysis" / "exp03_doppler" / "manuscript_figures"
+    experiments_dir = root / "data" / "experiments"
+    xlsx = experiments_dir / "exp03_walo_doppler_10trials_10s.xlsx"
+    aligned_path = experiments_dir / "exp03_tracker_walo_aligned.csv"
+    events_path = experiments_dir / "exp03_synchronization_events.csv"
+    figures = root / "figures" / "experiments"
+    out_dir = (root / "data" / "analysis" / "exp03_doppler"
+              / "manuscript_figures")
     figures.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
     for p in (xlsx, aligned_path, events_path):
-        if not p.exists():
-            raise FileNotFoundError(f"No se encontró: {p}")
+        if not p.is_file():
+            raise FileNotFoundError(f"No se encontró el archivo requerido: {p}")
 
     raw, aligned, c_sound = load_and_merge(xlsx, aligned_path)
     movement_onsets = load_movement_onsets(events_path)
@@ -6808,124 +5774,87 @@ def main():
     )
 
     outputs = {
-        "frequency": figures / "exp03_fig1_doppler_frequencies_REAL.png",
-        "differential": figures / "exp03_fig2_velocity_comparison_REAL.png",
-        "mic1": figures / "exp03_fig3_velocity_mic1_vs_tracker_REAL.png",
-        "mic2": figures / "exp03_fig4_velocity_mic2_vs_tracker_REAL.png",
-        "position": figures / "exp03_fig5_position_comparison_REAL.png",
+        "frequency": figures / "exp03_fig1_frequencies_with_rest_reference.png",
+        "individual": figures / "exp03_fig2_individual_mic_velocities.png",
+        "joint": figures / "exp03_fig3_joint_velocity_and_position.png",
     }
 
     freq_stats = plot_frequencies(
         raw, outputs["frequency"], args.frequency_window, args.polyorder,
-        args.frequency_tmin, args.frequency_tmax
+        args.frequency_tmin, args.frequency_tmax, baseline_diagnostics
     )
 
-    # Estimador diferencial: columna ya sincronizada en el CSV alineado.
-    specs = [
-        ("differential", "v_walo_m_s", "WALO diferencial (MIC1 + MIC2)",
-         "Exp03 — Velocidad Doppler diferencial frente al seguimiento visual"),
-        ("mic1", "v_mic1_corrected_m_s", "WALO MIC1 (referencia propia)",
-         "Exp03 — Velocidad Doppler calculada solo con MIC1 frente al tracker"),
-        ("mic2", "v_mic2_corrected_m_s", "WALO MIC2 (referencia propia)",
-         "Exp03 — Velocidad Doppler calculada solo con MIC2 frente al tracker"),
-    ]
-    all_metric_rows = []
-    sensor_metric_rows = []
-    for key, col, label, title in specs:
-        metrics = velocity_metrics(
+    # Comparación individual: referencias f0 independientes por sensor y ensayo.
+    mic_metrics = {}
+    for key, col in [
+        ("mic1", "v_mic1_corrected_m_s"),
+        ("mic2", "v_mic2_corrected_m_s"),
+    ]:
+        mic_metrics[key] = velocity_metrics(
             aligned[col].to_numpy(float),
             aligned["vx_tracker_interp_m_s"].to_numpy(float),
             aligned["movement_valid"].to_numpy(bool)
         )
-        plot_velocity_comparison(
-            aligned, outputs[key], metrics, col, label, title,
-            args.kinematic_window, args.polyorder,
-            args.comparison_tmin, args.comparison_tmax
-        )
-        for metric, value in metrics.items():
-            row = {"comparison": key, "estimator": label,
-                   "metric": metric, "value": value}
-            all_metric_rows.append(row)
-            sensor_metric_rows.append(row)
-
-    pos, pos_metrics = position_metrics_and_data(aligned)
-    plot_position(
-        pos, outputs["position"], pos_metrics,
-        args.position_window, args.polyorder,
+    plot_individual_sensor_comparison(
+        aligned, outputs["individual"], mic_metrics,
+        args.kinematic_window, args.polyorder,
         args.comparison_tmin, args.comparison_tmax
     )
+
+    # La estimación conjunta es la velocidad diferencial ya calculada por WALO:
+    # v = c (f2-f1)/(f1+f2) = c (f2-f1)/(2 f_common).
+    # No se obtiene convirtiendo f_common por sí sola en una velocidad.
+    common_velocity_metrics = velocity_metrics(
+        aligned["v_walo_m_s"].to_numpy(float),
+        aligned["vx_tracker_interp_m_s"].to_numpy(float),
+        aligned["movement_valid"].to_numpy(bool)
+    )
+    pos, pos_metrics = position_metrics_and_data(aligned)
+    plot_common_velocity_and_position(
+        aligned, pos, outputs["joint"], common_velocity_metrics, pos_metrics,
+        args.kinematic_window, args.position_window, args.polyorder,
+        args.comparison_tmin, args.comparison_tmax
+    )
+
+    metric_rows = []
+    for sensor, metrics in mic_metrics.items():
+        for metric, value in metrics.items():
+            metric_rows.append({"comparison": sensor, "metric": metric, "value": value})
+    for metric, value in common_velocity_metrics.items():
+        metric_rows.append({"comparison": "joint_velocity", "metric": metric, "value": value})
     for metric, value in pos_metrics.items():
-        all_metric_rows.append({
-            "comparison": "position", "estimator": "WALO vs Tracker",
-            "metric": metric, "value": value
-        })
+        metric_rows.append({"comparison": "position", "metric": metric, "value": value})
 
-    metrics_path = out_dir / "exp03_real_figures_metrics.csv"
-    sensor_path = out_dir / "exp03_velocity_metrics_by_sensor.csv"
-    freq_path = out_dir / "exp03_frequency_statistics.csv"
-    baseline_path = out_dir / "exp03_sensor_baseline_diagnostics.csv"
-    onset_path = out_dir / "exp03_movement_onsets_used.csv"
-    manifest_path = out_dir / "exp03_real_figures_manifest.csv"
-
-    pd.DataFrame(all_metric_rows).to_csv(metrics_path, index=False)
-    pd.DataFrame(sensor_metric_rows).to_csv(sensor_path, index=False)
-    freq_stats.to_csv(freq_path, index=False)
-    baseline_diagnostics.to_csv(baseline_path, index=False)
-    alignment_offsets = (
-        aligned.assign(_offset=aligned["tau_s"] - aligned["t_walo_original_s"])
-        .groupby("trial")["_offset"].median()
-    )
-    movement_onsets.assign(
-        tau_onset_s=movement_onsets["tracker_onset_t_s"]
-        + movement_onsets["trial"].map(alignment_offsets).to_numpy()
-    ).to_csv(onset_path, index=False)
-
-    manifest = pd.DataFrame([
+    pd.DataFrame(metric_rows).to_csv(out_dir / "exp03_final_metrics.csv", index=False)
+    pd.DataFrame([
         {"figure": 1, "file": str(outputs["frequency"].relative_to(root)),
-         "description": "Frecuencias: MIC1/MIC2 y componente común en paneles separados"},
-        {"figure": 2, "file": str(outputs["differential"].relative_to(root)),
-         "description": "Velocidad diferencial WALO (MIC1+MIC2) frente a Tracker"},
-        {"figure": 3, "file": str(outputs["mic1"].relative_to(root)),
-         "description": "Velocidad MIC1 con referencia propia por ensayo frente a Tracker"},
-        {"figure": 4, "file": str(outputs["mic2"].relative_to(root)),
-         "description": "Velocidad MIC2 con referencia propia por ensayo frente a Tracker"},
-        {"figure": 5, "file": str(outputs["position"].relative_to(root)),
-         "description": "Desplazamiento reconstruido WALO frente a Tracker"},
-    ])
-    manifest.to_csv(manifest_path, index=False)
+         "description": "Frecuencias MIC1/MIC2 y componente común con referencias medias de reposo"},
+        {"figure": 2, "file": str(outputs["individual"].relative_to(root)),
+         "description": "Velocidad reconstruida individualmente por MIC1 y MIC2 frente a Tracker"},
+        {"figure": 3, "file": str(outputs["joint"].relative_to(root)),
+         "description": "Velocidad Doppler conjunta y trayectoria reconstruida frente a Tracker"},
+    ]).to_csv(out_dir / "exp03_final_figures_manifest.csv", index=False)
+    freq_stats.to_csv(out_dir / "exp03_frequency_statistics.csv", index=False)
+    baseline_diagnostics.to_csv(out_dir / "exp03_sensor_baseline_diagnostics.csv", index=False)
+    movement_onsets.to_csv(out_dir / "exp03_movement_onsets_used.csv", index=False)
 
-    print("\nReferencias individuales estimadas (Hz):")
-    print(baseline_diagnostics.pivot(index="trial", columns="sensor", values="f0_reference_hz").round(3).to_string())
-    print("\nInicio de movimiento usado por ensayo (Tracker independiente):")
-    print(movement_onsets.to_string(index=False))
-    print("\nLas muestras anteriores al inicio se excluyeron de figuras 2–4 y sus métricas.")
-    print(f"Intervalo de reposo usado para f0: [{args.baseline_start:.2f}, {args.baseline_end:.2f}] s")
-    print(f"Velocidad del sonido: {c_sound:.3f} m/s")
-    print("\nFiguras generadas:")
-    for p in outputs.values():
-        print(f"  {p.relative_to(root)}")
-    print("\nArchivos de métricas:")
-    for p in (metrics_path, sensor_path, freq_path, baseline_path, onset_path, manifest_path):
-        print(f"  {p.relative_to(root)}")
-
-    print("\nComparación de velocidades (datos sin suavizar):")
-    for key, _, label, _ in specs:
-        m = next(
-            velocity_metrics(
-                aligned[spec[1]].to_numpy(float),
-                aligned["vx_tracker_interp_m_s"].to_numpy(float),
-                aligned["movement_valid"].to_numpy(bool)
-            ) for spec in specs if spec[0] == key
-        )
-        print(
-            f"  {label}: n={m['n']:,}, r={m['r']:.3f}, "
-            f"MAE={m['mae_m_s']:.3f} m/s, RMSE={m['rmse_m_s']:.3f} m/s, "
-            f"sesgo={m['bias_m_s']:+.3f} m/s, razón RMS={m['rms_ratio']:.2f}"
-        )
-    print(
-        f"\nPosición: n={pos_metrics['n']:,}, r={pos_metrics['r']:.3f}, "
-        f"MAE={pos_metrics['mae_m']:.3f} m, RMSE={pos_metrics['rmse_m']:.3f} m"
-    )
+    print("\\nFIGURAS GENERADAS")
+    for path in outputs.values():
+        print(f"  {path.relative_to(root)}")
+    print("\\nMÉTRICAS (datos sin suavizar)")
+    for name, metrics in [("MIC1", mic_metrics["mic1"]),
+                          ("MIC2", mic_metrics["mic2"]),
+                          ("Doppler conjunto", common_velocity_metrics)]:
+        print(f"{name}: n={metrics['n']}, r={metrics['r']:.3f}, "
+              f"MAE={metrics['mae_m_s']:.3f} m/s, "
+              f"RMSE={metrics['rmse_m_s']:.3f} m/s, "
+              f"sesgo={metrics['bias_m_s']:+.3f} m/s, "
+              f"razón RMS={metrics['rms_ratio']:.2f}")
+    print(f"Posición: n={pos_metrics['n']}, r={pos_metrics['r']:.3f}, "
+          f"MAE={pos_metrics['mae_m']:.3f} m, RMSE={pos_metrics['rmse_m']:.3f} m")
+    print("\\nReferencias medias de reposo (Hz):")
+    print(baseline_diagnostics.groupby("sensor")["f0_reference_hz"].agg(["mean", "std"]).round(3))
+    print("\\nRevise especialmente el diagnóstico de estabilidad del intervalo de reposo.")
 
 if __name__ == "__main__":
     main()
@@ -6939,19 +5868,19 @@ synchronize_exp03_tracker_walo.py: (scripts/synchronize_exp03_tracker_walo.py)
 Exp03 — prepara Tracker y WALO para comparación por primer punto de retorno.
 
 Genera:
-  data/exp03_synchronization_events.csv
-  data/exp03_tracker_walo_aligned.csv
-  data/exp03_tracker_walo_comparison.csv
-  figures/exp03_tracker_walo_alignment_check.png
+  data/experiments/exp03_synchronization_events.csv
+  data/experiments/exp03_tracker_walo_aligned.csv
+  data/experiments/exp03_tracker_walo_comparison.csv
+  figures/experiments/exp03_tracker_walo_alignment_check.png
 
 Y archiva (NO elimina) los productos intermedios de los ensayos anteriores en:
   ensayos/exp03_tracker_preprocessing/
 
 Conserva intactos los datos originales:
-  data/exp03_tracker/*.csv
-  data/exp03_raw_dual_channel.npz
-  data/exp03_walo_doppler_10trials_10s.csv (si existe)
-  data/exp03.mp4
+  data/experiments/exp03_tracker/*.csv
+  data/experiments/exp03_raw_dual_channel.npz
+  data/experiments/exp03_walo_doppler_10trials_10s.csv (si existe)
+  data/experiments/exp03.mp4
 
 Uso desde la raíz del repositorio:
   python scripts/synchronize_exp03_tracker_walo.py
@@ -6993,18 +5922,23 @@ from scipy.signal import find_peaks
 
 ROOT = Path(__file__).resolve().parents[1]
 
-TRACKER_DIR = ROOT / "data" / "exp03_tracker"
+EXPERIMENTS_DIR = ROOT / "data" / "experiments"
+TRACKER_DIR = EXPERIMENTS_DIR / "exp03_tracker"
 WALO_CSV_CANDIDATES = [
-    ROOT / "data" / "exp03_walo_doppler_10trials_10s.csv",
-    ROOT / "exp03_walo_doppler_10trials_10s.csv",
+    EXPERIMENTS_DIR / "exp03_walo_doppler_10trials_10s.csv",
+]
+WALO_XLSX_CANDIDATES = [
+    EXPERIMENTS_DIR / "exp03_walo_doppler_10trials_10s.xlsx",
 ]
 
-EVENTS_CSV = ROOT / "data" / "exp03_synchronization_events.csv"
-ALIGNED_CSV = ROOT / "data" / "exp03_tracker_walo_aligned.csv"
-COMPARISON_CSV = ROOT / "data" / "exp03_tracker_walo_comparison.csv"
-CHECK_FIGURE = ROOT / "figures" / "exp03_tracker_walo_alignment_check.png"
+EVENTS_CSV = EXPERIMENTS_DIR / "exp03_synchronization_events.csv"
+ALIGNED_CSV = EXPERIMENTS_DIR / "exp03_tracker_walo_aligned.csv"
+COMPARISON_CSV = EXPERIMENTS_DIR / "exp03_tracker_walo_comparison.csv"
+FIGURES_DIR = ROOT / "figures" / "experiments"
+CHECK_FIGURE = FIGURES_DIR / "exp03_tracker_walo_alignment_check.png"
 
-ARCHIVE_ROOT = ROOT / "ensayos" / "exp03_tracker_preprocessing"
+ARCHIVE_ROOT = (ROOT / "data" / "analysis" / "exp03_doppler"
+                / "preprocessing_archive")
 
 # Tracker: criterio coherente con el procesamiento preliminar ya utilizado.
 TRACKER_PEAK_PROMINENCE_M = 0.05
@@ -7150,14 +6084,11 @@ def read_walo():
     # Primero buscar el CSV consolidado en las ubicaciones habituales.
     csv_path = next((p for p in WALO_CSV_CANDIDATES if p.is_file()), None)
 
-    # Si no hay CSV, buscar el libro Excel tanto en data/ como en la raíz.
-    # Acepta sufijos automáticos de descarga como "(1)".
-    xlsx_candidates = []
-    for folder in (ROOT / "data", ROOT):
-        if folder.is_dir():
-            xlsx_candidates.extend(sorted(
-                folder.glob("exp03_walo_doppler_10trials_10s*.xlsx")
-            ))
+    # XLSX original almacenado junto a los demás datos experimentales.
+    # Acepta sufijos automáticos como "(1)".
+    xlsx_candidates = sorted(
+        EXPERIMENTS_DIR.glob("exp03_walo_doppler_10trials_10s*.xlsx")
+    ) if EXPERIMENTS_DIR.is_dir() else []
     xlsx_path = next((p for p in xlsx_candidates if p.is_file()), None)
 
     if csv_path is not None:
@@ -7173,7 +6104,7 @@ def read_walo():
     else:
         raise FileNotFoundError(
             "No encuentro los datos procesados de WALO. Busqué:\\n"
-            "  data/exp03_walo_doppler_10trials_10s.csv\\n"
+            "  data/experiments/exp03_walo_doppler_10trials_10s.csv\\n"
             "  exp03_walo_doppler_10trials_10s.csv\\n"
             "  data/exp03_walo_doppler_10trials_10s*.xlsx\\n"
             "  exp03_walo_doppler_10trials_10s*.xlsx\\n"
@@ -7336,10 +6267,10 @@ def archive_intermediate_files():
         "data/exp03_tracker_aligned_first_maximum.csv",
         "data/exp03_tracker_first_maximum_summary.csv",
         "data/exp03_tracker_first_maximum_mean_std.csv",
-        "figures/exp03_tracker_overview_initial.png",
-        "figures/exp03_tracker_aligned_onset.png",
-        "figures/exp03_tracker_aligned_first_maximum.png",
-        "figures/exp03_tracker_first_maximum_mean_std.png",
+        "figures/experiments/exp03_tracker_overview_initial.png",
+        "figures/experiments/exp03_tracker_aligned_onset.png",
+        "figures/experiments/exp03_tracker_aligned_first_maximum.png",
+        "figures/experiments/exp03_tracker_first_maximum_mean_std.png",
         "scripts/preprocess_exp03_tracker.py",
         "scripts/align_exp03_tracker_onset.py",
         "scripts/align_exp03_tracker_first_maximum.py",
@@ -7372,6 +6303,11 @@ def main():
     parser.add_argument("--max-tracker-gap", type=float, default=MAX_TRACKER_GAP_S,
                         help="Separación máxima entre muestras Tracker para interpolar (s).")
     args = parser.parse_args()
+
+    if not TRACKER_DIR.is_dir():
+        raise FileNotFoundError(f"No se encontró el directorio de Tracker: {TRACKER_DIR}")
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    EXPERIMENTS_DIR.mkdir(parents=True, exist_ok=True)
 
     tracker, events = read_tracker_trials()
     walo = read_walo()
