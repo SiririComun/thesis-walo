@@ -1,0 +1,4 @@
+figure,file,description
+1,figures/experiments/exp03_fig1_frequencies_with_rest_reference.png,Frecuencias MIC1/MIC2 y componente común con referencias medias de reposo
+2,figures/experiments/exp03_fig2_individual_mic_velocities.png,Velocidad reconstruida individualmente por MIC1 y MIC2 frente a Tracker
+3,figures/experiments/exp03_fig3_joint_velocity_and_position.png,Velocidad Doppler conjunta y trayectoria reconstruida frente a Tracker
