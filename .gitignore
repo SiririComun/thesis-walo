@@ -51,5 +51,6 @@ figures/*
 # ==================================================
 .vscode/
 
-data/exp03.mp4
-data/exp03_raw_dual_channel.npz
+# Exp03 raw acquisition and video (kept locally, not versioned)
+data/experiments/exp03_raw_dual_channel.npz
+data/experiments/exp03.mp4
