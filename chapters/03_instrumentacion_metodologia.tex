@@ -10,8 +10,9 @@ de una fuente sonora.
 
 La metodología presenta la configuración instrumental y los
 procedimientos de los experimentos de distancia y dirección.
-También describe el montaje cinemático y el procedimiento de
-referencia óptica previsto para contrastar la estimación Doppler.
+También describe el montaje cinemático, la adquisición continua
+y la referencia óptica utilizada para contrastar la estimación
+Doppler mediante seguimiento en Tracker.
 
 La implementación de hardware y software se encuentra documentada
 en repositorios versionados. El diseño del overlay para la plataforma
@@ -64,13 +65,13 @@ respectivamente.
 
 La arquitectura de adquisición utiliza el secuenciador dual del
 XADC para registrar ambos canales de manera simultánea. La
-configuración nominal corresponde a una tasa agregada de
-\SI{1}{MSPS}, equivalente a una tasa de
-\SI{500}{kSPS} por canal. La sincronización intercanal se
-verificó experimentalmente mediante una prueba con una señal
-común aplicada a ambas entradas. La descripción del procedimiento
-y su evidencia técnica se encuentran en los repositorios de
-hardware y software anexados a este trabajo
+configuración nominal del convertidor corresponde a una tasa
+agregada de \SI{1}{MSPS}, equivalente a
+\SI{500}{kSPS} por canal antes del diezmado digital. La
+sincronización intercanal se verificó experimentalmente mediante
+una prueba con una señal común aplicada a ambas entradas. La
+descripción del procedimiento y su evidencia técnica se encuentran
+en los repositorios de hardware y software anexos
 \cite{SiririHW2026,SiririSW2026}.
 
 \subsection{Transductores y excitación acústica}
@@ -105,10 +106,11 @@ hardware utilizada en los experimentos corresponde a la versión
 1.5.3 del overlay.
 
 En los experimentos de distancia y dirección se utilizó un
-factor de diezmado $M=10$, correspondiente a una tasa de
-muestreo de \SI{50}{kSPS} por canal. Esta configuración
-define la tasa efectiva de los registros empleados en la
-caracterización acústica presentada en este trabajo.
+factor de diezmado $M=10$, correspondiente a una tasa efectiva
+de \SI{50}{kSPS} por canal en los registros procesados. En
+consecuencia, debe distinguirse esta tasa de salida de la tasa
+nominal de conversión del XADC, de \SI{500}{kSPS} por canal
+antes del diezmado.
 
 \begin{figure}[!htbp]
     \centering
@@ -173,21 +175,24 @@ se trata como anecoico.
 
 \subsection{Adquisición continua}
 
-Para el estudio del movimiento de la fuente se requiere una
-secuencia temporal continua de ambos canales. En esta
-configuración se utiliza una tasa de
-\SI{50}{kSPS} por canal, que permite seguir la evolución de
-la frecuencia de la señal durante el movimiento.
+Para el estudio del movimiento de la fuente se registraron
+continuamente ambos canales durante diez ensayos de
+\SI{10}{\second} cada uno. La tasa de adquisición almacenada
+fue de \SI{50}{kSPS} por canal, después de aplicar el factor
+de diezmado $M=10$. Cada ensayo contiene, por tanto,
+500\,000 muestras por canal. La excitación del buzzer se
+mantuvo activa durante todo el registro y la adquisición
+comenzó antes de iniciar el desplazamiento, de modo que
+incluyera un intervalo inicial de reposo.
 
-La adquisición continua conserva la evolución temporal de
-las señales y permite estimar la frecuencia recibida en
-ventanas sucesivas. A partir de las dos frecuencias se
-construye una estimación de velocidad relativa, de acuerdo
-con el modelo Doppler desarrollado en el capítulo anterior.
-
-La duración y el número de registros deben mantenerse
-constantes dentro de cada serie experimental para facilitar
-la comparación entre ensayos.
+A partir de las señales se estimó la frecuencia recibida en
+ventanas sucesivas. Para la caracterización cinemática, la
+secuencia de estimaciones se procesó a una tasa temporal de
+\SI{100}{Hz}. Esta tasa corresponde a la salida del
+procesamiento cinemático y no a la tasa de muestreo del
+convertidor. Las dos frecuencias se utilizan para construir
+estimaciones de velocidad relativa conforme al modelo Doppler
+desarrollado en el capítulo anterior.
 
 \subsection{Calibración temporal de los canales}
 
@@ -496,119 +501,148 @@ utilizan excitación pulsada, esta medición requiere
 una adquisición continua durante el movimiento.
 
 El montaje permite estudiar la estimación de velocidad
-mediante Doppler diferencial y contrastarla con una
-referencia óptica independiente obtenida con Tracker.
-En el estado actual del trabajo, los resultados
-cuantitativos disponibles para este experimento son
-sintéticos; por tanto, esta sección documenta el
-procedimiento instrumental y de análisis, no una
-validación experimental de la estimación cinemática.
+mediante desplazamiento Doppler y contrastarla con una
+referencia óptica independiente obtenida mediante Tracker.
+La campaña experimental comprende diez ensayos de
+\SI{10}{\second}, con registros acústicos de ambos canales
+y seguimiento óptico de la fuente móvil. La comparación
+entre ambas mediciones se realiza después de alinear sus
+bases temporales; esta alineación se trata como parte del
+procesamiento y no como una calibración independiente de
+latencia.
 
 \subsubsection{Montaje mecánico}
 
-El montaje utiliza un riel rectilíneo de longitud
-aproximada \SI{2}{\metre}. Un carro se desplaza sobre
-el riel y lleva instalado el buzzer, que constituye
-la fuente acústica móvil. Un elástico dispuesto en
-el extremo inicial del recorrido permite generar el
-impulso de partida.
+El montaje utiliza un riel rectilíneo de longitud nominal
+aproximada de \SI{2}{\metre}. Un carro se desplaza sobre
+el riel y lleva instalado el buzzer, que constituye la
+fuente acústica móvil. El movimiento se inicia mediante
+un empuje manual y queda limitado por topes mecánicos
+rígidos en los extremos; no se utiliza un elemento
+elástico para impulsar ni para restaurar el movimiento.
 
-Se disponen dos micrófonos fijos en extremos
-opuestos del recorrido. El micrófono 1 se ubica
-en el extremo inicial y el micrófono 2 en el
-extremo final. El buzzer se orienta hacia el
-micrófono 1 y en sentido opuesto al micrófono 2.
+Se disponen dos micrófonos fijos en extremos opuestos
+del recorrido. El micrófono 1 se ubica en el extremo
+inicial y el micrófono 2 en el extremo final. El buzzer
+se orienta hacia el micrófono 1 y en sentido opuesto
+al micrófono 2. Aunque el riel tiene una longitud
+nominal de \SI{2}{\metre}, las posiciones efectivas
+de los extremos del recorrido, referidas al origen
+geométrico empleado en la caracterización, son
+\SI{9.4(1)}{\centi\metre} y
+\SI{175.6(1)}{\centi\metre}. El recorrido útil
+resultante es \SI{166.2(14)}{\centi\metre}.
+Estas magnitudes describen el intervalo mecánico
+utilizable y no deben confundirse con la posición
+óptica instantánea del buzzer.
 
-El elástico se dispone de forma aproximadamente
-perpendicular al eje del riel y actúa sobre el carro
-cerca del extremo inicial del recorrido.
-
-La masa del conjunto móvil debe establecerse mediante
-pesaje; no se asigna un valor numérico en este capítulo
-porque no se dispone de una medición documentada.
+La masa del conjunto móvil no se utiliza en la
+estimación Doppler de velocidad y no se asigna un
+valor en este capítulo, pues no se dispone de una
+medición documentada.
 
 \begin{figure}[!htbp]
     \centering
     \input{figures/diagrams/fig10_montaje_exp03.tex}
     \caption{Esquema del montaje cinemático.
     El carro con la fuente acústica se desplaza sobre
-    un riel entre dos micrófonos fijos. El elástico
-    dispuesto en el extremo inicial proporciona el
-    impulso de partida.}
+    un riel entre dos micrófonos fijos. El movimiento
+    se inicia mediante un empuje manual y el recorrido
+    está limitado por topes mecánicos en sus extremos.}
     \label{fig:montaje_exp03}
 \end{figure}
 
 \subsubsection{Condiciones de adquisición}
 
-La adquisición se configuró para registrar
-simultáneamente ambos canales a
-\SI{50}{kSPS} durante \SI{10}{\second}.
-El carro parte del extremo correspondiente al
-micrófono 1. El impulso inicial se genera mediante
-un elástico dispuesto en ese extremo del riel:
-el elástico se comprime y luego se libera, de modo
-que proporciona al carro un impulso aproximadamente
-reproducible entre ensayos.
+Cada ensayo registra simultáneamente ambos canales
+durante \SI{10}{\second}, a una tasa de
+\SI{50}{kSPS} por canal después del diezmado
+$M=10$. Esto equivale a 500\,000 muestras por
+canal y ensayo. Se realizaron diez ensayos. El
+buzzer permaneció activo durante toda la captura,
+que comenzó antes del movimiento para conservar
+un intervalo inicial de reposo. El carro se desplaza
+mediante un empuje manual y puede recorrer el riel
+en sentidos alternados; los topes rígidos delimitan
+el movimiento.
 
-El protocolo contempla diez ensayos con la misma
-configuración de adquisición. Debido a que los
-registros cuantitativos disponibles para este
-experimento son sintéticos, el número de ensayos
-describe el protocolo documentado y no una campaña
-experimental cuyos datos hayan sido incorporados
-a los resultados de esta versión.
-
-La excitación acústica se mantiene continua
-durante el registro, ya que el observable de
-interés es la variación temporal de la frecuencia
-recibida. La posición del carro se obtiene
-independientemente mediante seguimiento óptico
-en Tracker y se utiliza como referencia para
-comparar las trayectorias de velocidad y posición
-estimadas por WALO. Esta referencia óptica es
-distinta de los datos sintéticos empleados en
-las figuras y el análisis preliminar disponibles.
+La posición de la fuente acústica se obtuvo mediante
+seguimiento óptico en Tracker. El seguimiento se
+realiza sobre el buzzer y, por tanto, la coordenada
+óptica no representa necesariamente el centro
+geométrico del carro. La secuencia original de
+Tracker tiene una frecuencia de adquisición cercana
+a \SI{30}{\hertz}; su interpolación a una base
+temporal de \SI{100}{\hertz} permite compararla
+con la salida cinemática de WALO, pero no incrementa
+la resolución temporal ni la precisión espacial
+intrínsecas del video. Los eventos de sincronización
+identificados se utilizan como referencias candidatas
+para alinear las series y no constituyen, por sí
+solos, una medición validada de la latencia entre
+sistemas.
 
 \subsubsection{Estimación de velocidad y posición}
 
 A partir de las señales registradas se estima
 la frecuencia instantánea en cada canal mediante
 el procesamiento temporal y espectral descrito
-en el capítulo 1. Las frecuencias $f_1(t)$ y
-$f_2(t)$ se utilizan como entradas del modelo
-Doppler diferencial:
+en el capítulo 1. Para expresar el desplazamiento
+de frecuencia respecto al reposo, se utiliza una
+referencia independiente por micrófono y por ensayo,
+estimada en el intervalo inicial de reposo entre
+0.50 y 0.80 s. Los valores medios de referencia
+observados en la campaña fueron
+\SI{2595.474}{\hertz} para MIC1
+(desviación estándar \SI{1.988}{\hertz}) y
+\SI{2596.610}{\hertz} para MIC2
+(desviación estándar \SI{1.685}{\hertz}).
+La variación de la frecuencia de reposo entre
+ensayos y canales hace necesario conservar estas
+referencias individuales y no imponer una única
+frecuencia nominal a toda la campaña.
 
-\begin{equation}
-    \hat{v}_{\mathrm{diff}}(t)=
-    c(T)
-    \frac{f_2(t)-f_1(t)}
-    {f_1(t)+f_2(t)}.
-    \label{eq:velocidad_exp03}
-\end{equation}
+Con la convención de signo definida para cada
+receptor, las velocidades radiales se calculan como
 
-La convención de signo se fija tomando como
-sentido positivo el desplazamiento desde el
-micrófono 1 hacia el micrófono 2. Con esta
-convención, un movimiento de la fuente en ese
-sentido debe producir $f_2>f_1$ en el modelo
-ideal y, por tanto, una velocidad diferencial
-positiva.
+\begin{align}
+    \hat{v}_1(t)&=
+    -c(T)\frac{f_1(t)-f_{01}}{f_{01}},
+    \label{eq:velocidad_mic1_exp03}\\
+    \hat{v}_2(t)&=
+    +c(T)\frac{f_2(t)-f_{02}}{f_{02}},
+    \label{eq:velocidad_mic2_exp03}
+\end{align}
+donde $f_{01}$ y $f_{02}$ son las frecuencias de
+referencia en reposo para MIC1 y MIC2,
+respectivamente. Los signos opuestos corresponden
+a la orientación enfrentada de los receptores y
+a la convención de desplazamiento a lo largo del
+riel. La combinación de ambos canales se obtiene
+a partir de las estimaciones radiales individuales,
+de acuerdo con la geometría del montaje.
 
-La relación proporciona una estimación de la
-componente de velocidad bajo la geometría
-idealizada de dos receptores opuestos. Su
-aplicación experimental requiere que las
-frecuencias comparadas sean representativas
-de estados de movimiento suficientemente
-próximos y que las trayectorias acústicas
-dominantes sean compatibles con el modelo.
-Como las señales recibidas corresponden a
-instantes de emisión y propagación distintos,
-la cancelación de variaciones comunes de la
-frecuencia de la fuente no es exacta en
-condiciones generales; su validez depende
-de las hipótesis del modelo y de que la
-deriva de frecuencia sea suficientemente lenta.
+La estimación depende de la estabilidad de las
+referencias de reposo. Si la frecuencia del buzzer
+deriva durante el ensayo, una variación propia de
+la fuente puede confundirse con el desplazamiento
+Doppler. Por ello, la frecuencia inicial de reposo
+se estima por ensayo y canal, y la posible
+no estacionariedad de esa referencia debe
+considerarse al interpretar las velocidades.
+
+Las estimaciones individuales representan la
+componente radial de la velocidad bajo el modelo
+Doppler de fuente móvil y receptor fijo. Su
+interpretación requiere que la frecuencia de
+referencia sea representativa del estado de reposo
+y que las trayectorias acústicas dominantes sean
+compatibles con la geometría idealizada. Además,
+las señales recibidas corresponden a instantes de
+emisión y propagación distintos; por ello, las
+variaciones temporales de la frecuencia propia
+del buzzer y las diferencias de propagación pueden
+introducir discrepancias entre canales.
 
 La posición puede estimarse mediante integración
 temporal de la velocidad:
@@ -626,64 +660,63 @@ por lo que cualquier sesgo sistemático puede
 producir una desviación creciente en la posición
 estimada.
 
-La corrección de deriva, el tratamiento de los
-extremos del movimiento y la comparación con
-la posición de referencia deben evaluarse
-experimentalmente. No se presupone que la
-integración esté libre de deriva.
+La coordenada integrada se expresa respecto al
+inicio de la captura y depende de la condición
+inicial $x_0$ adoptada. En la comparación con
+Tracker se debe mantener explícita la transformación
+entre el origen de WALO, la geometría física del
+riel y el origen de la coordenada óptica. La
+corrección de deriva y el tratamiento de los
+extremos del movimiento se evalúan a partir de
+los registros; no se presupone que la integración
+esté libre de deriva.
 
 \subsubsection{Modelo dinámico de referencia}
 
-El movimiento del carro puede aproximarse,
-en primera instancia, mediante un oscilador
-armónico amortiguado.
+El movimiento observado no corresponde a un
+oscilador armónico con fuerza restauradora
+elástica: el carro se impulsa manualmente y se
+desplaza entre topes mecánicos. En consecuencia,
+no se adopta un modelo masa--resorte ni se
+interpretan los registros mediante una solución
+exponencial sinusoidal.
 
-Se define el desplazamiento respecto a la
-posición de equilibrio como
-$u=x-x_{\mathrm{eq}}$. El modelo se escribe
-entonces como
-
-\begin{equation}
-    m\ddot{u}+b\dot{u}+ku=0,
-    \label{eq:oscilador_exp03}
-\end{equation}
-
-donde $m$ representa la masa móvil, $b$ un
-coeficiente efectivo de amortiguamiento y $k$
-la constante elástica equivalente.
-
-Para el régimen subamortiguado, la solución
-para la coordenada física $x$ puede expresarse como
+Entre impactos, una descripción dinámica general
+del movimiento puede escribirse como
 
 \begin{equation}
-    x(t)=x_{\mathrm{eq}}+
-    A e^{-\gamma t}
-    \cos(\omega_d t+\phi),
-    \label{eq:solucion_oscilador_exp03}
+    m\ddot{x}=F_f(v,\ldots),
+    \label{eq:dinamica_libre_exp03}
 \end{equation}
 
-con
+donde $F_f$ representa la fuerza resultante de
+resistencia al movimiento, sin imponer aquí una
+ley constitutiva específica. En los contactos
+con los topes, una representación idealizada
+del cambio de velocidad es
 
 \begin{equation}
-    \gamma=\frac{b}{2m},
-    \qquad
-    \omega_d=
-    \sqrt{\frac{k}{m}-\gamma^2}.
+    v^{+}=-e\,v^{-},
+    \label{eq:impacto_exp03}
 \end{equation}
 
-Este modelo proporciona una descripción de
-referencia para analizar la evolución del
-movimiento. La respuesta real puede apartarse
-de la forma ideal debido a la histéresis de
-los elementos elásticos, la holgura mecánica,
-la fricción, la variación de la fuerza
-restauradora y los impactos en los extremos.
+donde $v^{-}$ y $v^{+}$ son las velocidades
+inmediatamente antes y después del impacto, y
+$e$ es un coeficiente de restitución. Este
+coeficiente no fue medido, por lo que la
+expresión describe únicamente la estructura
+idealizada de un impacto y no se utiliza para
+ajustar parámetros.
 
-Por tanto, la compatibilidad del movimiento
-con el modelo armónico amortiguado debe
-determinarse a partir de los registros
-experimentales y no asumirse como una
-propiedad del montaje.
+La fuerza de resistencia puede incluir efectos
+de fricción y pérdidas mecánicas, pero los datos
+disponibles no justifican identificar por separado
+un modelo de fricción seca o viscosa. Tampoco
+se estiman la masa, un coeficiente de
+amortiguamiento ni un coeficiente de restitución.
+El análisis se centra en las magnitudes
+cinemáticas medidas y en su comparación con
+la referencia óptica.
 
 \section{Tratamiento estadístico y métricas de error}
 \label{sec:tratamiento_datos_error}
@@ -825,14 +858,23 @@ angular de referencia se estima en aproximadamente
 del error observado en los estimadores TDOA
 y PDoA.
 
-En el experimento cinemático, la masa del
-conjunto móvil y la referencia de posición
-deben determinarse mediante instrumentos
-cuya resolución e incertidumbre se documenten
-antes del análisis. La posición de referencia
-obtenida mediante seguimiento externo debe
-tratarse como una medición, no como un valor
-exacto.
+En el experimento cinemático, la geometría
+mecánica del riel se describe mediante las
+posiciones medidas de los límites efectivos
+del recorrido. Esta geometría no equivale a
+la coordenada óptica del buzzer ni al origen
+temporal y espacial utilizado por WALO. La
+posición obtenida mediante Tracker corresponde
+al buzzer seguido en el video y debe tratarse
+como una medición con resolución temporal y
+espacial finita, no como un valor exacto. La
+interpolación de los cuadros a una base de
+\SI{100}{\hertz} facilita la comparación
+numérica, pero no reduce la incertidumbre
+asociada a la frecuencia original del video.
+La masa del carro no es necesaria para la
+estimación Doppler de velocidad y no se
+dispone de una medición documentada de ella.
 
 \subsection{Trazabilidad y conservación de los datos}
 
