@@ -3,41 +3,44 @@
 
 En este capítulo se presenta la evaluación experimental de WALO a
 partir de tres experimentos complementarios. El primero caracteriza
-la respuesta radial del sistema y compara la estimación de distancia
-mediante RSSI y tiempo de llegada (ToA). El segundo evalúa la
-estimación de dirección de llegada mediante diferencia de fase
-(PDoA) y diferencia temporal de llegada (TDoA). El tercero aborda
-la reconstrucción cinemática de una fuente móvil a partir de las
-variaciones Doppler registradas por dos micrófonos.
+la respuesta radial del sistema y evalúa la estimación de distancia
+mediante amplitud recibida (RSSI) y tiempo de llegada (ToA). El
+segundo evalúa la estimación de dirección de llegada mediante
+diferencia de fase (PDoA) y diferencia temporal de llegada (TDoA).
+El tercero aborda la reconstrucción cinemática de una fuente móvil
+a partir de las variaciones Doppler registradas por dos micrófonos.
 
 La presentación sigue la secuencia de información necesaria para
 describir una fuente acústica: distancia, dirección y evolución
 temporal del movimiento. En cada experimento se presentan los
-resultados correspondientes y se interpretan en función de las
-condiciones de medición. Las visualizaciones sintéticas que se
-mantienen para el Experimento 03 se identifican expresamente en
-sus respectivos pies de figura.
+resultados cuantitativos, su interpretación física y las limitaciones
+de las condiciones de medición. Las figuras de esta sección
+corresponden a las visualizaciones experimentales generadas a partir
+de los conjuntos de datos descritos; las métricas se distinguen de
+las correlaciones y de las referencias de comparación empleadas.
 
 \section{Caracterización de la respuesta espacial: Experimento 01}
 \label{sec:exp01}
 
 El primer experimento caracteriza la respuesta radial de WALO
-mediante dos observables acústicos: la intensidad de señal recibida
-(RSSI) y el tiempo de llegada (ToA). El objetivo es evaluar la
-relación entre las señales registradas y la separación entre la
-fuente y los micrófonos, así como comparar el desempeño de ambos
-procedimientos de estimación de distancia.
+mediante dos observables extraídos de las señales recibidas:
+la amplitud RMS y la energía digital. A partir de la amplitud
+se construye un estimador de distancia denominado RSSI en el
+contexto de este trabajo. También se evalúa un estimador basado
+en el tiempo de llegada (ToA). El objetivo es examinar la relación
+entre las señales registradas y la separación entre la fuente y
+los micrófonos, y comparar los resultados de ambos procedimientos
+en sus respectivas campañas de evaluación.
 
 \subsection{Calibración radial de amplitud RMS y energía digital}
 \label{subsec:exp01_amplitude}
 
 La respuesta radial de los dos canales se caracteriza mediante
-dos magnitudes extraídas de la señal recibida: la amplitud RMS
-y la energía digital. Para la amplitud RMS se considera una
-dependencia inversa con la distancia,
+la amplitud RMS y la energía digital. Para la amplitud RMS se
+considera una dependencia inversa con la distancia,
 
 \begin{equation}
-    A_{\mathrm{RMS}}(r) \propto \frac{1}{r},
+    A_{\mathrm{RMS}}(r) = \frac{k_A}{r},
     \label{eq:exp01_amplitude_model}
 \end{equation}
 
@@ -45,9 +48,16 @@ mientras que la energía digital se representa mediante una
 dependencia inversa con el cuadrado de la distancia,
 
 \begin{equation}
-    E_{\mathrm{dig}}(r) \propto \frac{1}{r^2}.
+    E_{\mathrm{dig}}(r) = \frac{k_E}{r^2}.
     \label{eq:exp01_energy_model}
 \end{equation}
+
+Los parámetros $k_A$ y $k_E$ son coeficientes de calibración
+instrumental. En particular, la amplitud RMS se expresa en
+milivoltios y $k_A$ tiene unidades de $\mathrm{mV\,m}$ cuando
+$r$ se expresa en metros. La energía digital es un observable
+calculado a partir de las muestras y no representa, por sí
+misma, energía acústica absoluta en joules.
 
 La Figura~\ref{fig:exp01_calibration} reúne las dos calibraciones
 en una composición de cuatro paneles. La fila superior corresponde
@@ -55,10 +65,8 @@ a la amplitud RMS y la inferior a la energía digital. En la columna
 izquierda se muestran los datos en los dominios linealizados,
 $1/r$ para la amplitud y $1/r^2$ para la energía; en la columna
 derecha se presenta la respuesta en función de la distancia física
-$r$. Cada panel incluye los datos de MIC1 y MIC2, sus barras de
-dispersión y los ajustes correspondientes. Esta disposición permite
-comparar la respuesta de ambos canales sin separar los dominios
-de representación de cada magnitud.
+$r$. Cada panel incluye los datos de MIC1 y MIC2 y los ajustes
+correspondientes.
 
 \begin{figure}[htbp]
     \centering
@@ -66,18 +74,16 @@ de representación de cada magnitud.
     {exp01_fig1_calibration_four_panel.png}
     \caption{
         Calibración radial de los dos canales de recepción.
-        (a) Amplitud RMS en el dominio linealizado $1/r$;
-        (b) amplitud RMS en función de la distancia física $r$;
-        (c) energía digital en el dominio linealizado $1/r^2$;
-        (d) energía digital en función de $r$. En cada panel
-        se muestran los datos de MIC1 y MIC2 con sus barras
-        de dispersión y los ajustes de calibración.
+        (a) Amplitud RMS frente a $1/r$; (b) amplitud RMS en
+        función de la distancia $r$; (c) energía digital frente
+        a $1/r^2$; y (d) energía digital en función de $r$.
+        Se muestran los datos de MIC1 y MIC2 y los ajustes
+        utilizados para caracterizar la respuesta radial.
     }
     \label{fig:exp01_calibration}
 \end{figure}
 
-Para la amplitud RMS, los ajustes lineales proporcionan los
-coeficientes:
+Para la amplitud RMS, los ajustes proporcionan los coeficientes:
 
 \begin{align}
     k_{A,1} &= 20.6934\ \mathrm{mV\,m}, &
@@ -95,92 +101,131 @@ Los ajustes de energía digital proporcionan:
     R_{E,2}^2 &= 0.99542.
 \end{align}
 
-En ambos observables se aprecia una respuesta diferenciada entre
-los canales, por lo que los coeficientes de calibración se
-determinan de manera independiente. Los coeficientes de
-determinación, superiores a 0.99 en los cuatro ajustes, muestran
-una correspondencia elevada con los modelos de dependencia
-radial utilizados dentro del intervalo caracterizado. La figura
-presenta tanto la linealización empleada para obtener los
-coeficientes como la evolución de las magnitudes en el dominio
-físico de distancia.
+Los coeficientes de determinación, superiores a 0.99 en los
+cuatro ajustes, indican una correspondencia elevada con los
+modelos radiales utilizados dentro del intervalo caracterizado.
+La diferencia entre los coeficientes de MIC1 y MIC2 muestra que
+la respuesta depende del canal; por esta razón, las calibraciones
+se mantienen independientes. Estos ajustes caracterizan la
+respuesta instrumental bajo las condiciones de la campaña y
+no constituyen una calibración universal de presión acústica.
 
 \subsection{Calibración y estimación de distancia mediante RSSI}
 \label{subsec:exp01_rssi}
 
-La intensidad de señal recibida (RSSI) proporciona un segundo
-observable para relacionar la respuesta acústica registrada con
-la distancia entre la fuente y el receptor. Su calibración permite
-construir una relación entre el nivel de señal medido y la
-separación radial, y utilizar posteriormente esa relación para
-estimar distancias a partir de nuevas adquisiciones.
+En este trabajo, RSSI designa el estimador radial construido
+a partir de la amplitud RMS recibida, expresada en milivoltios.
+No se trata de una potencia de radiofrecuencia ni se expresa
+en dBm. A partir del modelo de la Ecuación
+\ref{eq:exp01_amplitude_model}, la distancia estimada se obtiene
+como
 
-La caracterización de RSSI se realiza para ambos canales, cuya
-respuesta se presenta en función del inverso del cuadrado de la
-distancia y en el dominio físico. Esta representación permite
-examinar tanto la linealidad del modelo de calibración como la
-evolución de la señal al aumentar la separación entre la fuente
-y los micrófonos.
+\begin{equation}
+    \hat r = \frac{k_A}{A_{\mathrm{RMS}}},
+    \label{eq:exp01_rssi_estimator}
+\end{equation}
 
-La estimación de distancia mediante RSSI presentó el mejor
-desempeño radial entre los métodos evaluados: obtuvo mayor
-precisión que ToA y permitió trabajar a distancias superiores.
-Este resultado destaca la utilidad de la información de intensidad
-como observable para la estimación de distancia en las condiciones
-experimentales consideradas.
-
-La conversión de RSSI en distancia depende de la calibración
-obtenida para cada canal. Por tanto, los resultados deben
-interpretarse en relación con el intervalo caracterizado y con
-la respuesta instrumental utilizada durante las mediciones.
+donde el coeficiente $k_A$ se determina por separado para cada
+micrófono. Para evaluar el estimador se utilizó una campaña
+independiente de validación, manteniendo congelados los
+coeficientes obtenidos durante la calibración. Por tanto, los
+valores de la Tabla~\ref{tab:exp01_rssi_metrics} corresponden
+a observaciones de validación y no a un nuevo ajuste de los
+parámetros.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
     {exp01_fig2_method_distance_comparison.png}
     \caption{
-        Estimación de distancia a partir de RSSI para ambos
-        canales. La visualización se presenta como figura MOCK
-        generada con datos sintéticos y no corresponde a
-        mediciones experimentales.
+        Comparación experimental de la estimación de distancia
+        mediante RSSI y ToA para MIC1 y MIC2. Se representan
+        las distancias estimadas frente a la distancia de
+        referencia en los conjuntos de datos correspondientes
+        a cada método.
     }
-    \label{fig:exp01_distance_mock}
+    \label{fig:exp01_distance_comparison}
 \end{figure}
+
+\begin{table}[htbp]
+    \centering
+    \caption{
+        Métricas de validación independiente del estimador de
+        distancia basado en amplitud RMS (RSSI), con los
+        coeficientes de calibración mantenidos constantes.
+    }
+    \label{tab:exp01_rssi_metrics}
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{7pt}
+    \begin{tabular}{lrrr}
+        \hline
+        \textbf{Métrica} &
+        \textbf{MIC1} &
+        \textbf{MIC2} &
+        \textbf{Global} \\
+        \hline
+        Número de observaciones & 90 & 90 & 180 \\
+        Sesgo [cm] & -0.234 & -0.311 & -0.273 \\
+        MAE [cm] & 1.391 & 1.298 & 1.345 \\
+        RMSE [cm] & 2.141 & 1.832 & 1.992 \\
+        MAPE [\%] & 2.945 & 2.952 & 2.948 \\
+        Error absoluto máximo [cm] & 10.429 & 5.401 & 10.429 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+En la validación independiente, el estimador presenta un MAE
+global de 1.345 cm y un RMSE de 1.992 cm. Los sesgos de ambos
+canales son negativos y de magnitud inferior a 0.32 cm, lo que
+indica una ligera tendencia a subestimar la distancia en el
+conjunto evaluado. El error absoluto máximo, sin embargo,
+alcanza 10.429 cm en MIC1. Por ello, los errores medios reducidos
+no implican que todas las estimaciones se encuentren igualmente
+cerca de la referencia.
+
+Los resultados respaldan el uso de la amplitud RMS como observable
+para estimar distancia dentro del intervalo y las condiciones
+de la campaña de validación. No demuestran que el mismo error
+se mantenga fuera del intervalo evaluado, bajo cambios de
+orientación, nivel de excitación, respuesta del transductor o
+condiciones acústicas. La energía digital caracterizada en la
+subsección anterior no se presenta aquí como un estimador de
+distancia validado de manera independiente.
 
 \subsection{Estimación radial mediante tiempo de llegada}
 \label{subsec:exp01_toa}
 
-Además de la intensidad recibida, el tiempo de llegada de la señal
-permite estimar la distancia a partir del tiempo de propagación.
-La Figura~\ref{fig:exp01_toa} presenta las estimaciones obtenidas
-mediante ToA y sus residuos respecto a las distancias de referencia.
+El tiempo de llegada de la señal permite estimar la distancia
+a partir del tiempo de propagación acústica. La Figura
+\ref{fig:exp01_residual_comparison} presenta la comparación de
+los residuos de RSSI y ToA para los dos canales, mientras que
+la Tabla~\ref{tab:exp01_toa_metrics} resume las métricas
+disponibles para ToA.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
     {exp01_fig3_method_residual_comparison.png}
     \caption{
-        Caracterización experimental de la estimación de
-        distancia mediante el tiempo de llegada de la señal
-        acústica. Se presentan las estimaciones y sus residuos
-        para ambos canales.
+        Comparación de los residuos de estimación radial
+        obtenidos mediante RSSI y ToA para MIC1 y MIC2.
+        La figura permite contrastar la distribución de los
+        errores de ambos procedimientos en sus respectivos
+        conjuntos de evaluación.
     }
-    \label{fig:exp01_toa}
+    \label{fig:exp01_residual_comparison}
 \end{figure}
-
-Las métricas globales de estimación de distancia mediante ToA
-se presentan en la Tabla~\ref{tab:exp01_toa_metrics}.
 
 \begin{table}[htbp]
     \centering
     \caption{
-        Métricas globales de estimación de distancia mediante
-        ToA para los dos canales de recepción.
+        Métricas de estimación de distancia mediante tiempo
+        de llegada (ToA) para los dos canales de recepción.
     }
     \label{tab:exp01_toa_metrics}
     \renewcommand{\arraystretch}{1.15}
-    \setlength{\tabcolsep}{10pt}
-    \begin{tabular}{lcc}
+    \setlength{\tabcolsep}{9pt}
+    \begin{tabular}{lrr}
         \hline
         \textbf{Métrica} &
         \textbf{MIC1} &
@@ -195,62 +240,66 @@ se presentan en la Tabla~\ref{tab:exp01_toa_metrics}.
     \end{tabular}
 \end{table}
 
-Ambos canales presentan un sesgo medio negativo, por lo que ToA
-tiende a subestimar la distancia en el conjunto evaluado. El MAE
-es de 4.10 cm para MIC1 y 3.32 cm para MIC2, mientras que el RMSE
-alcanza 11.54 cm y 6.24 cm, respectivamente. La diferencia entre
-MAE y RMSE, especialmente en MIC1, muestra la influencia de
-desviaciones de mayor magnitud sobre el error cuadrático.
+Ambos canales presentan un sesgo medio negativo, por lo que
+ToA tiende a subestimar la distancia en el conjunto evaluado.
+El MAE es de 4.10 cm para MIC1 y 3.32 cm para MIC2, mientras
+que el RMSE alcanza 11.54 cm y 6.24 cm, respectivamente. La
+diferencia entre MAE y RMSE, especialmente en MIC1, muestra
+la influencia de desviaciones de mayor magnitud sobre el error
+cuadrático. Aunque el porcentaje de estimaciones con error
+absoluto no superior a 5 cm es de 88.9\,\% para MIC1 y
+82.8\,\% para MIC2, las métricas globales también reflejan
+observaciones con errores sustancialmente mayores.
 
-El porcentaje de estimaciones con error absoluto no superior
-a 5 cm es de 88.9\,\% para MIC1 y 82.8\,\% para MIC2. Este
-resultado indica que una proporción elevada de las estimaciones
-se mantiene dentro de ese margen, aunque el desempeño no es
-uniforme a lo largo de todo el intervalo radial.
+En la caracterización ToA, la dispersión aumenta a partir
+de 50 cm. A esa distancia, MIC1 presenta un error medio de
+-6.91 cm y una desviación estándar de 11.64 cm. A 100 cm,
+el sesgo alcanza -15.08 cm y la desviación estándar aumenta
+a 27.20 cm. MIC2 también presenta un deterioro a grandes
+distancias, aunque menos pronunciado en el extremo de 100 cm.
 
-En particular, la dispersión aumenta a partir de 50 cm. A esa
-distancia, MIC1 presenta un error medio de -6.91 cm y una
-desviación estándar de 11.64 cm. A 100 cm, el sesgo alcanza
--15.08 cm y la desviación estándar aumenta a 27.20 cm. MIC2
-también presenta un deterioro a grandes distancias, aunque
-menos pronunciado en el extremo de 100 cm.
-
-En conjunto, ToA ofrece estimaciones útiles en una parte
-importante del intervalo caracterizado, pero su precisión
-disminuye al aumentar la distancia. En comparación, RSSI
-presentó mayor precisión y alcance en las condiciones evaluadas.
-Por tanto, los resultados favorecen el uso de RSSI como método
-principal de estimación radial para este montaje, mientras que
-ToA constituye un observable complementario basado en el tiempo
-de propagación.
+La comparación entre RSSI y ToA debe interpretarse con una
+precaución metodológica: las métricas de validación RSSI y
+las métricas de caracterización ToA proceden de campañas y
+conjuntos de observaciones diferentes. Por tanto, no constituyen
+una comparación pareada bajo exactamente las mismas muestras.
+En los conjuntos evaluados, RSSI presenta menores errores
+globales que ToA; este resultado favorece su uso en el montaje
+caracterizado, pero no permite concluir que sea superior bajo
+cualquier geometría o condición acústica.
 
 \section{Caracterización angular y comparación de métodos: Experimento 02}
 \label{sec:exp02}
 
 El segundo experimento evalúa la capacidad de WALO para estimar
-la dirección de llegada de una fuente acústica. Se comparan dos
-métodos: la diferencia de fase entre canales (PDoA) y la
+la dirección de llegada de una fuente acústica. Se comparan
+dos métodos: la diferencia de fase entre canales (PDoA) y la
 diferencia temporal de llegada (TDoA).
 
 El conjunto de mediciones comprende nueve posiciones angulares,
 distribuidas entre $-60^\circ$ y $60^\circ$, con intervalos
 de $15^\circ$. Para cada posición se realizaron diez mediciones,
-obteniéndose un total de 90 registros válidos.
+obteniéndose un total de 90 registros. La distancia de referencia
+fue aproximadamente 30 cm y la separación entre micrófonos
+fue de 5 cm, de acuerdo con las condiciones registradas para
+el benchmark.
 
 \subsection{Benchmark de estimación angular}
 \label{subsec:exp02_benchmark}
 
 La Figura~\ref{fig:exp02_benchmark} compara los ángulos de
-referencia con las estimaciones obtenidas mediante PDoA y TDoA
-a lo largo del intervalo angular evaluado.
+referencia con las estimaciones obtenidas mediante PDoA y
+TDoA a lo largo del intervalo angular evaluado.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
     {exp02_fig1_angle_benchmark.png}
     \caption{
-        Comparación entre los ángulos de referencia y las
-        estimaciones obtenidas mediante PDoA y TDoA.
+        Benchmark de estimación angular para las nueve posiciones
+        de referencia entre $-60^\circ$ y $+60^\circ$.
+        Se comparan las estimaciones obtenidas mediante PDoA
+        y TDoA con los ángulos de referencia.
     }
     \label{fig:exp02_benchmark}
 \end{figure}
@@ -274,17 +323,19 @@ Tabla~\ref{tab:exp02_metrics}.
     \centering
     \caption{
         Métricas globales de estimación angular para los métodos
-        PDoA y TDoA.
+        PDoA y TDoA, calculadas sobre las 90 observaciones
+        del benchmark.
     }
     \label{tab:exp02_metrics}
     \renewcommand{\arraystretch}{1.15}
     \setlength{\tabcolsep}{12pt}
-    \begin{tabular}{lcc}
+    \begin{tabular}{lrr}
         \hline
         \textbf{Métrica} &
         \textbf{PDoA} &
         \textbf{TDoA} \\
         \hline
+        Número de observaciones & 90 & 90 \\
         Sesgo medio [$^\circ$] & 0.320 & 2.731 \\
         MAE [$^\circ$] & 4.020 & 7.856 \\
         RMSE [$^\circ$] & 6.223 & 12.098 \\
@@ -303,7 +354,7 @@ de ambos métodos.
     {exp02_fig3_angular_residuals.png}
     \caption{
         Distribución de los residuos angulares obtenidos
-        mediante PDoA y TDoA.
+        mediante PDoA y TDoA en el benchmark experimental.
     }
     \label{fig:exp02_residuals}
 \end{figure}
@@ -324,53 +375,62 @@ muestra que el desempeño no es idéntico en todas las
 direcciones y que las métricas globales deben leerse junto
 con la distribución de los residuos por posición.
 
-La comparación establece que PDoA fue el método más preciso
-en el benchmark realizado. Sin embargo, PDoA y TDoA proporcionan
-estimaciones obtenidas mediante observables diferentes. La
-disponibilidad simultánea de ambas estimaciones enriquece
-la información angular del sistema: permite contrastar
-resultados independientes y disponer de más de una referencia
-para caracterizar la dirección de llegada. En este sentido,
-la presencia de ambos métodos constituye una fuente de
-información complementaria para la localización, en lugar
-de una redundancia carente de utilidad.
-
-Estos resultados corresponden a la geometría, frecuencia,
-distancia y condiciones de medición del montaje evaluado.
-La comparación permite establecer el mejor desempeño de
-PDoA en este benchmark, sin asumir que el mismo orden de
-precisión deba mantenerse en cualquier configuración acústica.
+La comparación establece que PDoA fue el método con menor
+error global en este benchmark. Sin embargo, el resultado
+está condicionado por la geometría, la frecuencia, la
+distancia y las condiciones de medición del montaje. No
+demuestra una superioridad universal de PDoA frente a TDoA.
+La magnitud basada en energía que aparece en el archivo de
+benchmark se considera exploratoria y no se incorpora como
+un tercer método formal de estimación angular.
 
 \section{Reconstrucción cinemática mediante efecto Doppler: Experimento 03}
 \label{sec:exp03}
 
 El tercer experimento aborda la reconstrucción del movimiento
 de una fuente sonora a partir de las variaciones de frecuencia
-registradas por dos micrófonos. En este caso, el observable
-acústico permite obtener información cinemática de la fuente,
-en particular su velocidad y la evolución temporal de su
-posición.
+registradas por dos micrófonos. El montaje utiliza una tarjeta
+PYNQ-Z2 basada en el SoC-FPGA Xilinx Zynq XC7Z020 y dos
+micrófonos MAX4466. La adquisición se realizó simultáneamente
+a 50 kSPS por canal, con un factor de decimación $M=10$ y
+una salida cinemática de 100 Hz. Se ejecutaron diez ensayos
+de diez segundos. La campaña correspondiente utilizó el
+overlay de hardware v1.5.3.
 
-El montaje considera un carrito con una fuente sonora que
-se desplaza sobre un riel de aproximadamente 2 m. Los dos
-micrófonos se ubican en los extremos del recorrido y la
-reconstrucción acústica se contrasta con una referencia
-óptica obtenida mediante seguimiento en Tracker. Se consideran
-diez repeticiones del recorrido.
+El carrito con el buzzer se desplazó manualmente entre topes
+rígidos de un riel cuya longitud nominal es aproximadamente
+2 m. Las posiciones extremas medidas del buzzer fueron
+$9.4\pm0.1$ cm y $175.6\pm0.1$ cm, por lo que el recorrido
+efectivo entre extremos fue de aproximadamente
+$166.2\pm0.14$ cm. La adquisición comenzó antes del
+desplazamiento y el buzzer permaneció activo durante el
+registro. La referencia óptica de Tracker sigue la posición
+del buzzer, no el centro geométrico del carrito.
 
-El análisis comprende tres etapas relacionadas: la evolución
-de las frecuencias recibidas, la reconstrucción de velocidad
-mediante el modelo Doppler y la obtención de posición a partir
-de la integración temporal de la velocidad.
+La velocidad del sonido utilizada en el procesamiento fue
+$c=343.214623\ \mathrm{m/s}$, correspondiente a la temperatura
+registrada de $20\,^\circ$C. La posición reconstruida por
+WALO se expresa respecto al inicio de la captura y, por
+tanto, no debe interpretarse como una coordenada absoluta
+del riel.
+
+El análisis comprende tres etapas: la evolución de las
+frecuencias recibidas, la reconstrucción de velocidad mediante
+el modelo Doppler y la obtención de posición a partir de la
+integración temporal de la velocidad.
 
 \subsection{Evolución de las frecuencias recibidas}
 \label{subsec:exp03_frequencies}
 
 La evolución temporal de las frecuencias estimadas en los
 dos canales permite examinar las variaciones asociadas al
-movimiento relativo entre la fuente y cada receptor. La
-Figura~\ref{fig:exp03_frequencies_mock} presenta las
-frecuencias recibidas y su componente común.
+movimiento relativo entre la fuente y cada receptor. Para
+cada micrófono y ensayo se estimó una referencia de reposo
+independiente en la ventana comprendida entre 0.50 s y
+0.80 s. Las referencias medias reportadas para la campaña
+fueron $2595.474$ Hz para MIC1, con desviación estándar
+de $1.988$ Hz, y $2596.610$ Hz para MIC2, con desviación
+estándar de $1.685$ Hz.
 
 \begin{figure}[htbp]
     \centering
@@ -378,160 +438,290 @@ frecuencias recibidas y su componente común.
     {exp03_fig1_frequencies_with_rest_reference.png}
     \caption{
         Evolución temporal de las frecuencias recibidas por
-        los dos micrófonos y representación de la componente
-        común. Figura MOCK generada con datos sintéticos;
-        no corresponde a mediciones experimentales.
+        MIC1 y MIC2 durante los ensayos de movimiento, junto
+        con las referencias de reposo independientes y la
+        componente común representada por el procesamiento.
+        Las referencias de reposo se estiman por sensor y
+        ensayo a partir de la ventana de 0.50--0.80 s.
     }
-    \label{fig:exp03_frequencies_mock}
+    \label{fig:exp03_frequencies}
 \end{figure}
 
-La comparación de las frecuencias recibidas permite distinguir
-las variaciones diferenciales asociadas al movimiento relativo
-de la fuente respecto a cada micrófono. Estas variaciones
-constituyen la información de entrada para la estimación de
-velocidad mediante el modelo Doppler. La componente común,
-por su parte, permite identificar cambios compartidos por
-ambos canales y contextualizar la evolución conjunta de
-las observaciones.
+Las variaciones diferenciales de frecuencia constituyen la
+información utilizada para estimar la velocidad. Para la
+convención de signos adoptada, las expresiones individuales
+se escriben como
+
+\begin{align}
+    v_1 &= -c\frac{f_1-f_{01}}{f_{01}}, \\
+    v_2 &= +c\frac{f_2-f_{02}}{f_{02}},
+    \label{eq:exp03_velocity_individual}
+\end{align}
+
+donde $f_1$ y $f_2$ son las frecuencias recibidas, y
+$f_{01}$ y $f_{02}$ son las referencias de reposo
+correspondientes a MIC1 y MIC2. Los signos opuestos reflejan
+la orientación de los receptores respecto al eje de
+desplazamiento. La estimación conjunta utiliza la información
+diferencial de ambos canales, de acuerdo con el procesamiento
+implementado.
+
+La elección de una referencia individual por sensor y ensayo
+evita imponer una única frecuencia de reposo a canales con
+respuestas distintas. No obstante, durante la ejecución del
+procesamiento se advirtió que la frecuencia no es estacionaria
+en una parte del intervalo utilizado como reposo. Esta
+no estacionariedad introduce incertidumbre en la diferencia
+entre la frecuencia instantánea y su referencia, y puede
+propagarse a la velocidad estimada. Las referencias medias
+y sus desviaciones estándar resumen la campaña, pero no
+eliminan esta limitación ni demuestran que el baseline sea
+constante durante cada ensayo. Por ello, las métricas de
+velocidad deben interpretarse considerando la sensibilidad
+del estimador a la selección de la referencia de reposo.
+No se aplican desplazamientos verticales manuales para
+ocultar esta variación.
 
 \subsection{Reconstrucción y comparación de velocidad}
 \label{subsec:exp03_velocity}
 
-A partir de las frecuencias estimadas en ambos canales,
-el modelo Doppler proporciona la evolución temporal de la
-velocidad de la fuente. Esta reconstrucción se compara con
-la velocidad de referencia obtenida mediante el seguimiento
-óptico de la trayectoria en Tracker.
-
-La Figura~\ref{fig:exp03_velocity_mock} presenta la
-comparación de ambas señales de velocidad para las
-repeticiones consideradas.
+Las velocidades obtenidas individualmente a partir de cada
+canal se comparan con la velocidad de referencia derivada
+del seguimiento óptico en Tracker. La Figura
+\ref{fig:exp03_individual_velocities} presenta las
+reconstrucciones individuales de MIC1 y MIC2. El procesamiento
+de comparación excluye el transitorio instrumental inicial,
+utiliza una máscara de movimiento y restringe las muestras
+incluidas en las métricas al intervalo $|v|\leq3\ \mathrm{m/s}$.
+Las métricas se calculan con las señales sin suavizar; el
+suavizado se utiliza únicamente para facilitar la
+visualización.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
     {exp03_fig2_individual_mic_velocities.png}
     \caption{
-        Comparación de la velocidad reconstruida mediante
-        el modelo Doppler y la velocidad de referencia.
-        Se muestran diez ensayos. Figura MOCK generada con
-        datos sintéticos; no corresponde a mediciones
-        experimentales.
+        Velocidades estimadas individualmente mediante el
+        efecto Doppler para MIC1 y MIC2, comparadas con la
+        velocidad de referencia obtenida mediante Tracker
+        en los diez ensayos. Las curvas suavizadas, cuando
+        se muestran, se utilizan para visualización; las
+        métricas se calculan sobre los datos sin suavizar.
     }
-    \label{fig:exp03_velocity_mock}
+    \label{fig:exp03_individual_velocities}
 \end{figure}
 
-La comparación entre la reconstrucción acústica y la referencia
-óptica permite examinar la correspondencia temporal entre
-ambos procedimientos, así como las diferencias en amplitud,
-fase y evolución de la velocidad durante el movimiento.
-La variación entre repeticiones permite, además, caracterizar
-la consistencia del procedimiento. Para cuantificar la
-correspondencia se consideran las diferencias entre la
-velocidad reconstruida y la velocidad de referencia a lo
-largo del recorrido.
+La Tabla~\ref{tab:exp03_velocity_metrics} resume las métricas
+reportadas para cada canal y para la estimación Doppler
+conjunta. Se mantienen separadas las métricas individuales
+porque la respuesta y el error de los dos sensores no son
+equivalentes.
+
+\begin{table}[htbp]
+    \centering
+    \caption{
+        Métricas de comparación de las estimaciones de velocidad
+        Doppler con la referencia de Tracker. Los resultados
+        individuales de MIC1 y MIC2 se presentan por separado
+        de la estimación conjunta.
+    }
+    \label{tab:exp03_velocity_metrics}
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lrrrrr}
+        \hline
+        \textbf{Estimación} &
+        \textbf{N} &
+        \textbf{$r$} &
+        \textbf{MAE} &
+        \textbf{RMSE} &
+        \textbf{Sesgo} \\
+        & & & \textbf{[m/s]} & \textbf{[m/s]} & \textbf{[m/s]} \\
+        \hline
+        MIC1 & 7996 & 0.480 & 0.667 & 0.926 & +0.038 \\
+        MIC2 & 8000 & 0.711 & 0.573 & 0.757 & -0.233 \\
+        Doppler conjunto & 8099 & 0.775 & 0.437 & 0.604 & -0.038 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+En las métricas reportadas, MIC2 presenta una correlación
+mayor con Tracker que MIC1 ($r=0.711$ frente a $r=0.480$),
+mientras que la estimación conjunta presenta $r=0.775$.
+La estimación conjunta también registra el menor MAE
+(0.437 m/s) y RMSE (0.604 m/s) entre las tres estimaciones.
+El sesgo conjunto es de $-0.038$ m/s. Estos resultados
+indican que la combinación de canales mejora las métricas
+globales reportadas frente a las estimaciones individuales
+en esta campaña.
+
+La correlación cuantifica la asociación lineal entre las
+series, pero no mide por sí sola el acuerdo entre ellas.
+Por esa razón, se presentan también MAE, RMSE y sesgo.
+Las diferencias entre los canales, en particular el sesgo
+de MIC2, son relevantes al interpretar la combinación.
+Además, las métricas dependen de la máscara de movimiento,
+del límite de velocidad aplicado y de la alineación temporal
+con Tracker. No constituyen una certificación de exactitud
+absoluta del estimador.
 
 \subsection{Reconstrucción de posición}
 \label{subsec:exp03_position}
 
-La posición de la fuente se obtiene a partir de la evolución
-temporal de la velocidad reconstruida. La integración de
-esta magnitud permite recuperar la trayectoria, tomando
-como referencia la condición inicial de posición.
-
-La reconstrucción de posición permite examinar cómo las
-diferencias entre la velocidad acústica y la velocidad de
-referencia se reflejan en la trayectoria estimada. En
-particular, las desviaciones de velocidad pueden acumularse
-durante la integración y producir diferencias progresivas
-en la posición.
-
-La Figura~\ref{fig:exp03_position_mock} presenta la
-comparación entre la posición reconstruida mediante WALO
-y la trayectoria de referencia.
+La posición se obtiene a partir de la integración temporal
+de la velocidad reconstruida. En esta campaña, la posición
+WALO se expresa relativa al inicio de captura; la referencia
+óptica también se procesa como una trayectoria relativa
+para realizar la comparación. La Figura
+\ref{fig:exp03_joint_velocity_position} reúne la velocidad
+Doppler conjunta y la posición reconstruida con sus
+referencias correspondientes.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]
     {exp03_fig3_joint_velocity_and_position.png}
     \caption{
-        Comparación de la posición reconstruida mediante
-        integración de la velocidad Doppler y la trayectoria
-        de referencia. Se muestran diez ensayos. Figura MOCK
-        generada con datos sintéticos; no corresponde a
-        mediciones experimentales.
+        Reconstrucción cinemática conjunta mediante Doppler.
+        La figura presenta la velocidad estimada a partir de
+        ambos micrófonos y la posición obtenida por integración,
+        junto con las referencias ópticas procesadas de Tracker.
+        La posición WALO se expresa respecto al inicio de la
+        captura y no como coordenada absoluta del riel.
     }
-    \label{fig:exp03_position_mock}
+    \label{fig:exp03_joint_velocity_position}
 \end{figure}
 
-La comparación de las trayectorias permite evaluar la
-correspondencia espacial entre la reconstrucción acústica
-y el seguimiento óptico. Para interpretar las diferencias
-se consideran la condición inicial, el intervalo de
-integración y la posible acumulación de desviaciones
-durante la reconstrucción. De esta manera, el análisis
-de posición complementa la comparación de velocidad y
-permite estudiar la evolución espacial del movimiento.
+Las métricas de posición reportadas para la comparación
+con Tracker se presentan en la Tabla~\ref{tab:exp03_position_metrics}.
+Se calcularon sobre las muestras finitas disponibles en
+la comparación procesada.
+
+\begin{table}[htbp]
+    \centering
+    \caption{
+        Métricas de comparación de la posición reconstruida
+        mediante WALO con la trayectoria óptica de Tracker.
+    }
+    \label{tab:exp03_position_metrics}
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{10pt}
+    \begin{tabular}{lr}
+        \hline
+        \textbf{Métrica} & \textbf{Resultado} \\
+        \hline
+        Número de observaciones & 9316 \\
+        Correlación $r$ & 0.889 \\
+        MAE [m] & 0.214 \\
+        RMSE [m] & 0.273 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+La correlación de 0.889 indica una asociación lineal elevada
+entre las trayectorias comparadas, mientras que el MAE y
+el RMSE cuantifican las diferencias espaciales. La posición
+reconstruida presenta un MAE de 0.214 m y un RMSE de
+0.273 m. Estos errores deben interpretarse teniendo en
+cuenta que la posición se obtiene por integración temporal:
+un error persistente en velocidad puede acumularse y
+producir desviaciones en la trayectoria.
+
+La referencia óptica tampoco es una medición continua
+perfecta. Tracker opera a una frecuencia de cuadros cercana
+a 30 FPS y puede presentar oclusiones y separaciones
+temporales entre observaciones. Los huecos ópticos largos
+no deben interpretarse como posiciones medidas ni como
+datos recuperados con la misma resolución que la señal
+WALO a 100 Hz. La interpolación utilizada para alinear
+las series no aumenta la resolución temporal nativa de
+la referencia óptica.
+
+Los eventos utilizados para la alineación temporal —el
+primer máximo de posición detectado en Tracker y un cambio
+de signo de velocidad en WALO— son candidatos operacionales
+y no están demostrados como instantes físicos equivalentes.
+La diferencia entre esos eventos no se denomina latencia
+instrumental. En consecuencia, la comparación debe
+entenderse como una evaluación frente a una referencia
+óptica procesada, sujeta a incertidumbres de seguimiento
+y sincronización.
 
 \section{Discusión transversal}
 \label{sec:discusion_transversal}
 
 Los tres experimentos abordan dimensiones complementarias
-de la localización acústica: la distancia, la dirección
-de llegada y la evolución del movimiento. En conjunto,
-sus resultados muestran cómo diferentes observables
-extraídos de las señales recibidas permiten construir
-información espacial y cinemática sobre una fuente acústica.
+de la localización acústica: distancia, dirección de llegada
+y evolución del movimiento. Los resultados muestran que
+diferentes observables extraídos de las señales recibidas
+permiten construir información espacial y cinemática sobre
+una fuente acústica, aunque el alcance de cada estimación
+está condicionado por su calibración y por el procedimiento
+experimental.
 
-En la caracterización radial, RSSI presentó el mejor
-desempeño entre los métodos evaluados, tanto por su precisión
-como por el alcance de estimación obtenido. La calibración
-de amplitud RMS mostró, además, una relación aproximadamente
-lineal con el inverso de la distancia en el intervalo
-caracterizado. Por su parte, ToA proporcionó una alternativa
-basada en el tiempo de propagación, aunque sus errores y
-su dispersión aumentaron a distancias mayores. La comparación
-indica que RSSI resulta más favorable para la estimación
-radial en las condiciones experimentales consideradas,
-mientras que ToA aporta una medición basada en un observable
-físico diferente.
+En la caracterización radial, la amplitud RMS presenta una
+dependencia aproximada con $1/r$, mientras que la energía
+digital se ajusta mediante una dependencia con $1/r^2$.
+Estas magnitudes no deben confundirse: la primera se utiliza
+para construir el estimador RSSI evaluado mediante una
+campaña independiente; la segunda caracteriza la respuesta
+energética digital, pero no se presenta como predictor de
+distancia validado. RSSI obtuvo menores errores globales
+que ToA en los conjuntos disponibles. Sin embargo, al
+proceder de campañas diferentes, esta comparación no
+equivale a una prueba pareada de ambos métodos bajo las
+mismas observaciones. La conclusión se limita a las
+condiciones y al intervalo radial caracterizados.
 
 En la evaluación angular, PDoA obtuvo menores valores de
 MAE, RMSE y desviación estándar que TDoA. Este resultado
-identifica a PDoA como el método de mejor precisión global
-en el benchmark realizado. No obstante, ambos métodos
-aportan información angular mediante diferencias de fase
-y de tiempo, respectivamente. Su utilización conjunta
-enriquece la caracterización de la dirección de llegada,
-pues permite disponer de estimaciones complementarias
-y contrastar la información obtenida por procedimientos
-distintos.
+identifica a PDoA como el método con mejor desempeño global
+en el benchmark realizado. Las dificultades observadas
+en los extremos del intervalo angular muestran, no obstante,
+que el desempeño depende de la dirección. Por tanto, la
+comparación no permite establecer una superioridad
+universal de PDoA ni extrapolar las métricas a otras
+geometrías o configuraciones.
 
-La combinación de información radial y angular permite
-abordar la posición de una fuente desde dos componentes
-geométricas: su separación respecto al receptor y su
-dirección de llegada. Los experimentos muestran que WALO
-dispone de procedimientos para obtener ambas magnitudes
-a partir de señales acústicas. La integración de estas
-estimaciones constituye la base para una descripción
-espacial más completa de la fuente.
+El Experimento 03 extiende la evaluación al movimiento
+de una fuente sonora. La información diferencial de las
+frecuencias recibidas por los dos micrófonos permite
+estimar la velocidad mediante el modelo Doppler y obtener
+una trayectoria relativa por integración. La estimación
+conjunta presenta mejores métricas globales de velocidad
+que las estimaciones individuales en la campaña reportada.
+No obstante, el baseline de frecuencia no es estacionario
+en parte del intervalo de reposo, lo que introduce una
+fuente de incertidumbre que afecta directamente la
+conversión frecuencia--velocidad. Esta limitación debe
+considerarse junto con las diferencias de respuesta entre
+MIC1 y MIC2.
 
-El Experimento 03 extiende este enfoque al caso de una
-fuente móvil. A partir de las variaciones Doppler registradas
-por dos micrófonos se obtiene información para reconstruir
-la velocidad y, mediante su integración temporal, la
-posición. De este modo, el análisis incorpora la evolución
-del movimiento y amplía la caracterización espacial estática
-desarrollada en los dos primeros experimentos.
+La comparación cinemática también depende de la referencia
+óptica. Tracker sigue el buzzer y está limitado por su
+frecuencia de adquisición, oclusiones y huecos de datos.
+La correlación entre WALO y Tracker no equivale por sí
+sola a concordancia; por ello, se complementa con medidas
+de error. Además, los eventos utilizados para alinear las
+series son candidatos de sincronización y no una medición
+validada de latencia. La posición WALO es relativa al
+inicio de adquisición y el recorrido medido del buzzer
+entre extremos fue menor que la longitud nominal del riel.
 
-En conjunto, los resultados organizan la capacidad de WALO
-en tres dimensiones relacionadas: estimación radial,
-estimación angular y reconstrucción cinemática. RSSI y ToA
-aportan observables para la distancia; PDoA y TDoA enriquecen
-la estimación de dirección; y el análisis Doppler extiende
-la información acústica hacia la descripción del movimiento.
-Esta complementariedad constituye el principal resultado
-integrador del capítulo.
+En conjunto, los experimentos muestran tres capacidades
+diferenciadas: caracterización y estimación radial,
+estimación angular y reconstrucción cinemática Doppler.
+La evidencia cuantitativa respalda estas capacidades
+dentro de los montajes y conjuntos de datos evaluados.
+No obstante, las limitaciones de calibración, baseline,
+referencia óptica y sincronización impiden interpretar
+los resultados como una validación universal del sistema.
+La contribución experimental consiste en demostrar una
+arquitectura abierta capaz de adquirir y procesar señales
+de dos canales para obtener observables espaciales y
+cinemáticos, y en documentar las condiciones bajo las
+cuales se obtuvieron las estimaciones.
 
 \section{Síntesis}
 \label{sec:sintesis_cap4}
@@ -540,43 +730,43 @@ Los experimentos desarrollados permiten caracterizar tres
 dimensiones de la localización acústica mediante WALO:
 distancia, dirección y movimiento. Cada experimento utiliza
 observables diferentes y aporta información complementaria
-para describir la posición y la evolución de una fuente sonora.
+para describir la posición y la evolución de una fuente
+sonora.
 
-En el Experimento 01, la calibración de amplitud RMS mostró
-una relación aproximadamente lineal con el inverso de la
-distancia para ambos canales. La comparación de los métodos
-radiales identificó a RSSI como la alternativa de mejor
-desempeño en las condiciones evaluadas, tanto por precisión
-como por alcance. ToA también permitió estimar la distancia,
-aunque presentó un aumento de la dispersión a mayores
-separaciones, especialmente en MIC1.
+En el Experimento 01, la amplitud RMS presentó una
+dependencia aproximadamente inversa con la distancia,
+mientras que la energía digital siguió el modelo inverso
+cuadrático utilizado para su caracterización. La validación
+independiente del estimador basado en amplitud obtuvo un
+MAE global de 1.345 cm y un RMSE de 1.992 cm. ToA también
+permitió estimar distancia, aunque presentó mayores errores
+cuadráticos y una dispersión creciente a grandes
+separaciones en la campaña caracterizada. La comparación
+entre ambos métodos debe conservar la distinción entre
+sus conjuntos experimentales.
 
-En el Experimento 02, PDoA obtuvo menores valores de MAE,
-RMSE y desviación estándar que TDoA en el benchmark angular.
-Por tanto, presentó la mayor precisión global para el
-conjunto de mediciones realizado. La disponibilidad de
-ambos métodos aporta, sin embargo, información complementaria:
-sus estimaciones se basan en diferencias de fase y de tiempo,
-respectivamente, y enriquecen la caracterización de la
-dirección de llegada.
+En el Experimento 02, PDoA obtuvo un MAE de $4.020^\circ$
+y un RMSE de $6.223^\circ$, frente a $7.856^\circ$ y
+$12.098^\circ$ para TDoA. Por tanto, PDoA presentó el
+menor error global en las 90 observaciones del benchmark.
+Esta conclusión se restringe a la geometría y las
+condiciones experimentales utilizadas.
 
-El Experimento 03 aborda la reconstrucción del movimiento
-a partir de las frecuencias Doppler recibidas por dos
-micrófonos. El procedimiento permite obtener la evolución
-de la velocidad y reconstruir la posición mediante
-integración temporal, contrastando ambas magnitudes con
-una referencia óptica obtenida mediante Tracker. Las
-visualizaciones de esta sección se identifican como
-sintéticas en sus pies de figura y deberán sustituirse
-por las gráficas correspondientes a los registros
-experimentales definitivos.
+En el Experimento 03, la estimación Doppler conjunta
+presentó un MAE de 0.437 m/s y un RMSE de 0.604 m/s frente
+a la referencia de Tracker. La posición reconstruida
+presentó un MAE de 0.214 m y un RMSE de 0.273 m. Estos
+resultados muestran correspondencia entre las estimaciones
+acústicas y la referencia óptica procesada, pero deben
+interpretarse considerando la no estacionariedad del
+baseline, la resolución y las oclusiones de Tracker,
+y las incertidumbres de sincronización. La posición
+reconstruida es relativa al inicio de la captura.
 
-En conjunto, los resultados muestran que WALO aborda la
-localización acústica mediante una estrategia basada en
-observables complementarios. La estimación radial aporta
-información sobre la separación entre fuente y receptor;
-la estimación angular determina la dirección de llegada;
-y el análisis Doppler extiende la caracterización al
-movimiento de la fuente. Esta integración de distancia,
-dirección y evolución temporal constituye la contribución
-experimental central presentada en este capítulo.
+En conjunto, WALO permite obtener información radial,
+angular y cinemática a partir de señales acústicas
+adquiridas simultáneamente por dos canales. Los resultados
+demuestran el funcionamiento experimental de estos
+procedimientos en las configuraciones estudiadas y
+delimitan las condiciones y limitaciones que deben
+considerarse en futuras evaluaciones.
