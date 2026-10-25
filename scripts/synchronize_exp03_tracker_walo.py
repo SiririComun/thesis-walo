@@ -3,19 +3,19 @@
 Exp03 — prepara Tracker y WALO para comparación por primer punto de retorno.
 
 Genera:
-  data/exp03_synchronization_events.csv
-  data/exp03_tracker_walo_aligned.csv
-  data/exp03_tracker_walo_comparison.csv
-  figures/exp03_tracker_walo_alignment_check.png
+  data/experiments/exp03_synchronization_events.csv
+  data/experiments/exp03_tracker_walo_aligned.csv
+  data/experiments/exp03_tracker_walo_comparison.csv
+  figures/experiments/exp03_tracker_walo_alignment_check.png
 
 Y archiva (NO elimina) los productos intermedios de los ensayos anteriores en:
   ensayos/exp03_tracker_preprocessing/
 
 Conserva intactos los datos originales:
-  data/exp03_tracker/*.csv
-  data/exp03_raw_dual_channel.npz
-  data/exp03_walo_doppler_10trials_10s.csv (si existe)
-  data/exp03.mp4
+  data/experiments/exp03_tracker/*.csv
+  data/experiments/exp03_raw_dual_channel.npz
+  data/experiments/exp03_walo_doppler_10trials_10s.csv (si existe)
+  data/experiments/exp03.mp4
 
 Uso desde la raíz del repositorio:
   python scripts/synchronize_exp03_tracker_walo.py
@@ -58,18 +58,23 @@ from scipy.signal import find_peaks
 
 ROOT = Path(__file__).resolve().parents[1]
 
-TRACKER_DIR = ROOT / "data" / "exp03_tracker"
+EXPERIMENTS_DIR = ROOT / "data" / "experiments"
+TRACKER_DIR = EXPERIMENTS_DIR / "exp03_tracker"
 WALO_CSV_CANDIDATES = [
-    ROOT / "data" / "exp03_walo_doppler_10trials_10s.csv",
-    ROOT / "exp03_walo_doppler_10trials_10s.csv",
+    EXPERIMENTS_DIR / "exp03_walo_doppler_10trials_10s.csv",
+]
+WALO_XLSX_CANDIDATES = [
+    EXPERIMENTS_DIR / "exp03_walo_doppler_10trials_10s.xlsx",
 ]
 
-EVENTS_CSV = ROOT / "data" / "exp03_synchronization_events.csv"
-ALIGNED_CSV = ROOT / "data" / "exp03_tracker_walo_aligned.csv"
-COMPARISON_CSV = ROOT / "data" / "exp03_tracker_walo_comparison.csv"
-CHECK_FIGURE = ROOT / "figures" / "exp03_tracker_walo_alignment_check.png"
+EVENTS_CSV = EXPERIMENTS_DIR / "exp03_synchronization_events.csv"
+ALIGNED_CSV = EXPERIMENTS_DIR / "exp03_tracker_walo_aligned.csv"
+COMPARISON_CSV = EXPERIMENTS_DIR / "exp03_tracker_walo_comparison.csv"
+FIGURES_DIR = ROOT / "figures" / "experiments"
+CHECK_FIGURE = FIGURES_DIR / "exp03_tracker_walo_alignment_check.png"
 
-ARCHIVE_ROOT = ROOT / "ensayos" / "exp03_tracker_preprocessing"
+ARCHIVE_ROOT = (ROOT / "data" / "analysis" / "exp03_doppler"
+                / "preprocessing_archive")
 
 # Tracker: criterio coherente con el procesamiento preliminar ya utilizado.
 TRACKER_PEAK_PROMINENCE_M = 0.05
@@ -221,14 +226,11 @@ def read_walo():
     # Primero buscar el CSV consolidado en las ubicaciones habituales.
     csv_path = next((p for p in WALO_CSV_CANDIDATES if p.is_file()), None)
 
-    # Si no hay CSV, buscar el libro Excel tanto en data/ como en la raíz.
-    # Acepta sufijos automáticos de descarga como "(1)".
-    xlsx_candidates = []
-    for folder in (ROOT / "data", ROOT):
-        if folder.is_dir():
-            xlsx_candidates.extend(sorted(
-                folder.glob("exp03_walo_doppler_10trials_10s*.xlsx")
-            ))
+    # XLSX original almacenado junto a los demás datos experimentales.
+    # Acepta sufijos automáticos como "(1)".
+    xlsx_candidates = sorted(
+        EXPERIMENTS_DIR.glob("exp03_walo_doppler_10trials_10s*.xlsx")
+    ) if EXPERIMENTS_DIR.is_dir() else []
     xlsx_path = next((p for p in xlsx_candidates if p.is_file()), None)
 
     if csv_path is not None:
@@ -244,7 +246,7 @@ def read_walo():
     else:
         raise FileNotFoundError(
             "No encuentro los datos procesados de WALO. Busqué:\\n"
-            "  data/exp03_walo_doppler_10trials_10s.csv\\n"
+            "  data/experiments/exp03_walo_doppler_10trials_10s.csv\\n"
             "  exp03_walo_doppler_10trials_10s.csv\\n"
             "  data/exp03_walo_doppler_10trials_10s*.xlsx\\n"
             "  exp03_walo_doppler_10trials_10s*.xlsx\\n"
@@ -412,10 +414,10 @@ def archive_intermediate_files():
         "data/exp03_tracker_aligned_first_maximum.csv",
         "data/exp03_tracker_first_maximum_summary.csv",
         "data/exp03_tracker_first_maximum_mean_std.csv",
-        "figures/exp03_tracker_overview_initial.png",
-        "figures/exp03_tracker_aligned_onset.png",
-        "figures/exp03_tracker_aligned_first_maximum.png",
-        "figures/exp03_tracker_first_maximum_mean_std.png",
+        "figures/experiments/exp03_tracker_overview_initial.png",
+        "figures/experiments/exp03_tracker_aligned_onset.png",
+        "figures/experiments/exp03_tracker_aligned_first_maximum.png",
+        "figures/experiments/exp03_tracker_first_maximum_mean_std.png",
         "scripts/preprocess_exp03_tracker.py",
         "scripts/align_exp03_tracker_onset.py",
         "scripts/align_exp03_tracker_first_maximum.py",
@@ -449,6 +451,11 @@ def main():
     parser.add_argument("--max-tracker-gap", type=float, default=MAX_TRACKER_GAP_S,
                         help="Separación máxima entre muestras Tracker para interpolar (s).")
     args = parser.parse_args()
+
+    if not TRACKER_DIR.is_dir():
+        raise FileNotFoundError(f"No se encontró el directorio de Tracker: {TRACKER_DIR}")
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    EXPERIMENTS_DIR.mkdir(parents=True, exist_ok=True)
 
     tracker, events = read_tracker_trials()
     walo = read_walo()
