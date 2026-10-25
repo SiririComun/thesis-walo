@@ -5,11 +5,11 @@
 Experimento 02 — caracterización angular.
 
 Genera dos figuras a partir de:
-    data/angle_benchmark_patched_prototype.csv
+    data/experiments/angle_benchmark_patched_prototype.csv
 
 Salidas (PNG y PDF):
-    figures/exp02_fig1_angle_benchmark
-    figures/exp02_fig3_angular_residuals
+    figures/experiments/exp02_fig1_angle_benchmark
+    figures/experiments/exp02_fig3_angular_residuals
 
 Se utilizan exclusivamente:
     station_id, target_deg, pulse_num,
@@ -35,8 +35,8 @@ from plot_style import COLORS, FIGSIZE_WIDE, FIGSIZE_TALL, apply_style, style_ax
 # ============================================================
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_FILE = ROOT / "data" / "angle_benchmark_patched_prototype.csv"
-FIGURES_DIR = ROOT / "figures"
+DATA_FILE = ROOT / "data" / "experiments" / "angle_benchmark_patched_prototype.csv"
+FIGURES_DIR = ROOT / "figures" / "experiments"
 
 BASELINE_CM = 5.0
 DPI = 300
@@ -433,6 +433,7 @@ def main():
     print("EXPERIMENTO 02 — CARACTERIZACIÓN ANGULAR")
     print("=" * 62)
 
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     df = load_data()
     summary = summarize_by_target(df)
     metrics = calculate_metrics(df)
