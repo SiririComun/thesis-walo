@@ -1,0 +1,132 @@
+\begin{tikzpicture}[
+    >=Stealth,
+    input/.style={
+        draw=black!75,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!10,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.25cm,
+        font=\small
+    },
+    proc/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=gray!5,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.5cm,
+        font=\small
+    },
+    highlight/.style={
+        draw=UdeAGreen!85!black,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=UdeAGreen!7,
+        align=center,
+        minimum height=0.95cm,
+        text width=2.5cm,
+        font=\small
+    },
+    outnode/.style={
+        draw=black!80,
+        line width=0.8pt,
+        rounded corners=2pt,
+        fill=white,
+        align=center,
+        minimum height=0.85cm,
+        text width=2.35cm,
+        font=\small
+    },
+    arrow/.style={->, line width=0.8pt, draw=black!75}
+]
+
+% ==============================================================================
+% 1. ENTRADA Y FILTRADO PREVIO
+% ==============================================================================
+\node[input] (signal) {
+    Señal adquirida\\
+    $v_i[n]$
+};
+
+\node[proc, right=0.65cm of signal] (filter) {
+    Filtrado pasabanda\\
+    Banda de interés\\
+    $y_i[n]$
+};
+
+\draw[arrow] (signal) -- (filter);
+
+% ==============================================================================
+% 2. BIFURCACIÓN CON ESPACIO HORIZONTAL HOLGADO
+% ==============================================================================
+% Tronco a 0.55 cm del filtro
+\coordinate (fork) at ($(filter.east) + (0.55, 0.0)$);
+
+% Bloques desplazados a 1.15 cm a la derecha del filtro (0.60 cm a la derecha del tronco)
+\node[highlight, above right=0.70cm and 1.15cm of filter] (hilbert) {
+    Transformada\\
+    de Hilbert\\
+    $z_i[n] = y_i[n] + j\widetilde{y}_i[n]$
+};
+
+\node[proc, below right=0.85cm and 1.15cm of filter] (gate) {
+    Selección temporal\\
+    Ventana directa\\
+    $T_{\mathrm{gate}} = K / f_0$
+};
+
+\node[highlight, below=0.65cm of gate] (toa_proc) {
+    Detección de arribo\\
+    Umbral $V_{\mathrm{th}}$ e\\
+    interpolación de cruce
+};
+
+% Trazado de flechas holgadas (0.60 cm de recorrido horizontal antes del recuadro)
+\draw[line width=0.8pt, draw=black!75] (filter.east) -- (fork);
+\draw[arrow] (fork) |- (hilbert.west);
+\draw[arrow] (fork) |- (gate.west);
+\draw[arrow] (fork) |- (toa_proc.west);
+
+% ==============================================================================
+% 3. BLOQUES DE SALIDA (ESTRUCTURA ORIGINAL DESPEJADA)
+% ==============================================================================
+
+% Salidas de Hilbert
+\node[outnode, right=0.70cm of hilbert] (env) {
+    Envolvente\\
+    $A_i[n] = |z_i[n]|$
+};
+
+\node[outnode, above=0.25cm of env] (phase) {
+    Fase instantánea\\
+    $\Phi_i[n] = \operatorname{arg} z_i[n]$
+};
+
+\node[outnode, below=0.25cm of env] (freq) {
+    Frecuencia inst.\\
+    $f_{i,\mathrm{inst}}[n]$ (Savitzky-G.)
+};
+
+\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (phase.west);
+\draw[arrow] (hilbert.east) -- (env.west);
+\draw[arrow] (hilbert.east) -- ++(0.30, 0.0) |- (freq.west);
+
+% Salida de energía (alineada a Selección temporal)
+\node[outnode, right=0.70cm of gate] (energy) {
+    Energía y RMS\\
+    $Q_i = \sum (y_i - \bar{y})^2$\\
+    $A_{\mathrm{RMS},i}$ (Síncrona)
+};
+\draw[arrow] (gate) -- (energy);
+
+% Salida de ToA (alineada a Detección de arribo)
+\node[outnode, right=0.70cm of toa_proc] (toa) {
+    Tiempo de llegada\\
+    $t_{\mathrm{arr},i}$
+};
+\draw[arrow] (toa_proc) -- (toa);
+
+\end{tikzpicture}
