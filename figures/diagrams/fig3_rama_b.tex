@@ -1,65 +1,75 @@
+% Figura 1.4 — Procesamiento espectral y estimación de frecuencia.
+% Se amplían los espacios y se aplica la misma paleta sobria de la Figura 1.1.
+\definecolor{WaloFigBlue}{HTML}{526A86}
+\definecolor{WaloFigBlueLight}{HTML}{E8EEF5}
+\definecolor{WaloFigOrange}{HTML}{B8753C}
+\definecolor{WaloFigOrangeLight}{HTML}{F5E9DC}
 \begin{tikzpicture}[
     >=Stealth,
-    node distance=0.65cm and 0.75cm,
+    node distance=0.9cm and 0.9cm,
     input/.style={
-        draw=black!75,
-        line width=0.8pt,
+        draw=black!60,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=gray!10,
+        fill=black!3,
         align=center,
-        minimum height=0.95cm,
-        text width=2.3cm,
+        minimum height=1.12cm,
+        text width=2.45cm,
+        inner sep=6pt,
         font=\small
     },
     proc/.style={
-        draw=black!80,
+        draw=WaloFigBlue,
         line width=0.8pt,
         rounded corners=2pt,
-        fill=gray!5,
+        fill=WaloFigBlueLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
+        minimum height=1.12cm,
+        text width=2.65cm,
+        inner sep=6pt,
         font=\small
     },
-    highlight/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
+    fftstyle/.style={
+        draw=WaloFigBlue,
+        line width=0.85pt,
         rounded corners=2pt,
-        fill=UdeAGreen!7,
+        fill=WaloFigBlueLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
+        minimum height=1.12cm,
+        text width=2.75cm,
+        inner sep=6pt,
         font=\small
     },
     outnode/.style={
-        draw=black!80,
-        line width=0.8pt,
+        draw=WaloFigOrange,
+        line width=0.9pt,
         rounded corners=2pt,
-        fill=white,
+        fill=WaloFigOrangeLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.6cm,
+        minimum height=1.15cm,
+        text width=3.0cm,
+        inner sep=7pt,
         font=\small
     },
-    arrow/.style={->, line width=0.8pt, draw=black!75}
+    arrow/.style={->, line width=0.8pt, draw=black!68}
 ]
 
-% Fila superior
+% Fila superior: adquisición, ventana, FFT y extracción de magnitud/fase.
 \node[input] (block) {
     Bloque de muestras\\
     $v_i[n]$\\
-    $n = 0,\dots,N-1$
+    $n=0,\ldots,N-1$
 };
 
 \node[proc, right=of block] (window) {
     Enventanado\\
-    $x_i[n] = w[n]v_i[n]$\\
+    $x_i[n]=w[n]v_i[n]$\\
     Blackman--Harris
 };
 
-\node[proc, right=of window] (fft) {
-    Transformada\\
-    discreta de Fourier\\
+\node[fftstyle, right=of window] (fft) {
+    Transformada discreta\\
+    de Fourier\\
     $Z_i[k]$ (FFT)
 };
 
@@ -73,39 +83,36 @@
 \draw[arrow] (window) -- (fft);
 \draw[arrow] (fft) -- (polar);
 
-% Fila inferior
-\node[proc, below=1.3cm of polar] (peak) {
+% Fila inferior: lectura de derecha a izquierda, con mayor separación vertical.
+\node[proc, below=1.65cm of polar] (peak) {
     Identificación del\\
     máximo espectral\\
     Bin $k_0$
 };
 
-\node[proc, left=of peak] (interp) {
+\node[proc, left=of peak, text width=2.85cm] (interp) {
     Interpolación\\
-    local parabólica\\
+    parabólica local\\
     Desplazamiento $\delta$
 };
 
-\node[highlight, left=of interp] (freq) {
-    Frecuencia estimada\\
-    $\widehat{f}_0 = (k_0+\delta)\dfrac{f_s'}{N}$
+\node[outnode, left=of interp] (freq) {
+    \textbf{Frecuencia estimada}\\
+    $\widehat{f}_0=(k_0+\delta)\dfrac{f_s'}{N}$
 };
 
 \draw[arrow] (polar.south) -- (peak.north);
 \draw[arrow] (peak) -- (interp);
 \draw[arrow] (interp) -- (freq);
 
-% Indicador de resolución espectral
+% Resolución espectral como nota secundaria, fuera del flujo de flechas.
 \node[
-    draw=black!40,
-    dashed,
-    rounded corners=2pt,
-    fill=white,
     font=\footnotesize,
-    inner sep=4pt,
-    below=0.35cm of fft
-] {
-    Separación entre bines: $\Delta f = f_s' / N$
+    text=black!65,
+    align=center,
+    below=0.38cm of interp
+] (resolution) {
+    Separación entre bines: $\Delta f=f_s'/N$
 };
 
 \end{tikzpicture}

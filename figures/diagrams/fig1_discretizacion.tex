@@ -1,55 +1,63 @@
+% Figura 1.1 — Cadena de adquisición y acondicionamiento.
+% Paleta sobria azul grisáceo / gris cálido, coherente con el capítulo 3.
+\definecolor{WaloFigBlue}{HTML}{526A86}
+\definecolor{WaloFigBlueLight}{HTML}{E8EEF5}
+\definecolor{WaloFigBluePale}{HTML}{F4F7FA}
+\definecolor{WaloFigGray}{HTML}{77736D}
 \begin{tikzpicture}[
     >=Stealth,
     block/.style={
-        draw=black!75,
-        line width=0.8pt,
+        draw=black!60,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=gray!8,
+        fill=black!3,
         align=center,
         minimum height=1.0cm,
         text width=2.45cm,
+        inner sep=5pt,
         font=\small
     },
     proc/.style={
-        draw=UdeAGreen!85!black,
+        draw=WaloFigBlue,
         line width=0.8pt,
         rounded corners=2pt,
-        fill=UdeAGreen!6,
+        fill=WaloFigBlueLight,
         align=center,
         minimum height=1.0cm,
         text width=2.55cm,
+        inner sep=5pt,
         font=\small
     },
     blocks_style/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
+        draw=WaloFigBlue,
+        line width=0.85pt,
         rounded corners=2pt,
-        fill=UdeAGreen!6,
+        fill=WaloFigBlueLight,
         align=center,
         minimum height=1.05cm,
         text width=2.75cm,
+        inner sep=5pt,
         font=\small
     },
     branch/.style={
-        draw=black!80,
-        line width=0.8pt,
+        draw=WaloFigBlue,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=white,
+        fill=WaloFigBluePale,
         align=center,
         minimum height=1.05cm,
-        text width=2.85cm,
+        text width=3.5cm,
+        inner sep=5pt,
         font=\small
     },
-    arrow/.style={->, line width=0.85pt, draw=black!75}
+    arrow/.style={->, line width=0.8pt, draw=black!68}
 ]
 
-% ==============================================================================
-% COLUMNAS CON ESPACIADO HORIZONTAL HOLGADO
-% x = 0.0 (Col 1)  |  x = 3.6 (Col 2)  |  x = 7.4 (Col 3)  |  x = 11.5 (Col 4)
-% y = +1.85 (Fila superior)  |  y = 0.0 (Centro)  |  y = -1.85 (Fila inferior)
-% ==============================================================================
+% Se conserva la geometría y el recorrido de la versión anterior.
+% Columnas: 0.0, 3.6, 7.4 y 11.5 cm.
+% Filas: +1.85 y -1.85 cm.
 
-% --- COLUMNA 1: Dominio acústico y transducción ---
+% Dominio acústico y transducción
 \node[block] (field) at (0.0, 1.85) {
     Campo acústico\\
     $p(\vec{r},t)$
@@ -59,10 +67,9 @@
     Dos transductores\\
     $v_1(t),\,v_2(t)$
 };
-
 \draw[arrow] (field) -- (transducers);
 
-% --- COLUMNA 2: Digitalización y diezmado ---
+% Digitalización y promediado
 \node[proc] (adc) at (3.6, -1.85) {
     Adquisición\\
     ADC de 12 bits\\
@@ -74,19 +81,17 @@
     $M$ muestras\\
     $f_s' = f_s / M$
 };
-
 \draw[arrow] (transducers) -- (adc);
 \draw[arrow] (adc) -- (average);
 
-% --- COLUMNA 3: Formación de bloques (Centrado vertical en y = 0.0) ---
+% Formación de bloques
 \node[blocks_style] (blocks) at (7.4, 0.0) {
     Formación de bloques\\
     $N$ muestras por canal
 };
-
 \draw[arrow] (average.east) -- ++(0.5, 0.0) |- (blocks.west);
 
-% --- COLUMNA 4: Ramas de procesamiento con holgura vertical ---
+% Ramas de procesamiento
 \node[branch] (temporal) at (11.5, 1.85) {
     \textbf{Rama temporal}\\
     Filtrado pasabanda\\
@@ -102,13 +107,13 @@
 \draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (temporal.west);
 \draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (spectral.west);
 
-% --- TEXTOS DE OBSERVABLES (Completamente despejados) ---
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of temporal] {
+% Observables: secundarios y visualmente subordinados a las ramas
+\node[font=\footnotesize, align=center, text=black!65, below=0.18cm of temporal] {
     ToA, fase, amplitud\\
     y suma cuadrática ($Q$)
 };
 
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of spectral] {
+\node[font=\footnotesize, align=center, text=black!65, below=0.18cm of spectral] {
     Magnitud, fase y\\
     frecuencia dominante ($\widehat{f}_0$)
 };
