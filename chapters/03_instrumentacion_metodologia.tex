@@ -91,7 +91,7 @@ eléctricas de los canales y no como mediciones directas de
 presión acústica en pascales.
 
 La excitación acústica se produjo mediante un buzzer activo
-con frecuencia nominal cercana a \SI{2660}{\hertz}. Para los
+con frecuencia nominal cercana a \SI{2600}{\hertz}. Para los
 experimentos pulsados, el buzzer se accionó mediante una salida
 digital de la tarjeta, conectada a un transistor 2N2222A que
 controla su alimentación. Esta etapa permite generar pulsos
@@ -159,8 +159,8 @@ reflectante más cercana. La duración de la ventana es
 \end{equation}
 
 donde $K=3$ y $f_0$ es la frecuencia nominal de la fuente.
-Para $f_0=\SI{2660}{\hertz}$, la duración es aproximadamente
-\SI{1.13}{\milli\second}.
+Para $f_0=\SI{2600}{\hertz}$, la duración es aproximadamente
+\SI{1.15}{\milli\second}.
 
 La ventana se seleccionó para restringir el análisis a la
 respuesta inicial y reducir la contribución de reflexiones
@@ -168,7 +168,7 @@ posteriores. La mesa es la superficie reflectante más cercana;
 sin embargo, no se dispone aquí de una determinación completa
 de las longitudes de las trayectorias directa y reflejada que
 permita demostrar que la primera reflexión llega después del
-intervalo de \SI{1.13}{\milli\second}. Por ello, la ventana
+intervalo de \SI{1.15}{\milli\second}. Por ello, la ventana
 privilegia la respuesta inicial, pero no se considera una
 garantía de exclusión de todas las reflexiones. El recinto no
 se trata como anecoico.
@@ -259,8 +259,8 @@ se dirigió hacia la cara del micrófono. La distancia
 se midió entre el centro de la salida acústica del
 buzzer y el centro de la membrana del micrófono.
 
-Las distancias se determinaron mediante una cinta o
-regla con resolución indicada de \SI{1}{\milli\metre}.
+Las distancias se determinaron mediante una cinta métrica 
+con resolución indicada de \SI{1}{\milli\metre}.
 La referencia geométrica también depende de la alineación
 y de la identificación de los centros de los transductores.
 
@@ -277,7 +277,7 @@ y de la identificación de los centros de los transductores.
 \subsubsection{Condiciones de medición}
 
 La fuente se operó a una frecuencia nominal cercana a
-\SI{2660}{\hertz}. La temperatura de referencia utilizada
+\SI{2600}{\hertz}. La temperatura de referencia utilizada
 en el procesamiento fue de \SI{20}{\degreeCelsius},
 con una velocidad del sonido aproximada de
 \SI{343.2}{\metre\per\second}.
@@ -303,14 +303,12 @@ la geometría del montaje.
 
 Para cada pulso se conservaron las señales temporales
 y las magnitudes calculadas por la rutina de adquisición.
-Entre las variables de interés se encuentran:
+Entre los observables físicos de interés se encuentran:
 
 \begin{itemize}
-    \item amplitud RMS de la señal recibida;
-    \item magnitud digital asociada a la energía directa;
-    \item tiempo de llegada detectado;
-    \item nivel de ruido previo al pulso;
-    \item relación señal-ruido estimada.
+    \item Amplitud RMS de la señal recibida;
+    \item Magnitud digital asociada a la energía directa;
+    \item Tiempo de llegada detectado;
 \end{itemize}
 
 La amplitud RMS y la energía directa son observables
@@ -568,9 +566,7 @@ el movimiento.
 
 La posición de la fuente acústica se obtuvo mediante
 seguimiento óptico en Tracker. El seguimiento se
-realiza sobre el buzzer y, por tanto, la coordenada
-óptica no representa necesariamente el centro
-geométrico del carro. La secuencia original de
+realiza sobre el buzzer. La secuencia original de
 Tracker tiene una frecuencia de adquisición cercana
 a \SI{30}{\hertz}; su interpolación a una base
 temporal de \SI{100}{\hertz} permite compararla
@@ -843,7 +839,7 @@ aislada el origen de los errores.
 \subsection{Referencias geométricas e instrumentales}
 
 En el experimento de distancia, la referencia
-radial se determina mediante una regla o cinta
+radial se determina mediante una cinta métrica
 con resolución indicada de
 \SI{1}{\milli\metre}. La incertidumbre efectiva
 también depende de la alineación de los
