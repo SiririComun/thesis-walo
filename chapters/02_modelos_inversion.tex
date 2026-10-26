@@ -100,18 +100,6 @@ Esta relación fija la escala de conversión entre el instante detectado
 y la distancia estimada. La detección del arribo y la calibración del
 retardo determinan la calidad de esa estimación.
 
-Cuando se dispone de varios receptores con posiciones conocidas y de
-un instante de emisión común conocido, cada medición ToA corregida
-proporciona una distancia entre la fuente y el receptor. En tres
-dimensiones, una distancia fija define una esfera centrada en el
-receptor. La intersección de las superficies asociadas a varios
-receptores constituye la base geométrica de la trilateración por
-intersección de esferas. Esta formulación requiere una referencia
-temporal de emisión y sincronización suficientes para estimar distancias
-absolutas; no debe confundirse con TDoA, que utiliza diferencias de
-tiempos y elimina el instante común de emisión. El desarrollo geométrico
-y sus limitaciones se presenta en el Apéndice~\ref{app:trilateracion_esferas}.
-
 \subsection{Calibración radial de amplitud y energía digital}
 
 En un medio homogéneo y sin pérdidas, una fuente puntual que radia
