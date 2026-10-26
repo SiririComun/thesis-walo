@@ -1,34 +1,34 @@
 ==============================================================================
 ⚙️  PROJECT ENVIRONMENT & TOOLCHAIN CONSTRAINTS
 ==============================================================================
-• Repository State    : main @ fdee770
+• Repository State    : main @ 8de2739
 ==============================================================================
 
 Git Context & Branch Topology:
 
 ```log
-Current Branch: main | Working Tree: Dirty (3 modified/untracked files)
+Current Branch: main | Working Tree: Dirty (1 modified/untracked files)
 
 Branch Tracking & Divergence Status:
-* main                fdee770 [origin/main: ahead 3] Update experimental results and discussion
-  remotes/origin/main c81db10 Fix Exp03 figure paths and refresh thesis context
+* main                8de2739 [origin/main: ahead 5] Update compiled thesis manuscript
+  remotes/origin/main 69fa397 Update compiled thesis PDF
 
 Multi-Branch Git Commit Graph:
-* fdee770  (HEAD -> main) - 2026-10-25 : Update experimental results and discussion (SiririComun)
+* 8de2739  (HEAD -> main) - 2026-10-25 : Update compiled thesis manuscript (SiririComun)
+* 77e5bbc  - 2026-10-25 : Refine experimental results and discussion (SiririComun)
+* 5aad732  - 2026-10-25 : Refine instrumentation and experimental methodology (SiririComun)
+* 112f79e  - 2026-10-25 : Refine acoustic localization models (SiririComun)
+* 4b132a2  - 2026-10-25 : Refine chapter 1 signal processing diagrams and presentation (SiririComun)
+* 69fa397  (origin/main) - 2026-10-25 : Update compiled thesis PDF (SiririComun)
+* 145e355  - 2026-10-25 : Update COG configuration and thesis context (SiririComun)
+* fdee770  - 2026-10-25 : Update experimental results and discussion (SiririComun)
 * 61a2f86  - 2026-10-25 : Refine instrumentation and experimental methodology (SiririComun)
 * cd1dc5d  - 2026-10-25 : Update acoustic models and add trilateration appendix (SiririComun)
-* c81db10  (origin/main) - 2026-10-25 : Fix Exp03 figure paths and refresh thesis context (SiririComun)
+* c81db10  - 2026-10-25 : Fix Exp03 figure paths and refresh thesis context (SiririComun)
 * 1175dd3  - 2026-10-25 : Fix ignore rules for organized figures (SiririComun)
 * 5b9a3dd  - 2026-10-25 : Restore organized experimental figures and diagrams (SiririComun)
 * 7c143cf  - 2026-10-25 : Refresh generated thesis context (SiririComun)
 * c9f7745  - 2026-10-25 : Update COG context configuration (SiririComun)
-* 29505e5  - 2026-10-25 : Update compiled thesis manuscript (SiririComun)
-* ce37e41  - 2026-10-25 : Configure LaTeX experimental figure paths (SiririComun)
-* b98f868  - 2026-10-25 : Update chapter 4 experimental figure references (SiririComun)
-* aa5f422  - 2026-10-25 : Update chapter 3 LaTeX references (SiririComun)
-* 6b01490  - 2026-10-25 : Update chapter 2 LaTeX references (SiririComun)
-* 520250f  - 2026-10-25 : Update chapter 1 LaTeX references (SiririComun)
-* 3df5c1c  - 2026-10-25 : Update Exp03 Tracker synchronization paths (SiririComun)
 ```
 
 01_tratamiento_campo.tex: (chapters/01_tratamiento_campo.tex)
@@ -36,18 +36,19 @@ Multi-Branch Git Commit Graph:
 ```latex
 \label{chap:tratamiento_campo}
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
 En este capítulo se establecen los fundamentos físicos y matemáticos del
 tratamiento de las señales acústicas adquiridas por WALO. El objetivo es
-describir cómo las señales registradas por los receptores pueden
-transformarse en magnitudes observables relacionadas con la propagación
-acústica, la distancia, la dirección de llegada y el movimiento de una
-fuente.
+describir cómo las señales registradas por los receptores se transforman
+en observables que aportan información para estimar la posición de una
+fuente sonora y, cuando corresponde, su movimiento.
 
-La exposición sigue la cadena de medición: campo acústico, transducción,
-adquisición digital, representación temporal y espectral y extracción
-de observables. Esta secuencia establece las bases para interpretar las
-señales registradas y relacionarlas con la distancia, la dirección de
-llegada y el movimiento de una fuente.
+La exposición sigue la cadena de medición, desde el campo acústico y su
+transducción hasta la adquisición digital, el análisis temporal y
+espectral y la extracción de observables. Estas etapas proporcionan las
+magnitudes de entrada para los modelos de localización desarrollados en
+los capítulos siguientes.
 
 Se presentan primero los principios físicos y las definiciones
 matemáticas que sustentan el procesamiento. Los parámetros de adquisición
@@ -74,32 +75,15 @@ $p(\vec{r},t)$ satisface la ecuación escalar de onda
 
 donde $c$ representa la velocidad de propagación del sonido en el medio.
 
-Para aire seco, una aproximación de la dependencia de la velocidad del
-sonido con la temperatura es:
-
-\begin{equation}
-    c(T)
-    =
-    331.3
-    \sqrt{1+\frac{T}{273.15}}
-    \quad \si{\metre\per\second},
-    \label{eq:velocidad_sonido_temperatura}
-\end{equation}
-
-con $T$ expresada en grados Celsius. A una temperatura de referencia de
-$\SI{20}{\celsius}$ se obtiene aproximadamente:
-
-\begin{equation}
-    c(20\,^\circ\mathrm{C})
-    \approx
-    \SI{343.2}{\metre\per\second}.
-    \label{eq:velocidad_sonido_20}
-\end{equation}
-
-Este valor se adopta como referencia para los cálculos en condiciones
-de laboratorio. Cuando se requiere mayor exactitud, la velocidad del
-sonido se determina a partir de la temperatura del medio; la humedad
-y la composición del aire también pueden incorporarse al modelo.
+En las condiciones de laboratorio, se adopta una temperatura de
+referencia de $\SI{20}{\celsius}$, para la cual la velocidad del
+sonido en aire seco es aproximadamente
+$\SI{343.2}{\metre\per\second}$. Este valor se utiliza como
+referencia en los cálculos presentados. Cuando las condiciones
+ambientales se apartan de esta aproximación, la velocidad de propagación
+debe determinarse considerando la temperatura del medio y cuando la
+exactitud requerida lo justifique, otros factores como la humedad y la
+composición del aire.
 
 Para una fuente puntual en un medio homogéneo e ilimitado, la solución
 armónica de la ecuación de onda puede expresarse, en el régimen de campo
@@ -118,11 +102,17 @@ angular, $k=2\pi/\lambda$ es el número de onda y $\phi_0$ es una fase
 inicial.
 
 La dependencia inversa con la distancia describe la disminución de la
-amplitud de una onda esférica ideal. En consecuencia, el cuadrado de la
-amplitud presenta una dependencia proporcional a $1/r^2$. Esta relación
-es compatible con la conservación de la potencia acústica distribuida
-sobre superficies esféricas, siempre que la propagación esté dominada
-por la componente directa y no existan pérdidas adicionales relevantes
+amplitud de una onda esférica. En consecuencia, el cuadrado de la
+presión acústica presenta una dependencia proporcional a $1/r^2$.
+La intensidad acústica promedio de una onda progresiva plana se
+relaciona con la presión eficaz mediante
+$I=p_{\mathrm{rms}}^2/(\rho c)$, donde $\rho$ es la densidad del
+medio y $c$ la velocidad de propagación. En el campo lejano de una
+onda esférica, la propagación puede aproximarse localmente como plana,
+por lo que esta relación permite vincular la presión cuadrática con
+la intensidad acústica. Bajo condiciones ideales, la disminución de
+intensidad con la distancia también expresa la distribución de potencia
+sobre superficies esféricas
 \cite{kinsler2000fundamentals,pierce1989acoustics}.
 
 En un recinto real, el campo registrado puede contener contribuciones
@@ -145,12 +135,15 @@ $p_{\mathrm{ref},q}$ corresponden a las reflexiones y
 $p_{\mathrm{amb}}$ agrupa las perturbaciones acústicas ambientales.
 
 Esta descripción conecta el modelo ideal de propagación con el campo
-registrado en el experimento. Por ello, la relación entre amplitud,
-magnitud cuadrática y distancia se estudia junto con la geometría del
-montaje, la respuesta de los transductores y las contribuciones
-reflejadas.
+registrado en el experimento. La relación entre presión cuadrática,
+intensidad acústica y distancia debe interpretarse considerando la
+geometría del montaje, la respuesta de los transductores y las
+contribuciones reflejadas. La integración temporal del cuadrado de la
+presión también permite definir la exposición sonora; estas relaciones
+físicas sirven de fundamento para construir observables a partir de las
+señales adquiridas.
 
-\subsection{Señales en las posiciones de recepción}
+\subsection*{Señales en las posiciones de recepción}
 
 Se consideran dos receptores ubicados en las posiciones espaciales
 $\vec{r}_1$ y $\vec{r}_2$. La separación entre ambos define la línea de
@@ -174,10 +167,12 @@ Las fluctuaciones de presión en las posiciones de los receptores son:
     \label{eq:presion_receptores}
 \end{equation}
 
-Cada receptor transforma la perturbación acústica en una señal eléctrica.
-Por tanto, la tensión registrada no corresponde directamente a la presión
-sonora, sino que depende de la sensibilidad del micrófono, de su respuesta
-en frecuencia y de la electrónica de acondicionamiento.
+Cada receptor transforma la perturbación acústica en una señal
+eléctrica cuya respuesta depende de la sensibilidad del micrófono, de
+su comportamiento en frecuencia y de la electrónica de
+acondicionamiento. Por tanto, la tensión registrada no representa
+directamente la presión sonora, sino un observable condicionado por la
+cadena de medición.
 
 De forma general, la señal eléctrica de cada canal puede representarse
 como:
@@ -185,22 +180,19 @@ como:
 \begin{equation}
     v_i(t)
     =
-    \mathcal{H}_i\{p_i(t)\}
+    \mathcal{M}_i\{p_i(t)\}
     +
     n_i(t),
     \qquad i\in\{1,2\},
     \label{eq:transduccion}
 \end{equation}
 
-donde $\mathcal{H}_i$ representa la respuesta conjunta del transductor y
-la cadena analógica, mientras que $n_i(t)$ agrupa el ruido y las
-perturbaciones eléctricas.
-
-En ausencia de una calibración de sensibilidad acústica y de la cadena
-electrónica, las tensiones registradas no deben interpretarse como
-presiones absolutas. No obstante, pueden utilizarse como observables
-eléctricos para construir estimadores relativos o calibrados de distancia
-y dirección.
+donde $\mathcal{M}_i$ representa el operador de medición asociado al
+transductor y a la cadena analógica de cada canal, mientras que $n_i(t)$
+agrupa el ruido y las perturbaciones eléctricas. En ausencia de una
+calibración acústica y electrónica absoluta, las señales registradas se
+utilizan como observables eléctricos para construir estimadores
+relativos o calibrados de distancia y dirección.
 
 \section{Adquisición y representación discreta}
 
@@ -219,7 +211,7 @@ temporal y espectral.
     \label{fig:discretizacion_flujo}
 \end{figure}
 
-\subsection{Muestreo y cuantización}
+\subsection*{Muestreo y cuantización}
 
 Sean $v_1(t)$ y $v_2(t)$ las señales eléctricas de entrada. La conversión
 analógico-digital produce las secuencias:
@@ -252,45 +244,13 @@ respuesta del acondicionamiento analógico y la atenuación de las
 componentes fuera de la banda de interés
 \cite{oppenheim1999discrete,lyons2010understanding}.
 
-La cuantización asigna cada muestra a un conjunto finito de niveles.
-Para un convertidor ideal de $B$ bits y un intervalo total de conversión
-$V_{\mathrm{rango}}$, el paso de cuantización es aproximadamente:
+La cuantización representa cada muestra mediante un número finito de
+niveles, determinados por la resolución del ADC y su rango de entrada.
+Esta resolución establece la discretización de amplitud, pero no
+determina por sí sola la exactitud de la medición, que también depende
+del ruido y de las características de la cadena analógica.
 
-\begin{equation}
-    \Delta V
-    =
-    \frac{V_{\mathrm{rango}}}{2^B}.
-    \label{eq:paso_cuantizacion}
-\end{equation}
-
-En el modelo ideal de cuantización uniforme, el error se encuentra
-acotado por:
-
-\begin{equation}
-    -\frac{\Delta V}{2}
-    \leq
-    \epsilon_q
-    \leq
-    \frac{\Delta V}{2}.
-\end{equation}
-
-Si además se considera que el error está distribuido uniformemente
-y no está correlacionado con la señal, su varianza es:
-
-\begin{equation}
-    \sigma_q^2
-    =
-    \frac{(\Delta V)^2}{12}.
-    \label{eq:varianza_cuantizacion}
-\end{equation}
-
-Estas expresiones describen el modelo ideal de cuantización. No incluyen
-el ruido analógico, la no linealidad del convertidor ni las perturbaciones
-de la electrónica de entrada. Por ello, la resolución nominal del
-convertidor no determina por sí sola la resolución efectiva de una
-medición.
-
-\subsection{Temporización entre canales}
+\subsection*{Temporización entre canales}
 
 La comparación de las señales de dos receptores requiere una referencia
 temporal común. En una adquisición multicanal, la diferencia entre los
@@ -323,7 +283,7 @@ incertidumbre específica a las diferencias de tiempo o fase, el desfase
 residual debe caracterizarse experimentalmente, considerando la
 resolución y el límite de detección del procedimiento utilizado.
 
-\subsection{Reducción de la tasa de muestreo}
+\subsection*{Reducción de la tasa de muestreo}
 
 Una forma de reducir la cantidad de datos consiste en agrupar muestras
 consecutivas y calcular su promedio. Para un bloque de $M$ muestras,
@@ -349,8 +309,6 @@ efectiva de la secuencia resultante es:
 
 El promedio de muestras consecutivas equivale a un filtrado mediante
 una ventana rectangular seguido de una reducción de la tasa de muestreo.
-Por tanto, modifica la respuesta en frecuencia de la señal y no debe
-considerarse un filtro antialias ideal.
 
 El efecto del promedio sobre el ruido puede estudiarse separando la
 señal en una componente determinista y una perturbación aditiva:
@@ -377,12 +335,11 @@ estacionariedad del ruido. Si las muestras están correlacionadas, la
 reducción efectiva puede ser menor
 \cite{lyons2010understanding,mitra2006digital}.
 
-La frecuencia de muestreo y el factor de reducción utilizados en cada
-modo de operación son parámetros de implementación. Su descripción
-detallada se presenta junto con la arquitectura de adquisición en el
-capítulo de instrumentación.
+La frecuencia efectiva de muestreo y el factor de reducción empleados
+en cada experimento se especifican en el capítulo de instrumentación y
+metodología, junto con la configuración de adquisición correspondiente.
 
-\subsection{Formación de bloques}
+\subsection*{Formación de bloques}
 
 Para el procesamiento digital, las muestras pueden organizarse en
 bloques de longitud $N$. Un bloque del canal $i$ se representa como:
@@ -399,17 +356,16 @@ bloques de longitud $N$. Un bloque del canal $i$ se representa como:
     \label{eq:bloque_temporal}
 \end{equation}
 
-La longitud del bloque fija la duración del intervalo analizado y,
-para la transformada discreta de Fourier, determina la separación
-entre frecuencias discretas. La elección de $N$ establece el
-compromiso entre resolución espectral, duración de observación y
+La longitud del bloque determina la duración de cada ventana temporal
+de análisis y, en la transformada discreta de Fourier, la separación
+entre las frecuencias discretas. Por tanto, la elección de $N$ establece
+un compromiso entre resolución espectral, duración de observación y
 respuesta temporal.
 
-No todas las operaciones requieren el mismo tratamiento de los bloques.
-El análisis espectral suele utilizar ventanas para reducir la fuga
-espectral, mientras que la detección de tiempos de llegada requiere
-conservar la evolución temporal de la señal
-\cite{harris1978use,oppenheim1999discrete}.
+En el análisis FFT, cada bloque puede ponderarse mediante una función
+ventana para reducir la fuga espectral. En cambio, los métodos basados
+en tiempos de llegada requieren conservar la evolución temporal de la
+señal \cite{harris1978use,oppenheim1999discrete}.
 
 \section{Representación temporal y extracción de observables}
 
@@ -418,7 +374,7 @@ recibidas y obtener magnitudes relacionadas con su amplitud, fase y
 tiempo de llegada. Estas magnitudes constituyen entradas para los modelos
 de estimación desarrollados en el capítulo siguiente.
 
-\subsection{Filtrado pasabanda}
+\subsection*{Filtrado pasabanda}
 
 Las señales registradas pueden contener componentes espectrales
 adicionales a la emisión de interés. Un filtro pasabanda centrado
@@ -446,7 +402,7 @@ componentes externas a ella se atenúan.
     \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
         node[right] {$t$};
 
-    \draw[blue, thick, domain=0:3.45, samples=250]
+    \draw[blue!55!black, thick, domain=0:3.45, samples=250]
         plot ({0.4+\x},{1.75
         +0.48*sin(deg(2*pi*1.6*\x))
         +0.23*sin(deg(2*pi*4.2*\x))});
@@ -461,7 +417,7 @@ componentes externas a ella se atenúan.
     \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
         node[right] {$f$};
 
-    \draw[orange!90!black, thick]
+    \draw[orange!65!black, thick]
         (6.15,0.75)
         .. controls (6.65,0.75) and (6.8,2.25) .. (7.45,2.25)
         -- (8.55,2.25)
@@ -482,7 +438,7 @@ componentes externas a ella se atenúan.
     \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
         node[right] {$t$};
 
-    \draw[blue, thick, domain=0:3.35, samples=250]
+    \draw[blue!55!black, thick, domain=0:3.35, samples=250]
         plot ({12.4+\x},{1.75+0.48*sin(deg(2*pi*1.6*\x))});
 
     \end{tikzpicture}
@@ -530,9 +486,10 @@ que sus respuestas sean suficientemente equivalentes. Las diferencias
 de respuesta analógica, los efectos de borde y el ruido pueden seguir
 afectando las estimaciones.
 
-En el procesamiento fuera de línea puede utilizarse un filtrado
-bidireccional. Para un filtro con respuesta $H(e^{j\omega})$, la
-respuesta efectiva ideal de dos pasadas es:
+En el procesamiento fuera de línea puede aplicarse el filtro en sentido
+directo e inverso. Este filtrado bidireccional evita el desplazamiento de
+fase neto ideal introducido por el filtro. Para una respuesta
+$H(e^{j\omega})$, la respuesta efectiva de dos pasadas es:
 
 \begin{equation}
     H_{\mathrm{eff}}(e^{j\omega})
@@ -543,16 +500,18 @@ respuesta efectiva ideal de dos pasadas es:
     \label{eq:respuesta_bidireccional}
 \end{equation}
 
-si los coeficientes del filtro son reales. Este procedimiento elimina
-la fase introducida por el filtro ideal, pero no elimina los efectos
-de borde ni las diferencias presentes en la cadena analógica.
+si los coeficientes del filtro son reales. La magnitud de la respuesta
+efectiva corresponde al cuadrado de la magnitud original. La operación
+no elimina los efectos de borde ni las diferencias presentes en la
+cadena analógica; sus fundamentos y limitaciones se desarrollan en
+\cite{oppenheim1999discrete,lyons2010understanding}.
 
 Los parámetros numéricos del filtro utilizado en cada experimento
 dependen de la configuración de procesamiento correspondiente. En
 consecuencia, no se asignan aquí frecuencias de corte ni órdenes
 específicos sin identificar previamente la implementación utilizada.
 
-\subsection{Señal analítica, amplitud y fase instantáneas}
+\subsection*{Señal analítica, amplitud y fase instantáneas}
 
 Para una señal real de banda estrecha, la amplitud y la fase pueden
 estimarse mediante la señal analítica. La transformada de Hilbert de
@@ -651,32 +610,34 @@ las perturbaciones. Por ello, las estimaciones instantáneas deben
 interpretarse dentro de los intervalos en los que la señal recibida
 presenta una amplitud y una relación señal-ruido adecuadas.
 
-\subsection{Amplitud eficaz}
+\subsection*{Amplitud eficaz}
 
-Para un conjunto de $N$ muestras de una señal eléctrica, la amplitud
-eficaz se define como:
+Para un conjunto de $N$ muestras de una señal eléctrica, definido
+sobre la ventana temporal
+$\mathcal{W}_i=\{n_0,\ldots,n_0+N-1\}$, la amplitud eficaz se define
+como:
 
 \begin{equation}
     A_{\mathrm{RMS},i}
     =
     \sqrt{
         \frac{1}{N}
-        \sum_{n=0}^{N-1}v_i^2[n]
+        \sum_{n=n_0}^{n_0+N-1}v_i^2[n]
     }.
     \label{eq:amplitud_rms}
 \end{equation}
 
 Si la señal contiene una componente continua que no forma parte de la
 magnitud de interés, puede calcularse el valor eficaz después de
-sustraer la media:
+sustraer la media de esa misma ventana:
 
 \begin{equation}
     A_{\mathrm{RMS},i}^{(\mathrm{ac})}
     =
     \sqrt{
         \frac{1}{N}
-        \sum_{n=0}^{N-1}
-        \left(v_i[n]-\overline{v}_i\right)^2
+        \sum_{n=n_0}^{n_0+N-1}
+        \left(v_i[n]-\overline{v}_{i,\mathcal{W}}\right)^2
     },
     \label{eq:amplitud_rms_ac}
 \end{equation}
@@ -684,11 +645,15 @@ sustraer la media:
 donde:
 
 \begin{equation}
-    \overline{v}_i
+    \overline{v}_{i,\mathcal{W}}
     =
     \frac{1}{N}
-    \sum_{n=0}^{N-1}v_i[n].
+    \sum_{n=n_0}^{n_0+N-1}v_i[n].
 \end{equation}
+
+La sustracción de la media elimina el desplazamiento continuo presente
+en el intervalo. En términos gráficos, centra la oscilación alrededor
+de cero, en lugar de hacerlo alrededor de un nivel distinto de cero.
 
 La primera expresión incluye tanto la componente continua como la
 componente alterna de la señal. La segunda elimina la media del intervalo
@@ -707,40 +672,47 @@ cadena de adquisición; sin esa calibración, el resultado debe
 interpretarse como una magnitud eléctrica y no como una medida absoluta
 de presión sonora.
 
-\subsection{Magnitud cuadrática acumulada}
+\subsection*{Observable cuadrático acumulado}
 
-Una magnitud relacionada con la amplitud de la señal puede construirse
-mediante la suma de los cuadrados de las muestras en un intervalo
-temporal. Para una ventana de $N_{\mathrm{gate}}$ muestras:
+El nivel cuadrático de la señal eléctrica puede acumularse sobre la
+misma ventana temporal de $N$ muestras utilizada para calcular la
+amplitud eficaz,
+$\mathcal{W}_i=\{n_0,\ldots,n_0+N-1\}$:
 
 \begin{equation}
     Q_i
     =
-    \sum_{n=n_0}^{n_1}
+    \sum_{n=n_0}^{n_0+N-1}
     \left(
-        y_i[n]-\overline{y}_{i,\mathrm{gate}}
+        v_i[n]-\overline{v}_{i,\mathcal{W}}
     \right)^2,
-    \label{eq:energia_directa}
+    \label{eq:observable_cuadratico}
 \end{equation}
 
-donde $n_0$ y $n_1$ delimitan el intervalo considerado,
-$\overline{y}_{i,\mathrm{gate}}$ es el valor medio de las muestras
-dentro de esa ventana y el número de muestras incluido, con ambos
-extremos considerados, es
+donde $\overline{v}_{i,\mathcal{W}}$ es el valor medio de las muestras
+de tensión dentro de esa ventana. De acuerdo con la definición de
+amplitud eficaz de la componente alterna, ambos observables se calculan
+a partir del mismo conjunto de muestras y se relacionan mediante:
 
 \begin{equation}
-    N_{\mathrm{gate}}=n_1-n_0+1.
-    \label{eq:numero_muestras_gate}
+    Q_i=N\left(A_{\mathrm{RMS},i}^{(\mathrm{ac})}\right)^2.
+    \label{eq:relacion_cuadratico_rms}
 \end{equation}
 
-La expresión define una suma cuadrática discreta cuyo valor depende
-de la amplitud de la señal, la duración de la ventana, la frecuencia
-de muestreo y la escala numérica. En este capítulo, $Q_i$ se utiliza
-como indicador digital del nivel de señal. No representa por sí misma
-energía acústica ni energía eléctrica expresada en julios. Su uso para
-comparar magnitudes acústicas requiere mantener condiciones de
-adquisición equivalentes y considerar la sensibilidad del transductor,
-la respuesta de la cadena electrónica y la duración de la ventana.
+La suma $Q_i$ depende de la amplitud de la señal, del número de muestras,
+de la frecuencia de muestreo y de la escala numérica. Su versión
+normalizada, $Q_i/N$, es el valor medio del cuadrado de la componente
+alterna en la ventana y, por tanto, constituye un indicador relacionado
+con la potencia media eléctrica. Para una duración de ventana fija,
+$Q_i$ conserva esa proporcionalidad. Cuando la respuesta
+del transductor y de la cadena electrónica se mantiene estable, el
+cuadrado de la tensión registrada puede relacionarse con el cuadrado de
+la presión acústica y con la intensidad recibida bajo un modelo de
+propagación determinado. En WALO, $Q_i$ se emplea como indicador digital
+del nivel recibido; no es por sí solo una medida absoluta de potencia,
+intensidad ni energía acústica. Para obtener magnitudes físicas
+absolutas se requieren calibración y una normalización temporal
+consistente.
 
 \section{Detección de tiempos de llegada}
 
@@ -757,18 +729,20 @@ mediante:
 \begin{equation}
     r_i
     =
-    c(T)
+    c
     \left(
         t_{\mathrm{arr},i}-t_0
     \right).
     \label{eq:distancia_toa}
 \end{equation}
 
-La detección se realiza mediante un criterio que identifica el
-frente de onda dentro de la señal recibida. Una estrategia consiste
+La detección se realiza dentro de una ventana temporal de búsqueda,
+que para cada canal delimita las muestras en las que se admite la
+llegada directa. Esta ventana puede ser distinta de la utilizada para
+calcular otros observables. Dentro de ella, una estrategia consiste
 en habilitar la búsqueda mediante un umbral de amplitud y localizar
-después un cruce ascendente por cero de la señal filtrada. Si el
-cruce ocurre entre las muestras $k_0$ y $k_0+1$, se cumple:
+después un cruce ascendente por cero de la señal filtrada. Si el cruce
+ocurre entre las muestras $k_0$ y $k_0+1$, se cumple:
 
 \begin{equation}
     y_i[k_0]\leq 0,
@@ -798,11 +772,60 @@ $k_0$ es el índice local de la primera muestra del intervalo de cruce.
 La interpolación proporciona una estimación submuestral del instante
 de cruce. Su desempeño depende de la relación señal-ruido, la pendiente
 del cruce, la forma de onda y la respuesta de los canales. En señales
-pulsadas, el criterio de detección se aplica sobre la región temporal
-de la llegada directa para separar el frente de onda de las
+pulsadas, la ventana de búsqueda restringe la detección a la región
+temporal asociada con la llegada directa y ayuda a separar su frente de onda de las
 contribuciones reflejadas.
 
-\subsection{Diferencia de tiempos de llegada}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        x=1.35cm, y=1.05cm, >=stealth,
+        line cap=round, line join=round, font=\small
+    ]
+        \draw[->, thin] (0.25,0.35) -- (0.25,3.55)
+            node[above] {$y_i(t)$};
+        \draw[->, thin] (0.25,1.65) -- (7.5,1.65)
+            node[right] {$t$};
+        \node[below left] at (0.25,1.65) {$0$};
+
+        \draw[blue!55!black, very thick, domain=0.45:7.1, samples=240]
+            plot (\x,{1.65+1.05*sin(deg(2*pi*(\x-2.0)/4.8))});
+        \coordinate (P0) at (1.72,{1.65+1.05*sin(deg(2*pi*(1.72-2.0)/4.8))});
+        \coordinate (P1) at (2.28,{1.65+1.05*sin(deg(2*pi*(2.28-2.0)/4.8))});
+        \fill[orange!65!black] (P0) circle (2.2pt);
+        \fill[orange!65!black] (P1) circle (2.2pt);
+        \draw[orange!65!black, very thick, dashed] (P0) -- (P1);
+        \fill[orange!65!black] (2.0,1.65) circle (2.7pt);
+
+        \draw[gray!65, densely dashed] (1.72,0.55) -- (P0);
+        \draw[gray!65, densely dashed] (2.28,0.55) -- (P1);
+        \draw[orange!65!black, densely dashed] (2.0,0.55) -- (2.0,1.65);
+
+        \node[below, align=center] at (1.72,0.48) {$t[k_0]$};
+        \node[below, align=center] at (2.55,0.18) {$t[k_0+1]$};
+
+        \node[anchor=west, text=black] at (1.05,3.08)
+            {$y_i[k_0]\leq 0$};
+        \node[anchor=west, text=black] at (2.75,3.20)
+            {$y_i[k_0+1]>0$};
+
+        \draw[orange!65!black, thin] (2.0,1.83) -- (2.88,2.58);
+        \node[anchor=west, text=orange!65!black] at (2.94,2.62)
+            {$t_{\mathrm{arr},i}$};
+
+        \node[blue!55!black, anchor=west] at (4.85,3.18)
+            {Señal filtrada};
+    \end{tikzpicture}
+    \caption{Estimación submuestral del tiempo de llegada mediante
+    interpolación lineal del cruce ascendente por cero. La curva
+    representa la señal filtrada; los puntos naranjas indican las
+    muestras consecutivas que encierran el cruce y el punto destacado
+    señala el instante de llegada interpolado. Representación didáctica,
+    no correspondiente a una medición experimental.}
+    \label{fig:interpolacion_toa}
+\end{figure}
+
+\subsection*{Diferencia de tiempos de llegada}
 
 Cuando se dispone de dos receptores, puede calcularse la diferencia
 entre sus tiempos de llegada:
@@ -824,7 +847,7 @@ diferencia de distancias recorridas $r_1-r_2$ mediante:
 \begin{equation}
     \Delta r
     =
-    c(T)\Delta t.
+    c\Delta t.
     \label{eq:delta_r_tdoa}
 \end{equation}
 
@@ -852,7 +875,7 @@ construir observables asociados al efecto Doppler.
     \label{fig:rama_b_flujo}
 \end{figure}
 
-\subsection{Transformada discreta de Fourier}
+\subsection*{Transformada discreta de Fourier}
 
 Para un bloque de $N$ muestras, la transformada discreta de Fourier
 (DFT) se define como
@@ -869,8 +892,13 @@ Para un bloque de $N$ muestras, la transformada discreta de Fourier
 \end{equation}
 
 La transformada rápida de Fourier (FFT) permite calcular esta
-transformación con menor costo computacional. La salida es compleja
-y puede expresarse como:
+transformación con menor costo computacional. En el procesamiento de
+WALO, su propósito principal es realizar un barrido efectivo del
+espectro e identificar las frecuencias dominantes de la señal. Estas
+frecuencias constituyen parámetros de entrada para otros métodos de
+estimación, en particular los que utilizan una frecuencia de referencia
+o recibida para calcular diferencias de fase y desplazamientos Doppler.
+La salida es compleja y puede expresarse como:
 
 \begin{equation}
     Z_i[k]
@@ -892,19 +920,20 @@ Su magnitud y fase son:
 \begin{equation}
     \Phi_i[k]
     =
-    \operatorname{atan2}
-    \left(
-        X_{I,i}[k],X_{R,i}[k]
-    \right).
+    \arg\left(Z_i[k]\right).
     \label{eq:fase_espectral}
 \end{equation}
 
-La fase espectral está referida al origen temporal del bloque y
-depende de la ventana y de la respuesta instrumental. En la comparación
-entre canales, estos elementos se consideran junto con la diferencia
-de fase asociada a la propagación acústica.
+La función $\arg(\cdot)$ devuelve el ángulo del número complejo
+considerado. Así, la fase espectral y la fase instantánea se expresan
+mediante la misma operación matemática, aplicada en un caso al
+coeficiente complejo de la DFT y en el otro a la señal analítica. La
+fase espectral está referida al origen temporal del bloque y depende
+de la ventana y de la respuesta instrumental. En la comparación entre
+canales, estos elementos se consideran junto con la diferencia de fase
+asociada a la propagación acústica.
 
-\subsection{Ventanas espectrales}
+\subsection*{Ventanas espectrales}
 
 La aplicación de una ventana antes de calcular la DFT permite reducir
 la fuga espectral asociada a la observación de un intervalo finito.
@@ -959,7 +988,7 @@ y el efecto de la ponderación sobre la señal original.
     \draw[->, thin] (0.4,1.75) -- (4.0,1.75)
         node[right] {$n$};
 
-    \draw[blue, thick, domain=0:3.4, samples=250]
+    \draw[blue!55!black, thick, domain=0:3.4, samples=250]
         plot ({0.4+\x},{1.75+0.65*sin(deg(2*pi*2.0*\x))});
 
     \draw[->, thick] (4.35,1.75) -- (5.45,1.75);
@@ -971,7 +1000,7 @@ y el efecto de la ponderación sobre la señal original.
     \draw[->, thin] (6.0,0.65) -- (10.0,0.65)
         node[right] {$n$};
 
-    \draw[orange!90!black, thick, domain=0:3.5, samples=150]
+    \draw[orange!65!black, thick, domain=0:3.5, samples=150]
         plot ({6.15+\x},
         {0.75+1.75*(0.5-0.5*cos(deg(2*pi*\x/3.5)))});
 
@@ -986,7 +1015,7 @@ y el efecto de la ponderación sobre la señal original.
     \draw[->, thin] (12.4,1.75) -- (15.9,1.75)
         node[right] {$n$};
 
-    \draw[blue, thick, domain=0:3.4, samples=250]
+    \draw[blue!55!black, thick, domain=0:3.4, samples=250]
         plot ({12.4+\x},
         {1.75+
         0.65*(0.5-0.5*cos(deg(2*pi*\x/3.5)))
@@ -1007,13 +1036,16 @@ y el efecto de la ponderación sobre la señal original.
 
 La ventana modifica la amplitud efectiva de las componentes
 espectrales; por ello, la estimación de amplitud incorpora la ganancia
-coherente y la normalización correspondiente. Su aplicación se reserva
-al análisis espectral: en la detección temporal, la ponderación puede
-alterar la forma de los frentes de onda y desplazar los instantes de
-llegada \cite{harris1978use,oppenheim1999discrete}. La ventana
-seleccionada se define de acuerdo con el procedimiento de análisis.
+coherente y la normalización correspondiente. Esta operación no debe
+confundirse con el filtrado pasabanda: el filtro atenúa componentes
+fuera de la banda de interés, mientras que la ventana pondera las
+muestras del bloque para reducir la fuga espectral. La ventana se
+aplica en el análisis espectral cuando lo establece el procedimiento;
+no se utiliza para detectar tiempos de llegada, pues puede alterar
+la forma del frente de onda y desplazar su instante estimado
+\cite{harris1978use,oppenheim1999discrete}.
 
-\subsection{Resolución espectral}
+\subsection*{Resolución espectral}
 
 Para un bloque de $N$ muestras adquirido a una frecuencia $f_s'$, la
 separación entre bines de la DFT es:
@@ -1055,7 +1087,69 @@ La frecuencia estimada es:
     \label{eq:frecuencia_interpolada}
 \end{equation}
 
-La interpolación es una aproximación local cuyo sesgo depende de la
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        x=1.0cm, y=0.95cm, >=stealth,
+        line cap=round, line join=round, font=\small
+    ]
+        \draw[->, thin] (0.45,0.55) -- (12.7,0.55)
+            node[right] {$k$};
+        \draw[->, thin] (0.45,0.55) -- (0.45,5.05)
+            node[above] {$|Z[k]|$};
+
+        \draw[blue!55!black, thick, smooth]
+            plot coordinates {
+                (1.0,0.82) (2.0,1.02) (3.0,1.48)
+                (3.5,2.15) (4.0,3.25) (5.0,3.85)
+                (5.8,4.05) (6.6,3.85) (7.6,3.45)
+                (8.5,2.35) (9.4,1.55) (10.3,1.08)
+                (11.0,0.84)
+            };
+
+        \coordinate (L) at (4.0,3.25);
+        \coordinate (C) at (5.8,4.05);
+        \coordinate (R) at (7.6,3.45);
+        \foreach \P in {L,C,R}{
+            \draw[gray!65, densely dashed] (\P |- 0,0.55) -- (\P);
+            \fill[blue!55!black] (\P) circle (2.6pt);
+        }
+
+        \draw[orange!65!black, very thick, domain=3.45:8.65, samples=120]
+            plot (\x,{4.12-0.20*(\x-6.05)^2});
+        \fill[orange!65!black] (6.05,4.12) circle (3pt);
+        \draw[orange!65!black, densely dashed]
+            (6.05,0.55) -- (6.05,4.12);
+
+        \node[below] at (4.0,0.42) {$k_0-1$};
+        \node[below] at (5.8,0.42) {$k_0$};
+        \node[below] at (7.6,0.42) {$k_0+1$};
+
+        \draw[orange!65!black, thin] (6.05,4.22) -- (6.72,4.66);
+        \node[anchor=west, text=orange!65!black] at (6.80,4.68)
+            {Máximo interpolado};
+
+        \node[anchor=west, text=orange!65!black] at (6.35,1.35)
+            {$k_0+\delta$};
+
+        \node[anchor=west, text=blue!55!black] at (9.0,3.55)
+            {Espectro};
+    \end{tikzpicture}
+    \caption{Estimación sub-bin de la frecuencia mediante interpolación
+    parabólica local. Los tres bins alrededor del máximo discreto
+    determinan una parábola cuyo vértice estima la posición fraccionaria
+    $k_0+\delta$; esta posición se convierte en frecuencia mediante la
+    separación $\Delta f=f_s'/N$. Representación didáctica.}
+    \label{fig:interpolacion_frecuencia}
+\end{figure}
+
+La prioridad de este procedimiento es localizar de forma confiable
+las frecuencias dominantes dentro de la banda de interés. La magnitud
+espectral se utiliza para identificar los máximos y refinar su posición,
+pero su conservación como una medida calibrada de amplitud no es el
+objetivo central de esta etapa. La amplitud recibida se caracteriza
+mediante los observables temporales definidos anteriormente. La
+interpolación es una aproximación local cuyo sesgo depende de la
 ventana, de la posición del tono respecto de los bines, de las
 componentes espectrales cercanas y de la relación señal-ruido
 \cite{grandke1983interpolation,jacobsen2007fast}. La precisión
@@ -1180,68 +1274,52 @@ geométricas desarrolladas en el capítulo siguiente.
 
 \section{Incertidumbre y limitaciones de los observables}
 
-La incertidumbre de los observables integra las contribuciones de
-la instrumentación, la geometría experimental, el procesamiento
-digital y la repetibilidad. Su evaluación se realiza siguiendo la
-Guía para la Expresión de la Incertidumbre de Medida (GUM), que
-establece el marco para propagar las incertidumbres de las magnitudes
-de entrada a través del modelo de medición
-\cite{jcg2008evaluation,taylor1997introduction}. La aplicación
-del marco se adapta a las magnitudes y al procedimiento de estimación
-de cada experimento.
+Los observables utilizados para localizar una fuente están afectados
+por la instrumentación, la geometría del arreglo, el procesamiento
+digital y la repetibilidad de las mediciones. Estas contribuciones
+deben considerarse al interpretar cualquier estimación. El marco general
+para expresar y propagar incertidumbres se establece en la Guía para la
+Expresión de la Incertidumbre de Medida (GUM)
+\cite{jcg2008evaluation,taylor1997introduction}.
 
-En la caracterización experimental deben distinguirse al menos tres
-contribuciones:
+En este capítulo basta distinguir tres conceptos: la incertidumbre de
+referencia, asociada a los instrumentos y procedimientos que establecen
+las magnitudes conocidas; la repetibilidad, relacionada con la
+dispersión entre mediciones realizadas bajo condiciones equivalentes;
+y el error del estimador, que expresa la diferencia entre la magnitud
+estimada y su valor de referencia. Estos conceptos no son equivalentes:
+los indicadores de desempeño, como el error medio absoluto (MAE) y la
+raíz del error cuadrático medio (RMSE), cuantifican discrepancias frente
+a una referencia, mientras que la incertidumbre caracteriza el
+conocimiento disponible sobre las magnitudes medidas.
 
-\begin{enumerate}
-    \item \textbf{Incertidumbre de referencia:} asociada a los
-    instrumentos y procedimientos utilizados para establecer las
-    distancias, los ángulos y las demás magnitudes de
-    referencia.
-
-    \item \textbf{Repetibilidad:} asociada a la dispersión de las
-    mediciones obtenidas al repetir una misma condición experimental.
-
-    \item \textbf{Error del estimador:} diferencia entre el valor
-    estimado por el procedimiento de procesamiento y el valor de
-    referencia.
-\end{enumerate}
-
-Estas contribuciones describen aspectos distintos de la medición.
-El error medio absoluto (MAE) y la raíz del error cuadrático medio
-(RMSE) cuantifican el desempeño del estimador respecto de una
-referencia, mientras que la incertidumbre instrumental caracteriza
-la dispersión atribuible al proceso de medición.
-
-El comportamiento de los observables está determinado por el modelo
-físico y las condiciones de medición. Las reflexiones influyen en
-los tiempos de llegada, la amplitud y la fase; las diferencias entre
-transductores pueden producir sesgos entre canales; y la estabilidad
-de la fuente y la relación señal-ruido intervienen en la estimación
-de frecuencia y de parámetros temporales. Estos efectos se incorporan
-en la caracterización experimental de cada observable.
+Las reflexiones acústicas, las diferencias entre transductores, la
+estabilidad de la fuente y la relación señal-ruido pueden afectar los
+tiempos de llegada, la amplitud, la fase y la frecuencia estimada. La
+identificación de estas contribuciones y su cuantificación para cada
+experimento se desarrollan en el capítulo de metodología; los resultados
+y el desempeño de los estimadores se analizan en el capítulo de
+resultados.
 
 \section{Alcance del tratamiento de señales}
 
-El tratamiento descrito en este capítulo establece las magnitudes
-necesarias para estudiar la propagación acústica y el movimiento de
-una fuente mediante dos receptores. Los observables temporales,
-espectrales y de amplitud constituyen las entradas de los estimadores
-desarrollados en los capítulos siguientes.
+El tratamiento descrito en este capítulo establece las operaciones
+necesarias para extraer de las señales acústicas los observables que
+alimentan los métodos de localización de WALO. Las magnitudes de
+amplitud, tiempo de llegada, fase y frecuencia recibida aportan
+información complementaria sobre la distancia, la dirección de llegada
+y, cuando corresponde, el movimiento relativo entre la fuente y los
+receptores.
 
-La amplitud y las magnitudes cuadráticas pueden utilizarse para
-caracterizar la dependencia del nivel recibido con la distancia.
-Los tiempos de llegada y sus diferencias permiten estudiar los
-retardos de propagación. Las diferencias de fase aportan información
-sobre la dirección de llegada, mientras que las frecuencias recibidas
-pueden relacionarse con el movimiento relativo mediante el efecto
-Doppler.
+Estos observables no determinan por sí solos una posición única. Su
+interpretación requiere modelos físicos y restricciones geométricas
+que relacionen las mediciones con las coordenadas de la fuente. En
+consecuencia, el capítulo siguiente desarrolla los modelos de estimación
+que combinan la información obtenida por los receptores para inferir
+la ubicación de la fuente y, en los casos correspondientes, describir
+su movimiento.
 
-La estimación de estas magnitudes integra el modelo físico, la
-geometría experimental, la respuesta instrumental y el procesamiento
-digital. Sobre esta base, el capítulo siguiente desarrolla los
-modelos de inversión que relacionan los observables con las magnitudes
-geométricas y cinemáticas de interés.
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 ```
 
 02_modelos_inversion.tex: (chapters/02_modelos_inversion.tex)
@@ -1348,18 +1426,6 @@ acústico
 Esta relación fija la escala de conversión entre el instante detectado
 y la distancia estimada. La detección del arribo y la calibración del
 retardo determinan la calidad de esa estimación.
-
-Cuando se dispone de varios receptores con posiciones conocidas y de
-un instante de emisión común conocido, cada medición ToA corregida
-proporciona una distancia entre la fuente y el receptor. En tres
-dimensiones, una distancia fija define una esfera centrada en el
-receptor. La intersección de las superficies asociadas a varios
-receptores constituye la base geométrica de la trilateración por
-intersección de esferas. Esta formulación requiere una referencia
-temporal de emisión y sincronización suficientes para estimar distancias
-absolutas; no debe confundirse con TDoA, que utiliza diferencias de
-tiempos y elimina el instante común de emisión. El desarrollo geométrico
-y sus limitaciones se presenta en el Apéndice~\ref{app:trilateracion_esferas}.
 
 \subsection{Calibración radial de amplitud y energía digital}
 
@@ -1875,7 +1941,7 @@ eléctricas de los canales y no como mediciones directas de
 presión acústica en pascales.
 
 La excitación acústica se produjo mediante un buzzer activo
-con frecuencia nominal cercana a \SI{2660}{\hertz}. Para los
+con frecuencia nominal cercana a \SI{2600}{\hertz}. Para los
 experimentos pulsados, el buzzer se accionó mediante una salida
 digital de la tarjeta, conectada a un transistor 2N2222A que
 controla su alimentación. Esta etapa permite generar pulsos
@@ -1943,8 +2009,8 @@ reflectante más cercana. La duración de la ventana es
 \end{equation}
 
 donde $K=3$ y $f_0$ es la frecuencia nominal de la fuente.
-Para $f_0=\SI{2660}{\hertz}$, la duración es aproximadamente
-\SI{1.13}{\milli\second}.
+Para $f_0=\SI{2600}{\hertz}$, la duración es aproximadamente
+\SI{1.15}{\milli\second}.
 
 La ventana se seleccionó para restringir el análisis a la
 respuesta inicial y reducir la contribución de reflexiones
@@ -1952,7 +2018,7 @@ posteriores. La mesa es la superficie reflectante más cercana;
 sin embargo, no se dispone aquí de una determinación completa
 de las longitudes de las trayectorias directa y reflejada que
 permita demostrar que la primera reflexión llega después del
-intervalo de \SI{1.13}{\milli\second}. Por ello, la ventana
+intervalo de \SI{1.15}{\milli\second}. Por ello, la ventana
 privilegia la respuesta inicial, pero no se considera una
 garantía de exclusión de todas las reflexiones. El recinto no
 se trata como anecoico.
@@ -2043,8 +2109,8 @@ se dirigió hacia la cara del micrófono. La distancia
 se midió entre el centro de la salida acústica del
 buzzer y el centro de la membrana del micrófono.
 
-Las distancias se determinaron mediante una cinta o
-regla con resolución indicada de \SI{1}{\milli\metre}.
+Las distancias se determinaron mediante una cinta métrica
+con resolución indicada de \SI{1}{\milli\metre}.
 La referencia geométrica también depende de la alineación
 y de la identificación de los centros de los transductores.
 
@@ -2061,7 +2127,7 @@ y de la identificación de los centros de los transductores.
 \subsubsection{Condiciones de medición}
 
 La fuente se operó a una frecuencia nominal cercana a
-\SI{2660}{\hertz}. La temperatura de referencia utilizada
+\SI{2600}{\hertz}. La temperatura de referencia utilizada
 en el procesamiento fue de \SI{20}{\degreeCelsius},
 con una velocidad del sonido aproximada de
 \SI{343.2}{\metre\per\second}.
@@ -2087,14 +2153,12 @@ la geometría del montaje.
 
 Para cada pulso se conservaron las señales temporales
 y las magnitudes calculadas por la rutina de adquisición.
-Entre las variables de interés se encuentran:
+Entre los observables físicos de interés se encuentran:
 
 \begin{itemize}
-    \item amplitud RMS de la señal recibida;
-    \item magnitud digital asociada a la energía directa;
-    \item tiempo de llegada detectado;
-    \item nivel de ruido previo al pulso;
-    \item relación señal-ruido estimada.
+    \item Amplitud RMS de la señal recibida;
+    \item Magnitud digital asociada a la energía directa;
+    \item Tiempo de llegada detectado;
 \end{itemize}
 
 La amplitud RMS y la energía directa son observables
@@ -2351,9 +2415,7 @@ el movimiento.
 
 La posición de la fuente acústica se obtuvo mediante
 seguimiento óptico en Tracker. El seguimiento se
-realiza sobre el buzzer y, por tanto, la coordenada
-óptica no representa necesariamente el centro
-geométrico del carro. La secuencia original de
+realiza sobre el buzzer. La secuencia original de
 Tracker tiene una frecuencia de adquisición cercana
 a \SI{30}{\hertz}; su interpolación a una base
 temporal de \SI{100}{\hertz} permite compararla
@@ -2626,7 +2688,7 @@ aislada el origen de los errores.
 \subsection{Referencias geométricas e instrumentales}
 
 En el experimento de distancia, la referencia
-radial se determina mediante una regla o cinta
+radial se determina mediante una cinta métrica
 con resolución indicada de
 \SI{1}{\milli\metre}. La incertidumbre efectiva
 también depende de la alineación de los
@@ -2801,7 +2863,7 @@ se mantienen independientes. Estos ajustes caracterizan la
 respuesta instrumental bajo las condiciones de la campaña y
 no constituyen una calibración universal de presión acústica.
 
-\subsection{Calibración y estimación de distancia mediante RSSI}
+\subsection{Estimación de distancia mediante RSSI}
 \label{subsec:exp01_rssi}
 
 En este trabajo, RSSI designa el estimador radial construido
@@ -3466,49 +3528,57 @@ considerarse en futuras evaluaciones.
 fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
 
 ```latex
+\definecolor{WaloFigBlue}{HTML}{526A86}
+\definecolor{WaloFigBlueLight}{HTML}{E8EEF5}
+\definecolor{WaloFigBluePale}{HTML}{F4F7FA}
+\definecolor{WaloFigGray}{HTML}{77736D}
 \begin{tikzpicture}[
     >=Stealth,
     block/.style={
-        draw=black!75,
-        line width=0.8pt,
+        draw=black!60,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=gray!8,
+        fill=black!3,
         align=center,
         minimum height=1.0cm,
         text width=2.45cm,
+        inner sep=5pt,
         font=\small
     },
     proc/.style={
-        draw=UdeAGreen!85!black,
+        draw=WaloFigBlue,
         line width=0.8pt,
         rounded corners=2pt,
-        fill=UdeAGreen!6,
+        fill=WaloFigBlueLight,
         align=center,
         minimum height=1.0cm,
         text width=2.55cm,
+        inner sep=5pt,
         font=\small
     },
     blocks_style/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
+        draw=WaloFigBlue,
+        line width=0.85pt,
         rounded corners=2pt,
-        fill=UdeAGreen!6,
+        fill=WaloFigBlueLight,
         align=center,
         minimum height=1.05cm,
         text width=2.75cm,
+        inner sep=5pt,
         font=\small
     },
     branch/.style={
-        draw=black!80,
-        line width=0.8pt,
+        draw=WaloFigBlue,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=white,
+        fill=WaloFigBluePale,
         align=center,
         minimum height=1.05cm,
-        text width=2.85cm,
+        text width=3.5cm,
+        inner sep=5pt,
         font=\small
     },
-    arrow/.style={->, line width=0.85pt, draw=black!75}
+    arrow/.style={->, line width=0.8pt, draw=black!68}
 ]
 
 \node[block] (field) at (0.0, 1.85) {
@@ -3520,7 +3590,6 @@ fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
     Dos transductores\\
     $v_1(t),\,v_2(t)$
 };
-
 \draw[arrow] (field) -- (transducers);
 
 \node[proc] (adc) at (3.6, -1.85) {
@@ -3534,7 +3603,6 @@ fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
     $M$ muestras\\
     $f_s' = f_s / M$
 };
-
 \draw[arrow] (transducers) -- (adc);
 \draw[arrow] (adc) -- (average);
 
@@ -3542,7 +3610,6 @@ fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
     Formación de bloques\\
     $N$ muestras por canal
 };
-
 \draw[arrow] (average.east) -- ++(0.5, 0.0) |- (blocks.west);
 
 \node[branch] (temporal) at (11.5, 1.85) {
@@ -3560,12 +3627,12 @@ fig1_discretizacion.tex: (figures/diagrams/fig1_discretizacion.tex)
 \draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (temporal.west);
 \draw[arrow] (blocks.east) -- ++(0.5, 0.0) |- (spectral.west);
 
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of temporal] {
+\node[font=\footnotesize, align=center, text=black!65, below=0.18cm of temporal] {
     ToA, fase, amplitud\\
     y suma cuadrática ($Q$)
 };
 
-\node[font=\footnotesize, align=center, text=black!70, below=0.18cm of spectral] {
+\node[font=\footnotesize, align=center, text=black!65, below=0.18cm of spectral] {
     Magnitud, fase y\\
     frecuencia dominante ($\widehat{f}_0$)
 };
@@ -3697,67 +3764,75 @@ fig2_rama_a.tex: (figures/diagrams/fig2_rama_a.tex)
 fig3_rama_b.tex: (figures/diagrams/fig3_rama_b.tex)
 
 ```latex
+\definecolor{WaloFigBlue}{HTML}{526A86}
+\definecolor{WaloFigBlueLight}{HTML}{E8EEF5}
+\definecolor{WaloFigOrange}{HTML}{B8753C}
+\definecolor{WaloFigOrangeLight}{HTML}{F5E9DC}
 \begin{tikzpicture}[
     >=Stealth,
-    node distance=0.65cm and 0.75cm,
+    node distance=0.9cm and 0.9cm,
     input/.style={
-        draw=black!75,
-        line width=0.8pt,
+        draw=black!60,
+        line width=0.75pt,
         rounded corners=2pt,
-        fill=gray!10,
+        fill=black!3,
         align=center,
-        minimum height=0.95cm,
-        text width=2.3cm,
+        minimum height=1.12cm,
+        text width=2.45cm,
+        inner sep=6pt,
         font=\small
     },
     proc/.style={
-        draw=black!80,
+        draw=WaloFigBlue,
         line width=0.8pt,
         rounded corners=2pt,
-        fill=gray!5,
+        fill=WaloFigBlueLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
+        minimum height=1.12cm,
+        text width=2.65cm,
+        inner sep=6pt,
         font=\small
     },
-    highlight/.style={
-        draw=UdeAGreen!85!black,
-        line width=0.8pt,
+    fftstyle/.style={
+        draw=WaloFigBlue,
+        line width=0.85pt,
         rounded corners=2pt,
-        fill=UdeAGreen!7,
+        fill=WaloFigBlueLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.45cm,
+        minimum height=1.12cm,
+        text width=2.75cm,
+        inner sep=6pt,
         font=\small
     },
     outnode/.style={
-        draw=black!80,
-        line width=0.8pt,
+        draw=WaloFigOrange,
+        line width=0.9pt,
         rounded corners=2pt,
-        fill=white,
+        fill=WaloFigOrangeLight,
         align=center,
-        minimum height=0.95cm,
-        text width=2.6cm,
+        minimum height=1.15cm,
+        text width=3.0cm,
+        inner sep=7pt,
         font=\small
     },
-    arrow/.style={->, line width=0.8pt, draw=black!75}
+    arrow/.style={->, line width=0.8pt, draw=black!68}
 ]
 
 \node[input] (block) {
     Bloque de muestras\\
     $v_i[n]$\\
-    $n = 0,\dots,N-1$
+    $n=0,\ldots,N-1$
 };
 
 \node[proc, right=of block] (window) {
     Enventanado\\
-    $x_i[n] = w[n]v_i[n]$\\
+    $x_i[n]=w[n]v_i[n]$\\
     Blackman--Harris
 };
 
-\node[proc, right=of window] (fft) {
-    Transformada\\
-    discreta de Fourier\\
+\node[fftstyle, right=of window] (fft) {
+    Transformada discreta\\
+    de Fourier\\
     $Z_i[k]$ (FFT)
 };
 
@@ -3771,21 +3846,21 @@ fig3_rama_b.tex: (figures/diagrams/fig3_rama_b.tex)
 \draw[arrow] (window) -- (fft);
 \draw[arrow] (fft) -- (polar);
 
-\node[proc, below=1.3cm of polar] (peak) {
+\node[proc, below=1.65cm of polar] (peak) {
     Identificación del\\
     máximo espectral\\
     Bin $k_0$
 };
 
-\node[proc, left=of peak] (interp) {
+\node[proc, left=of peak, text width=2.85cm] (interp) {
     Interpolación\\
-    local parabólica\\
+    parabólica local\\
     Desplazamiento $\delta$
 };
 
-\node[highlight, left=of interp] (freq) {
-    Frecuencia estimada\\
-    $\widehat{f}_0 = (k_0+\delta)\dfrac{f_s'}{N}$
+\node[outnode, left=of interp] (freq) {
+    \textbf{Frecuencia estimada}\\
+    $\widehat{f}_0=(k_0+\delta)\dfrac{f_s'}{N}$
 };
 
 \draw[arrow] (polar.south) -- (peak.north);
@@ -3793,15 +3868,12 @@ fig3_rama_b.tex: (figures/diagrams/fig3_rama_b.tex)
 \draw[arrow] (interp) -- (freq);
 
 \node[
-    draw=black!40,
-    dashed,
-    rounded corners=2pt,
-    fill=white,
     font=\footnotesize,
-    inner sep=4pt,
-    below=0.35cm of fft
-] {
-    Separación entre bines: $\Delta f = f_s' / N$
+    text=black!65,
+    align=center,
+    below=0.38cm of interp
+] (resolution) {
+    Separación entre bines: $\Delta f=f_s'/N$
 };
 
 \end{tikzpicture}
